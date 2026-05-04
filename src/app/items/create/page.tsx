@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import imageCompression from 'browser-image-compression'
 import { supabase } from "@/lib/supabaseclient"
+import { appConfig } from "@/lib/app-config"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,19 +16,49 @@ export default function CreateItemPage() {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [file, setFile] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const acceptedImageTypes = appConfig.media.acceptedImageMimeTypes
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0])
+        const selectedFile = e.target.files?.[0] || null
+        if (!selectedFile) {
+            setFile(null)
+            setPreviewUrl(null)
+            return
         }
+
+        if (!acceptedImageTypes.includes(selectedFile.type)) {
+            setFile(null)
+            setPreviewUrl(null)
+            setError(`Please upload one of these image types: ${acceptedImageTypes.join(", ")}`)
+            return
+        }
+
+        if (selectedFile.size > appConfig.media.maxUploadBytes) {
+            setFile(null)
+            setPreviewUrl(null)
+            setError(`Image is too large. Maximum size is ${formatBytes(appConfig.media.maxUploadBytes)}.`)
+            return
+        }
+
+        setError(null)
+        setFile(selectedFile)
+        setPreviewUrl(URL.createObjectURL(selectedFile))
     }
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl)
+        }
+    }, [previewUrl])
 
     const uploadImage = async (file: File) => {
         // Compression options
         const options = {
-            maxWidthOrHeight: 800, // Doubled from 400 for better details view quality
+            maxSizeMB: appConfig.media.compressionMaxSizeMb,
+            maxWidthOrHeight: appConfig.media.compressionMaxWidthOrHeight,
             useWebWorker: true,
             fileType: 'image/webp' as const,
             initialQuality: 0.85
@@ -63,7 +94,7 @@ export default function CreateItemPage() {
         setError(null)
 
         try {
-            if (!name) throw new Error("Name is required")
+            if (!name.trim()) throw new Error("Name is required")
 
             let imageUrl = ""
             if (file) {
@@ -75,8 +106,8 @@ export default function CreateItemPage() {
             const { error: insertError } = await supabase
                 .from('items')
                 .insert({
-                    name,
-                    description,
+                    name: name.trim(),
+                    description: description.trim(),
                     image_url: imageUrl || null, // Ensure null if empty string
                     status: 'inStock',
                     created_by: user?.id
@@ -86,9 +117,9 @@ export default function CreateItemPage() {
 
             router.push('/dashboard')
             router.refresh()
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(err.message || "Something went wrong")
+            setError(err instanceof Error ? err.message : "Something went wrong")
         } finally {
             setLoading(false)
         }
@@ -137,14 +168,25 @@ export default function CreateItemPage() {
                                 <input
                                     type="file"
                                     id="image"
-                                    accept="image/*"
+                                    accept={acceptedImageTypes.join(",")}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                     onChange={handleFileChange}
                                 />
                                 {file ? (
-                                    <div className="text-center">
-                                        <p className="text-sm font-medium">{file.name}</p>
-                                        <p className="text-xs text-muted-foreground">Click to change</p>
+                                    <div className="flex w-full flex-col items-center gap-3 text-center">
+                                        {previewUrl && (
+                                            <img
+                                                src={previewUrl}
+                                                alt="Selected item image preview"
+                                                className="h-36 w-full rounded-md border object-cover"
+                                            />
+                                        )}
+                                        <div>
+                                            <p className="text-sm font-medium">{file.name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {formatBytes(file.size)} | Click to change
+                                            </p>
+                                        </div>
                                     </div>
                                 ) : (
                                     <>
@@ -170,4 +212,10 @@ export default function CreateItemPage() {
             </div>
         </ProtectedRoute>
     )
+}
+
+function formatBytes(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
