@@ -54,7 +54,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Admin moderation route lists pending visibility requests, suggestions, and flags, and reviews status through RPCs with notes for final decisions.
 - [x] Admin user item views group current borrower, owner, and creator relationships for one profile.
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
-- [x] Admin deletion request queue lists operator-reviewed account deletion requests without destructive action.
+- [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
 - [x] Admin notification settings route shows Telegram, mute-window, dedupe, and seen-state planning without mutating user data.
 - [ ] Accepted-suggestion application, approved deletion execution, and notification execution are complete.
 

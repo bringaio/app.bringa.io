@@ -200,7 +200,8 @@ Current script:
 - `scripts/backup-supabase.mjs` backs up configured public tables.
 - It does not back up Supabase Auth users or Storage objects.
 - User-facing `export_my_data` returns profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags for the authenticated user.
-- `request_account_deletion` records a pending operator-reviewed request but does not delete Auth users, Storage objects, or item rows.
+- `request_account_deletion` records one active operator-reviewed request while a request is `pending` or `reviewing`.
+- `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` and record review metadata, but does not delete Auth users, Storage objects, item rows, image metadata, or profile rows.
 
 Risk:
 
@@ -211,7 +212,7 @@ Target:
 
 - Document Storage and Auth export limits.
 - Add restore drills and encrypted backup handling before claiming operational readiness.
-- Add admin processing for account deletion requests, including item visibility/owner reassignment, Auth deletion, and Storage cleanup policy.
+- Add approved destructive execution for account deletion requests, including item visibility/owner reassignment, Auth deletion, and Storage cleanup policy.
 
 ## Required RPC Candidates
 

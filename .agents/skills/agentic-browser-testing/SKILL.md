@@ -58,7 +58,7 @@ Use these as concrete routes through the app. Adapt only the account names and f
 3. Open `/admin/users`, promote/demote only with the intended admin role, and confirm self-demotion is blocked.
 4. From a user row or detail route, inspect that user's items; confirm owner, visibility, and status are visible without exposing unnecessary personal data.
 5. Open item versions from an admin item row, add a restore reason, and confirm restore is routed through the RPC flow and records a new version.
-6. Open `/admin/deletion-requests` and `/admin/notifications`; confirm read-only queues and settings do not expose more personal data than needed.
+6. Open `/admin/deletion-requests` and `/admin/notifications`; confirm non-destructive review actions, queues, and settings do not expose more personal data than needed.
 
 ### Moderation Queue
 

@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { summarizeDeletionRequests } from "../src/lib/admin-deletion-requests.ts";
+import {
+  buildDeletionRequestReview,
+  canReviewDeletionRequestStatus,
+  summarizeDeletionRequests,
+} from "../src/lib/admin-deletion-requests.ts";
 
 function request(overrides) {
   return {
@@ -47,4 +51,26 @@ test("sorts open requests before closed requests and newest first within status"
     "reviewing",
     "completed-new",
   ]);
+});
+
+test("builds non-destructive deletion request review notes", () => {
+  assert.deepEqual(buildDeletionRequestReview({ status: "reviewing", note: "" }), {
+    ok: true,
+    adminNote: null,
+  });
+  assert.deepEqual(buildDeletionRequestReview({ status: "cancelled", note: "  User withdrew request. " }), {
+    ok: true,
+    adminNote: "User withdrew request.",
+  });
+  assert.deepEqual(buildDeletionRequestReview({ status: "cancelled", note: "" }), {
+    ok: false,
+    adminNote: null,
+  });
+});
+
+test("allows review actions only for active deletion request states", () => {
+  assert.equal(canReviewDeletionRequestStatus("pending"), true);
+  assert.equal(canReviewDeletionRequestStatus("reviewing"), true);
+  assert.equal(canReviewDeletionRequestStatus("completed"), false);
+  assert.equal(canReviewDeletionRequestStatus("cancelled"), false);
 });

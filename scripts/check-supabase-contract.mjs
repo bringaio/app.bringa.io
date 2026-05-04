@@ -63,6 +63,7 @@ async function main() {
     "set_my_invite_code",
     "export_my_data",
     "request_account_deletion",
+    "review_account_deletion_request",
     "create_item_suggestion",
     "create_item_flag",
     "review_item_suggestion",
@@ -184,8 +185,8 @@ async function main() {
       "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'completed'::text, 'cancelled'::text]))",
     ],
     [
-      "one pending deletion request per user",
-      "CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_pending_per_user ON public.account_deletion_requests(user_id) WHERE status = 'pending';",
+      "one active deletion request per user",
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_user ON public.account_deletion_requests(user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);",
     ],
     ["item_suggestions table", "CREATE TABLE IF NOT EXISTS public.item_suggestions ("],
     [
@@ -237,6 +238,21 @@ async function main() {
 
   for (const [label, expectedSql] of requiredProfileValidationSql) {
     requireIncludes(schema, expectedSql, `Missing profile validation contract in supabase/schema.sql: ${label}`);
+  }
+
+  const requiredDeletionReviewSql = [
+    ["deletion review admin RPC", "CREATE OR REPLACE FUNCTION public.review_account_deletion_request("],
+    ["deletion review remains non-destructive", "normalized_status <> ALL (ARRAY['reviewing', 'cancelled'])"],
+    ["cancelled deletion requests require notes", "normalized_status = 'cancelled' AND normalized_note IS NULL"],
+    ["deletion review records reviewer", "reviewed_by = auth.uid()"],
+    ["deletion review only updates active requests", "WHERE id = request_id_input\n      AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])"],
+    ["deletion request creation treats reviewing as active", "AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])"],
+    ["deletion review RPC blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) FROM PUBLIC;"],
+    ["deletion review RPC allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) TO authenticated;"],
+  ];
+
+  for (const [label, expectedSql] of requiredDeletionReviewSql) {
+    requireIncludes(schema, expectedSql, `Missing deletion request review contract in supabase/schema.sql: ${label}`);
   }
 
   const requiredProductPolicies = [

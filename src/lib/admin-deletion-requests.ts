@@ -14,6 +14,13 @@ export type AccountDeletionRequestSummary<TRequest extends AccountDeletionReques
   sorted: TRequest[];
 };
 
+export type AccountDeletionReviewStatus = "reviewing" | "cancelled";
+
+export type AccountDeletionReview = {
+  ok: boolean;
+  adminNote: string | null;
+};
+
 const statusRank: Record<AccountDeletionRequestStatus, number> = {
   pending: 0,
   reviewing: 1,
@@ -50,4 +57,24 @@ export function summarizeDeletionRequests<TRequest extends AccountDeletionReques
       return requestedTime(right) - requestedTime(left);
     }),
   };
+}
+
+export function buildDeletionRequestReview({
+  status,
+  note,
+}: {
+  status: AccountDeletionReviewStatus;
+  note: string;
+}): AccountDeletionReview {
+  const adminNote = note.trim() || null;
+
+  if (status === "cancelled" && (!adminNote || adminNote.length < 3)) {
+    return { ok: false, adminNote: null };
+  }
+
+  return { ok: true, adminNote };
+}
+
+export function canReviewDeletionRequestStatus(status: AccountDeletionRequestStatus): boolean {
+  return status === "pending" || status === "reviewing";
 }

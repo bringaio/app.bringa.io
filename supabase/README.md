@@ -45,6 +45,7 @@ The browser should call RPCs for these writes:
 - `set_my_invite_code`
 - `export_my_data`
 - `request_account_deletion`
+- `review_account_deletion_request`
 - `create_item_suggestion`
 - `create_item_flag`
 - `review_item_suggestion`
@@ -71,7 +72,7 @@ Borrow history reads are admin-only by default.
 - item version capture on create/update and admin restore-by-republish through RPCs;
 - admin-only item visibility changes with required reasons;
 - admin-only profile validation changes with self-invalidation protection;
-- prepared account deletion request table;
+- prepared account deletion request table and non-destructive admin review RPC;
 - prepared item suggestion and item flag tables;
 - blocked direct browser writes to item versions and item image metadata;
 - blocked direct browser writes to account deletion request state;
@@ -83,7 +84,8 @@ Borrow history reads are admin-only by default.
 
 `export_my_data` returns the authenticated user's profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags as JSON.
 
-`request_account_deletion` records one pending operator-reviewed deletion request per user. It does not delete Supabase Auth users, Storage objects, or item records.
+`request_account_deletion` records one active operator-reviewed deletion request per user while a request is `pending` or `reviewing`.
+`review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata. It does not delete Supabase Auth users, Storage objects, item records, image metadata, or profile rows.
 
 ## Moderation Queue
 

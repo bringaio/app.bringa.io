@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Clock3, Loader2, ShieldAlert, Trash2, UserRound } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Clock3, Loader2, ShieldAlert, UserRound, XCircle } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { supabase } from "@/lib/supabaseclient"
-import { summarizeDeletionRequests, type AccountDeletionRequestSummary } from "@/lib/admin-deletion-requests"
+import {
+    buildDeletionRequestReview,
+    canReviewDeletionRequestStatus,
+    summarizeDeletionRequests,
+    type AccountDeletionRequestSummary,
+    type AccountDeletionReviewStatus,
+} from "@/lib/admin-deletion-requests"
 import type { AccountDeletionRequest, Profile } from "@/app/model/model"
 
 type ProfileSummary = Pick<Profile, "id" | "email" | "display_name" | "display_surname" | "avatar_url">
@@ -55,11 +61,12 @@ function SummaryCards({ summary }: { summary: AccountDeletionRequestSummary<Dele
         { label: "Open", value: summary.openCount, icon: ShieldAlert },
         { label: "Pending", value: summary.counts.pending, icon: Clock3 },
         { label: "Reviewing", value: summary.counts.reviewing, icon: UserRound },
-        { label: "Completed", value: summary.counts.completed, icon: Trash2 },
+        { label: "Completed", value: summary.counts.completed, icon: CheckCircle2 },
+        { label: "Cancelled", value: summary.counts.cancelled, icon: XCircle },
     ]
 
     return (
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {cards.map(({ label, value, icon: Icon }) => (
                 <div key={label} className="rounded-lg border bg-card p-3">
                     <div className="flex items-center justify-between gap-2">
@@ -79,6 +86,9 @@ export default function AdminDeletionRequestsPage() {
     const [summary, setSummary] = useState<AccountDeletionRequestSummary<DeletionRequestRow> | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [actionError, setActionError] = useState<string | null>(null)
+    const [reviewNote, setReviewNote] = useState("")
+    const [processingId, setProcessingId] = useState<string | null>(null)
 
     useEffect(() => {
         if (!adminLoading && !isAdmin) {
@@ -115,6 +125,42 @@ export default function AdminDeletionRequestsPage() {
         }
     }, [isAdmin])
 
+    const reviewDeletionRequest = async (request: DeletionRequestRow, status: AccountDeletionReviewStatus) => {
+        const review = buildDeletionRequestReview({ status, note: reviewNote })
+        if (!review.ok) {
+            setActionError("Add a short admin note before cancelling this deletion request.")
+            return
+        }
+
+        setProcessingId(`${request.id}-${status}`)
+        setActionError(null)
+
+        try {
+            const { data, error: reviewError } = await supabase.rpc("review_account_deletion_request", {
+                request_id_input: request.id,
+                status_input: status,
+                admin_note_input: review.adminNote,
+            })
+
+            if (reviewError) throw reviewError
+            if (!data) throw new Error("Review rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setSummary((current) => current
+                ? summarizeDeletionRequests(current.sorted.map((row) => (
+                    row.id === request.id
+                        ? { ...row, status, admin_note: review.adminNote ?? row.admin_note, reviewed_at: reviewedAt, completed_at: null }
+                        : row
+                )))
+                : current)
+            if (review.adminNote) setReviewNote("")
+        } catch {
+            setActionError("Could not update the deletion request.")
+        } finally {
+            setProcessingId(null)
+        }
+    }
+
     if (adminLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -140,7 +186,7 @@ export default function AdminDeletionRequestsPage() {
                                 </Link>
                             </Button>
                             <h1 className="text-2xl font-bold">Deletion Requests</h1>
-                            <p className="mt-1 text-sm text-muted-foreground">Read-only operator review queue for account deletion requests</p>
+                            <p className="mt-1 text-sm text-muted-foreground">Non-destructive operator review queue for account deletion requests</p>
                         </div>
                     </div>
 
@@ -160,7 +206,26 @@ export default function AdminDeletionRequestsPage() {
                         </div>
                     )}
 
+                    {actionError && (
+                        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+                            {actionError}
+                        </div>
+                    )}
+
                     {summary && <SummaryCards summary={summary} />}
+
+                    <section className="rounded-lg border bg-card p-4">
+                        <label htmlFor="deletion-review-note" className="text-sm font-medium">Review note</label>
+                        <textarea
+                            id="deletion-review-note"
+                            value={reviewNote}
+                            onChange={(event) => setReviewNote(event.target.value)}
+                            rows={3}
+                            className="mt-2 min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            placeholder="Record triage context. Required when cancelling a request."
+                        />
+                        <p className="mt-2 text-xs text-muted-foreground">This route only updates review status and notes.</p>
+                    </section>
 
                     {summary && summary.sorted.length === 0 && !error ? (
                         <div className="rounded-lg border bg-card p-8 text-center text-sm text-muted-foreground">
@@ -174,6 +239,11 @@ export default function AdminDeletionRequestsPage() {
                             </div>
                             {summary.sorted.map((request) => {
                                 const profile = relationOne(request.user)
+                                const canReview = canReviewDeletionRequestStatus(request.status)
+                                const reviewDates = [
+                                    request.reviewed_at ? `Reviewed ${formatDate(request.reviewed_at)}` : null,
+                                    request.completed_at ? `Completed ${formatDate(request.completed_at)}` : null,
+                                ].filter(Boolean)
 
                                 return (
                                     <div key={request.id} className="rounded-lg border bg-card p-4">
@@ -202,20 +272,47 @@ export default function AdminDeletionRequestsPage() {
                                                     </div>
                                                     <h3 className="mt-2 truncate font-semibold">{profileName(profile)}</h3>
                                                     <p className="mt-1 line-clamp-3 text-sm text-muted-foreground">{request.user_note || "No user note provided."}</p>
-                                                    {(request.reviewed_at || request.completed_at) && (
+                                                    {reviewDates.length > 0 && (
                                                         <p className="mt-2 text-xs text-muted-foreground">
-                                                            Reviewed {formatDate(request.reviewed_at)} · Completed {formatDate(request.completed_at)}
+                                                            {reviewDates.join(" · ")}
                                                         </p>
+                                                    )}
+                                                    {request.admin_note && (
+                                                        <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">Admin note: {request.admin_note}</p>
                                                     )}
                                                 </div>
                                             </div>
-                                            {profile && (
-                                                <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
+                                            <div className="flex flex-wrap gap-2 sm:max-w-64 sm:justify-end">
+                                                {profile && (
                                                     <Button asChild variant="outline" size="sm">
                                                         <Link href={`/admin/user-items?id=${profile.id}`}>User items</Link>
                                                     </Button>
-                                                </div>
-                                            )}
+                                                )}
+                                                {canReview && (
+                                                    <>
+                                                        <Button
+                                                            type="button"
+                                                            variant="secondary"
+                                                            size="sm"
+                                                            onClick={() => reviewDeletionRequest(request, "reviewing")}
+                                                            disabled={processingId !== null || request.status === "reviewing"}
+                                                        >
+                                                            {processingId === `${request.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock3 className="h-4 w-4" />}
+                                                            Reviewing
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => reviewDeletionRequest(request, "cancelled")}
+                                                            disabled={processingId !== null || request.status === "cancelled" || reviewNote.trim().length < 3}
+                                                        >
+                                                            {processingId === `${request.id}-cancelled` ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
+                                                            Cancel
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )

@@ -891,7 +891,7 @@ BEGIN
     INTO existing_request_id
     FROM public.account_deletion_requests
     WHERE user_id = auth.uid()
-      AND status = 'pending'
+      AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])
     ORDER BY requested_at DESC
     LIMIT 1;
 
@@ -906,6 +906,49 @@ BEGIN
     RETURN new_request_id;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION public.review_account_deletion_request(
+    request_id_input uuid,
+    status_input text,
+    admin_note_input text DEFAULT NULL
+)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+    normalized_status text;
+    normalized_note text;
+    updated_count integer;
+BEGIN
+    IF auth.uid() IS NULL OR NOT public.is_admin() THEN
+        RETURN false;
+    END IF;
+
+    normalized_status := lower(NULLIF(btrim(coalesce(status_input, '')), ''));
+    IF normalized_status IS NULL OR normalized_status <> ALL (ARRAY['reviewing', 'cancelled']) THEN
+        RETURN false;
+    END IF;
+
+    normalized_note := NULLIF(btrim(coalesce(admin_note_input, '')), '');
+    IF normalized_status = 'cancelled' AND normalized_note IS NULL THEN
+        RETURN false;
+    END IF;
+
+    UPDATE public.account_deletion_requests
+    SET
+        status = normalized_status,
+        admin_note = coalesce(normalized_note, admin_note),
+        reviewed_at = now(),
+        reviewed_by = auth.uid(),
+        completed_at = NULL
+    WHERE id = request_id_input
+      AND status = ANY (ARRAY['pending'::text, 'reviewing'::text]);
+
+    GET DIAGNOSTICS updated_count = ROW_COUNT;
+    RETURN updated_count = 1;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.create_item_suggestion(
     item_id_input uuid,
@@ -1144,7 +1187,7 @@ CREATE INDEX IF NOT EXISTS idx_item_versions_item_id ON public.item_versions(ite
 CREATE INDEX IF NOT EXISTS idx_item_images_item_id ON public.item_images(item_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_item_images_one_cover_per_item ON public.item_images(item_id) WHERE is_cover;
 CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_user_id ON public.account_deletion_requests(user_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_pending_per_user ON public.account_deletion_requests(user_id) WHERE status = 'pending';
+CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_user ON public.account_deletion_requests(user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_item_id ON public.item_suggestions(item_id);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_status_created_at ON public.item_suggestions(status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_suggested_by ON public.item_suggestions(suggested_by);
