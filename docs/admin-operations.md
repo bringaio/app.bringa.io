@@ -26,7 +26,7 @@ Moderation queue records live in Supabase:
 - `items.visibility_state = 'pending_visible'`: item visibility requests that require an admin reason before approval or hiding.
 - `account_deletion_requests`: user account deletion requests for operator triage before any approved destructive workflow.
 
-Users create these records through `create_item_suggestion` and `create_item_flag`. Admins transition state through `review_item_suggestion`, `review_item_flag`, and `set_item_visibility`. Direct browser inserts, updates, and deletes remain blocked by RLS.
+Users create these records through `create_item_suggestion` and `create_item_flag`. Admins transition state through `review_item_suggestion`, `review_item_flag`, and `set_item_visibility`. Final suggestion and flag decisions require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
 Status transitions currently record reviewer and reviewed time. They do not yet apply accepted suggestions to item records, notify users, or update Telegram seen-state.
 

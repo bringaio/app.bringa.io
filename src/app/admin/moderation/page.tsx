@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabaseclient"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { ItemDb, ItemFlag, ItemFlagStatus, ItemSuggestion, ItemSuggestionStatus, Profile } from "@/app/model/model"
+import { buildAdminModerationReviewNote, moderationReviewRequiresNote, type AdminModerationReviewStatus } from "@/lib/admin-moderation-review"
 import { buildAdminVisibilityQueue, type AdminVisibilityQueueEntry, type AdminVisibilityQueueItem } from "@/lib/admin-visibility-queue"
 
 type ModerationItem = Pick<ItemDb, "id" | "name" | "status" | "visibility_state" | "image_url">
@@ -65,6 +66,7 @@ export default function AdminModerationPage() {
     const [actionError, setActionError] = useState<string | null>(null)
     const [processingAction, setProcessingAction] = useState<string | null>(null)
     const [visibilityReason, setVisibilityReason] = useState("")
+    const [reviewNote, setReviewNote] = useState("")
 
     const visibilityQueue = useMemo(() => buildAdminVisibilityQueue(visibilityItems), [visibilityItems])
     const stats = useMemo(() => ({
@@ -73,6 +75,10 @@ export default function AdminModerationPage() {
         pendingVisibility: visibilityQueue.length,
         openTotal: [...suggestions, ...flags].filter((row) => row.status === "pending" || row.status === "reviewing").length + visibilityQueue.length,
     }), [flags, suggestions, visibilityQueue])
+
+    const canSubmitReviewStatus = (status: AdminModerationReviewStatus): boolean => (
+        !moderationReviewRequiresNote(status) || reviewNote.trim().length >= 3
+    )
 
     useEffect(() => {
         if (!adminLoading && !isAdmin) {
@@ -132,6 +138,12 @@ export default function AdminModerationPage() {
     }, [isAdmin])
 
     const reviewSuggestion = async (suggestionId: string, status: Exclude<ItemSuggestionStatus, "pending">) => {
+        const review = buildAdminModerationReviewNote({ status, note: reviewNote })
+        if (!review.ok) {
+            setActionError("Add a short admin note before completing this suggestion review.")
+            return
+        }
+
         const actionId = `suggestion-${suggestionId}-${status}`
         setProcessingAction(actionId)
         setActionError(null)
@@ -139,7 +151,7 @@ export default function AdminModerationPage() {
             const { data, error } = await supabase.rpc("review_item_suggestion", {
                 suggestion_id_input: suggestionId,
                 status_input: status,
-                admin_note_input: null,
+                admin_note_input: review.adminNote,
             })
 
             if (error) throw error
@@ -147,8 +159,9 @@ export default function AdminModerationPage() {
 
             const reviewedAt = new Date().toISOString()
             setSuggestions((rows) => rows.map((row) => (
-                row.id === suggestionId ? { ...row, status, reviewed_at: reviewedAt } : row
+                row.id === suggestionId ? { ...row, status, admin_note: review.adminNote ?? row.admin_note, reviewed_at: reviewedAt } : row
             )))
+            if (review.adminNote) setReviewNote("")
         } catch {
             setActionError("Could not update the suggestion status.")
         } finally {
@@ -157,6 +170,12 @@ export default function AdminModerationPage() {
     }
 
     const reviewFlag = async (flagId: string, status: Exclude<ItemFlagStatus, "pending">) => {
+        const review = buildAdminModerationReviewNote({ status, note: reviewNote })
+        if (!review.ok) {
+            setActionError("Add a short admin note before completing this flag review.")
+            return
+        }
+
         const actionId = `flag-${flagId}-${status}`
         setProcessingAction(actionId)
         setActionError(null)
@@ -164,7 +183,7 @@ export default function AdminModerationPage() {
             const { data, error } = await supabase.rpc("review_item_flag", {
                 flag_id_input: flagId,
                 status_input: status,
-                admin_note_input: null,
+                admin_note_input: review.adminNote,
             })
 
             if (error) throw error
@@ -172,8 +191,9 @@ export default function AdminModerationPage() {
 
             const reviewedAt = new Date().toISOString()
             setFlags((rows) => rows.map((row) => (
-                row.id === flagId ? { ...row, status, reviewed_at: reviewedAt } : row
+                row.id === flagId ? { ...row, status, admin_note: review.adminNote ?? row.admin_note, reviewed_at: reviewedAt } : row
             )))
+            if (review.adminNote) setReviewNote("")
         } catch {
             setActionError("Could not update the flag status.")
         } finally {
@@ -290,6 +310,19 @@ export default function AdminModerationPage() {
                             placeholder="Record why this item should become visible or stay hidden."
                         />
                         <p className="mt-2 text-xs text-muted-foreground">Required for pending visibility actions.</p>
+                    </section>
+
+                    <section className="rounded-lg border bg-card p-4">
+                        <label htmlFor="review-note" className="text-sm font-medium">Review note</label>
+                        <textarea
+                            id="review-note"
+                            value={reviewNote}
+                            onChange={(event) => setReviewNote(event.target.value)}
+                            rows={3}
+                            className="mt-2 min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            placeholder="Record the decision context before accepting, rejecting, resolving, or dismissing."
+                        />
+                        <p className="mt-2 text-xs text-muted-foreground">Required for final suggestion and flag decisions.</p>
                     </section>
 
                     <section className="flex flex-col gap-2">
@@ -444,7 +477,7 @@ export default function AdminModerationPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => reviewSuggestion(suggestion.id, "accepted")}
-                                                    disabled={processingAction !== null || suggestion.status === "accepted"}
+                                                    disabled={processingAction !== null || suggestion.status === "accepted" || !canSubmitReviewStatus("accepted")}
                                                 >
                                                     {processingAction === `suggestion-${suggestion.id}-accepted` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                                                     Accept
@@ -454,7 +487,7 @@ export default function AdminModerationPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => reviewSuggestion(suggestion.id, "rejected")}
-                                                    disabled={processingAction !== null || suggestion.status === "rejected"}
+                                                    disabled={processingAction !== null || suggestion.status === "rejected" || !canSubmitReviewStatus("rejected")}
                                                 >
                                                     {processingAction === `suggestion-${suggestion.id}-rejected` ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                                                     Reject
@@ -542,7 +575,7 @@ export default function AdminModerationPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => reviewFlag(flag.id, "resolved")}
-                                                    disabled={processingAction !== null || flag.status === "resolved"}
+                                                    disabled={processingAction !== null || flag.status === "resolved" || !canSubmitReviewStatus("resolved")}
                                                 >
                                                     {processingAction === `flag-${flag.id}-resolved` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                                                     Resolve
@@ -552,7 +585,7 @@ export default function AdminModerationPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => reviewFlag(flag.id, "dismissed")}
-                                                    disabled={processingAction !== null || flag.status === "dismissed"}
+                                                    disabled={processingAction !== null || flag.status === "dismissed" || !canSubmitReviewStatus("dismissed")}
                                                 >
                                                     {processingAction === `flag-${flag.id}-dismissed` ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                                                     Dismiss

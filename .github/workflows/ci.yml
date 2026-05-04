@@ -51,6 +51,9 @@ jobs:
       - name: Test admin deletion request summary
         run: pnpm test:admin-deletion-requests
 
+      - name: Test admin moderation review notes
+        run: pnpm test:admin-moderation-review
+
       - name: Test admin queue counts
         run: pnpm test:admin-queue-counts
 

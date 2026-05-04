@@ -117,7 +117,7 @@ Current model:
 
 Risk:
 
-- Admin processing records status, reviewer, reviewed time, and optional admin note, but it does not yet create item versions, apply accepted suggestions, send notifications, or dedupe Telegram messages.
+- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions, but it does not yet apply accepted suggestions, send notifications, or dedupe Telegram messages.
 - Live projects must apply the moderation migration before enabling the user-facing queue controls.
 
 Target:
