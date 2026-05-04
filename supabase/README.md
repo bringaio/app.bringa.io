@@ -47,6 +47,17 @@ Direct browser reads still use RLS policies where appropriate. Direct browser wr
 Direct browser writes to `borrow_history` are also blocked; borrow history is maintained by `borrow_item` and `return_item`.
 Borrow history reads are admin-only by default.
 
+## Current Integrity Boundary
+
+`pnpm check:supabase-contract` verifies the consolidated schema contains:
+
+- core browser-write RPCs;
+- blocked direct item and borrow-history writes;
+- admin-only borrow-history reads;
+- item-image Storage bucket limits aligned with resolved deployment config;
+- `borrow_history.item_id` and `item_sharing.item_id` foreign keys to `items.id`;
+- unique admin invite codes.
+
 ## Before Live Review
 
 When Supabase MCP or service-role access is available, inspect schema and metadata first:

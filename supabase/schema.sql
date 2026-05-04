@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS public.admins (
     profile_id uuid,
     created_at timestamp with time zone DEFAULT now(),
     CONSTRAINT admins_pkey PRIMARY KEY (id),
-    CONSTRAINT admins_profile_id_unique UNIQUE (profile_id)
+    CONSTRAINT admins_profile_id_unique UNIQUE (profile_id),
+    CONSTRAINT admins_invite_code_unique UNIQUE (invite_code)
 );
 COMMENT ON COLUMN public.admins.invite_code IS 'Unique invite code for this admin to share with users';
 
@@ -102,8 +103,10 @@ ON CONFLICT (id) DO UPDATE SET
 ALTER TABLE public.profiles ADD CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE;
 ALTER TABLE public.items ADD CONSTRAINT items_borrowed_by_fkey FOREIGN KEY (borrowed_by) REFERENCES auth.users(id) ON DELETE SET NULL;
 ALTER TABLE public.items ADD CONSTRAINT items_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
+ALTER TABLE public.borrow_history ADD CONSTRAINT borrow_history_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 ALTER TABLE public.borrow_history ADD CONSTRAINT borrow_history_borrower_id_fkey FOREIGN KEY (borrower_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
 ALTER TABLE public.admins ADD CONSTRAINT admins_profile_id_fkey FOREIGN KEY (profile_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
+ALTER TABLE public.item_sharing ADD CONSTRAINT item_sharing_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 ALTER TABLE public.item_sharing ADD CONSTRAINT item_sharing_shared_with_user_id_fkey FOREIGN KEY (shared_with_user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
 
 
@@ -506,7 +509,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 5. INDEXES
 CREATE INDEX IF NOT EXISTS idx_profiles_profile_valid ON public.profiles(profile_valid);
-CREATE INDEX IF NOT EXISTS idx_admins_invite_code ON public.admins(invite_code);
 
 -- 6. RLS POLICIES
 -- profiles

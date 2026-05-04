@@ -19,6 +19,14 @@ function requireIncludes(content, value, message) {
   }
 }
 
+function requireConstraint(content, constraintName, expectedSql) {
+  requireIncludes(
+    content,
+    expectedSql,
+    `Missing or drifted constraint in supabase/schema.sql: ${constraintName}`,
+  );
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -87,6 +95,22 @@ async function main() {
 
   for (const policyName of forbiddenPolicies) {
     requireNoPolicyCreate(schema, policyName);
+  }
+
+  const requiredConstraints = [
+    [
+      "borrow_history_item_id_fkey",
+      "ALTER TABLE public.borrow_history ADD CONSTRAINT borrow_history_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
+    [
+      "item_sharing_item_id_fkey",
+      "ALTER TABLE public.item_sharing ADD CONSTRAINT item_sharing_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
+    ["admins_invite_code_unique", "CONSTRAINT admins_invite_code_unique UNIQUE (invite_code)"],
+  ];
+
+  for (const [constraintName, expectedSql] of requiredConstraints) {
+    requireConstraint(schema, constraintName, expectedSql);
   }
 
   requireIncludes(schema, "INSERT INTO storage.buckets", "Missing Storage bucket setup in supabase/schema.sql.");

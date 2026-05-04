@@ -157,6 +157,7 @@ Current state:
 
 - `supabase/schema.sql` is a consolidated fresh setup schema.
 - Existing migrations include older project-specific names and policies.
+- The local contract checker now verifies core item-reference foreign keys and invite-code uniqueness in addition to RPCs, RLS policy names, and Storage limits.
 
 Risk:
 
@@ -167,6 +168,7 @@ Target:
 - Decide whether `supabase/schema.sql` or migrations are authoritative for fresh setup.
 - Keep migration docs explicit about production upgrade order.
 - Remove or quarantine obsolete project-specific assumptions.
+- Add checker coverage when new ownership, visibility, versioning, moderation, and media tables become durable schema.
 
 ### Backup Scope
 
