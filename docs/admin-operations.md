@@ -26,9 +26,9 @@ Moderation queue records live in Supabase:
 - `items.visibility_state = 'pending_visible'`: item visibility requests that require an admin reason before approval or hiding.
 - `account_deletion_requests`: user account deletion requests for operator triage before any approved destructive workflow.
 
-Users create these records through `create_item_suggestion`, `create_item_flag`, `request_item_visibility`, and `request_account_deletion`. Admins transition state through `review_item_suggestion`, `review_item_flag`, `set_item_visibility`, and `review_account_deletion_request`; content/image suggestions can be applied through `apply_item_suggestion`. Final suggestion and flag decisions require an admin note; cancelled deletion requests require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
+Users create these records through `create_item_suggestion`, `create_item_flag`, `request_item_visibility`, and `request_account_deletion`. Admins transition state through `review_item_suggestion`, `review_item_flag`, `set_item_visibility`, and `review_account_deletion_request`; content/image suggestions can be applied through `apply_item_suggestion`, and owner suggestions through `apply_owner_item_suggestion`. Final suggestion and flag decisions require an admin note; cancelled deletion requests require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
-Status transitions record reviewer and reviewed time. Applying a content/image suggestion updates explicit item fields and creates a new `item_versions` snapshot. Admin item visibility actions require a reason and reuse `set_item_visibility`, including version capture. Owner-specific application, image metadata application, user notifications, and Telegram seen-state are still pending.
+Status transitions record reviewer and reviewed time. Applying a content/image or owner suggestion updates explicit item fields and creates a new `item_versions` snapshot. Admin item visibility actions require a reason and reuse `set_item_visibility`, including version capture. Image metadata application, user notifications, and Telegram seen-state are still pending.
 
 Item creation, item updates, and admin version restore create append-only `item_versions` snapshots through `record_item_version`. Admin restore uses `restore_item_version` and records the restore reason as the newly current version.
 
@@ -55,7 +55,7 @@ The deletion request route is non-destructive. It can mark requests `reviewing` 
 
 Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 
-- owner-specific and image-metadata suggestion application;
+- image-metadata suggestion application;
 - item/image-specific moderation;
 - Telegram dedupe, mute windows, and seen-state;
 - backup freshness and Supabase health visibility;

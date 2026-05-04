@@ -11,10 +11,16 @@ import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ItemDb, ItemFlag, ItemFlagStatus, ItemSuggestion, ItemSuggestionStatus, Profile } from "@/app/model/model"
-import { buildAcceptedSuggestionApplication, buildAdminModerationReviewNote, moderationReviewRequiresNote, type AdminModerationReviewStatus } from "@/lib/admin-moderation-review"
+import {
+    buildAcceptedSuggestionApplication,
+    buildAdminModerationReviewNote,
+    buildOwnerSuggestionApplication,
+    moderationReviewRequiresNote,
+    type AdminModerationReviewStatus,
+} from "@/lib/admin-moderation-review"
 import { buildAdminVisibilityQueue, type AdminVisibilityQueueEntry, type AdminVisibilityQueueItem } from "@/lib/admin-visibility-queue"
 
-type ModerationItem = Pick<ItemDb, "id" | "name" | "description" | "status" | "visibility_state" | "image_url">
+type ModerationItem = Pick<ItemDb, "id" | "name" | "description" | "status" | "visibility_state" | "image_url" | "owner_kind" | "owner_profile_id" | "owner_label">
 type ProfileSummary = Pick<Profile, "id" | "email" | "display_name" | "display_surname">
 
 type SuggestionQueueRow = ItemSuggestion & {
@@ -97,7 +103,7 @@ export default function AdminModerationPage() {
                         .from("item_suggestions")
                         .select(`
                             id,item_id,suggested_by,suggestion_type,suggestion,status,admin_note,reviewed_at,reviewed_by,created_at,
-                            item:items!item_suggestions_item_id_fkey(id,name,description,status,visibility_state,image_url),
+                            item:items!item_suggestions_item_id_fkey(id,name,description,status,visibility_state,image_url,owner_kind,owner_profile_id,owner_label),
                             suggested_by_profile:profiles!item_suggestions_suggested_by_fkey(id,email,display_name,display_surname)
                         `)
                         .order("created_at", { ascending: false })
@@ -222,6 +228,63 @@ export default function AdminModerationPage() {
             setReviewNote("")
         } catch {
             setActionError("Could not apply the suggestion to the item.")
+        } finally {
+            setProcessingAction(null)
+        }
+    }
+
+    const applyOwnerSuggestion = async (event: React.FormEvent<HTMLFormElement>, suggestion: SuggestionQueueRow) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const application = buildOwnerSuggestionApplication({
+            ownerKind: String(formData.get("ownerKind") || ""),
+            ownerProfileId: String(formData.get("ownerProfileId") || ""),
+            ownerLabel: String(formData.get("ownerLabel") || ""),
+            note: reviewNote,
+        })
+
+        if (!application.ok) {
+            setActionError("Add a valid owner target and a short admin note before applying this owner suggestion.")
+            return
+        }
+
+        const actionId = `suggestion-${suggestion.id}-apply-owner`
+        setProcessingAction(actionId)
+        setActionError(null)
+        try {
+            const { data, error } = await supabase.rpc("apply_owner_item_suggestion", {
+                suggestion_id_input: suggestion.id,
+                owner_kind_input: application.ownerKind,
+                owner_profile_id_input: application.ownerProfileId,
+                owner_label_input: application.ownerLabel,
+                admin_note_input: application.adminNote,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Owner suggestion application rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setSuggestions((rows) => rows.map((row) => {
+                if (row.id !== suggestion.id) return row
+                const item = relationOne(row.item)
+                return {
+                    ...row,
+                    status: "accepted",
+                    admin_note: application.adminNote,
+                    reviewed_at: reviewedAt,
+                    item: item
+                        ? {
+                            ...item,
+                            owner_kind: application.ownerKind,
+                            owner_profile_id: application.ownerProfileId,
+                            owner_label: application.ownerLabel,
+                        }
+                        : row.item,
+                }
+            }))
+            setReviewNote("")
+        } catch {
+            setActionError("Could not apply the owner suggestion to the item.")
         } finally {
             setProcessingAction(null)
         }
@@ -478,6 +541,11 @@ export default function AdminModerationPage() {
                                     && (suggestion.suggestion_type === "content" || suggestion.suggestion_type === "image")
                                     && (suggestion.status === "pending" || suggestion.status === "reviewing")
                                 )
+                                const canApplyOwnerSuggestion = Boolean(
+                                    item
+                                    && suggestion.suggestion_type === "owner"
+                                    && (suggestion.status === "pending" || suggestion.status === "reviewing")
+                                )
 
                                 return (
                                     <div key={suggestion.id} className="rounded-lg border bg-card p-4">
@@ -541,6 +609,41 @@ export default function AdminModerationPage() {
                                                             </div>
                                                         </form>
                                                     )}
+                                                    {canApplyOwnerSuggestion && item && (
+                                                        <form onSubmit={(event) => applyOwnerSuggestion(event, suggestion)} className="mt-3 grid gap-3 rounded-md border bg-background p-3 sm:grid-cols-2">
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Owner kind
+                                                                <select
+                                                                    name="ownerKind"
+                                                                    defaultValue={item.owner_kind || "operator"}
+                                                                    className="h-9 rounded-md border bg-background px-3 text-sm font-normal text-foreground outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                                                >
+                                                                    <option value="operator">Operator</option>
+                                                                    <option value="profile">Profile</option>
+                                                                    <option value="free_text">Free-text owner</option>
+                                                                </select>
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Owner profile ID
+                                                                <Input name="ownerProfileId" defaultValue={item.owner_profile_id || profile?.id || ""} className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground sm:col-span-2">
+                                                                Owner label
+                                                                <Input name="ownerLabel" defaultValue={item.owner_label || ""} className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <div className="flex justify-end sm:col-span-2">
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="secondary"
+                                                                    size="sm"
+                                                                    disabled={processingAction !== null || reviewNote.trim().length < 3}
+                                                                >
+                                                                    {processingAction === `suggestion-${suggestion.id}-apply-owner` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                                    Apply owner
+                                                                </Button>
+                                                            </div>
+                                                        </form>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
@@ -567,7 +670,7 @@ export default function AdminModerationPage() {
                                                     {processingAction === `suggestion-${suggestion.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                                                     Reviewing
                                                 </Button>
-                                                {!canApplySuggestion && (
+                                                {!canApplySuggestion && !canApplyOwnerSuggestion && (
                                                     <Button
                                                         type="button"
                                                         variant="outline"

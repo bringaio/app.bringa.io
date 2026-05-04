@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   buildAcceptedSuggestionApplication,
+  buildOwnerSuggestionApplication,
   buildAdminModerationReviewNote,
   moderationReviewRequiresNote,
 } from "../src/lib/admin-moderation-review.ts";
@@ -67,6 +68,73 @@ test("builds accepted suggestion item updates with explicit admin notes", () => 
     name: null,
     description: null,
     imageUrl: null,
+    adminNote: null,
+  });
+});
+
+test("builds owner suggestion applications with explicit admin notes", () => {
+  assert.deepEqual(buildOwnerSuggestionApplication({
+    ownerKind: " profile ",
+    ownerProfileId: " 00000000-0000-4000-8000-000000000001 ",
+    ownerLabel: " Ignored for profile ",
+    note: " Assigned to the requesting profile. ",
+  }), {
+    ok: true,
+    ownerKind: "profile",
+    ownerProfileId: "00000000-0000-4000-8000-000000000001",
+    ownerLabel: null,
+    adminNote: "Assigned to the requesting profile.",
+  });
+
+  assert.deepEqual(buildOwnerSuggestionApplication({
+    ownerKind: "free_text",
+    ownerProfileId: "00000000-0000-4000-8000-000000000001",
+    ownerLabel: "  Tool library shelf ",
+    note: " Accepted free-text owner. ",
+  }), {
+    ok: true,
+    ownerKind: "free_text",
+    ownerProfileId: null,
+    ownerLabel: "Tool library shelf",
+    adminNote: "Accepted free-text owner.",
+  });
+
+  assert.deepEqual(buildOwnerSuggestionApplication({
+    ownerKind: "operator",
+    ownerProfileId: "00000000-0000-4000-8000-000000000001",
+    ownerLabel: "  Main operator  ",
+    note: " Marked as operator-owned. ",
+  }), {
+    ok: true,
+    ownerKind: "operator",
+    ownerProfileId: null,
+    ownerLabel: "Main operator",
+    adminNote: "Marked as operator-owned.",
+  });
+
+  assert.deepEqual(buildOwnerSuggestionApplication({
+    ownerKind: "profile",
+    ownerProfileId: "",
+    ownerLabel: "",
+    note: "Missing profile.",
+  }), {
+    ok: false,
+    ownerKind: null,
+    ownerProfileId: null,
+    ownerLabel: null,
+    adminNote: null,
+  });
+
+  assert.deepEqual(buildOwnerSuggestionApplication({
+    ownerKind: "free_text",
+    ownerProfileId: "",
+    ownerLabel: "",
+    note: "Missing label.",
+  }), {
+    ok: false,
+    ownerKind: null,
+    ownerProfileId: null,
+    ownerLabel: null,
     adminNote: null,
   });
 });

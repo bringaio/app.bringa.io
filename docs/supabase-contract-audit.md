@@ -116,16 +116,16 @@ Current model:
 - Users create both through `create_item_suggestion` and `create_item_flag`; direct browser inserts, updates, and deletes are blocked by RLS.
 - Admins inspect and transition queue status in `/admin/moderation` through `review_item_suggestion`, `review_item_flag`, and `set_item_visibility`.
 - Admins can also change item visibility from `/admin/user-items` through `set_item_visibility` with a required reason.
-- Admins can apply content/image suggestions through `apply_item_suggestion`, which updates explicit item fields, marks the suggestion accepted, and records a new item version.
+- Admins can apply content/image suggestions through `apply_item_suggestion` and owner suggestions through `apply_owner_item_suggestion`; both update explicit item fields, mark the suggestion accepted, and record a new item version.
 
 Risk:
 
-- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions. Content/image suggestion application updates current item fields and versions the item, but owner-specific application, image metadata application, user notifications, and Telegram dedupe remain incomplete.
+- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions. Content/image and owner suggestion application updates current item fields and versions the item, but image metadata application, user notifications, and Telegram dedupe remain incomplete.
 - Live projects must apply the moderation migration before enabling the user-facing queue controls.
 
 Target:
 
-- Add focused RPCs for owner/image-metadata suggestion application, item/image-specific review actions, and Telegram seen-state.
+- Add focused RPCs for image-metadata suggestion application, item/image-specific review actions, and Telegram seen-state.
 - Keep moderation rows in user export and table backups so users and operators can audit feedback history.
 
 ### Storage
@@ -237,6 +237,7 @@ Target:
 - `create_item_flag(...)`
 - `review_item_suggestion(...)`
 - `apply_item_suggestion(...)`
+- `apply_owner_item_suggestion(...)`
 - `review_item_flag(...)`
 - `mark_moderation_seen(...)`
 - `set_telegram_mute(...)`

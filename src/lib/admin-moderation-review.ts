@@ -1,4 +1,4 @@
-import type { ItemFlagStatus, ItemSuggestionStatus } from "@/app/model/model";
+import type { ItemFlagStatus, ItemOwnerKind, ItemSuggestionStatus } from "@/app/model/model";
 
 export type AdminModerationReviewStatus = Exclude<ItemSuggestionStatus, "pending"> | Exclude<ItemFlagStatus, "pending">;
 
@@ -14,6 +14,17 @@ export type AcceptedSuggestionApplicationResult = {
   imageUrl: string | null;
   adminNote: string | null;
 };
+
+export type OwnerSuggestionApplicationResult = {
+  ok: boolean;
+  ownerKind: ItemOwnerKind | null;
+  ownerProfileId: string | null;
+  ownerLabel: string | null;
+  adminNote: string | null;
+};
+
+const ownerKinds = new Set<ItemOwnerKind>(["operator", "profile", "free_text"]);
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export function moderationReviewRequiresNote(status: AdminModerationReviewStatus): boolean {
   return status !== "reviewing";
@@ -66,6 +77,71 @@ export function buildAcceptedSuggestionApplication({
     name: normalizedName,
     description: normalizedDescription,
     imageUrl: normalizedImageUrl,
+    adminNote,
+  };
+}
+
+export function buildOwnerSuggestionApplication({
+  ownerKind,
+  ownerProfileId,
+  ownerLabel,
+  note,
+}: {
+  ownerKind: string;
+  ownerProfileId: string;
+  ownerLabel: string;
+  note: string;
+}): OwnerSuggestionApplicationResult {
+  const normalizedKind = ownerKind.trim() as ItemOwnerKind;
+  const normalizedProfileId = ownerProfileId.trim() || null;
+  const normalizedLabel = ownerLabel.trim() || null;
+  const adminNote = note.trim() || null;
+
+  if (!ownerKinds.has(normalizedKind) || !adminNote || adminNote.length < 3) {
+    return {
+      ok: false,
+      ownerKind: null,
+      ownerProfileId: null,
+      ownerLabel: null,
+      adminNote: null,
+    };
+  }
+
+  if (normalizedKind === "profile") {
+    if (!normalizedProfileId || !uuidPattern.test(normalizedProfileId)) {
+      return {
+        ok: false,
+        ownerKind: null,
+        ownerProfileId: null,
+        ownerLabel: null,
+        adminNote: null,
+      };
+    }
+
+    return {
+      ok: true,
+      ownerKind: normalizedKind,
+      ownerProfileId: normalizedProfileId,
+      ownerLabel: null,
+      adminNote,
+    };
+  }
+
+  if (normalizedKind === "free_text" && !normalizedLabel) {
+    return {
+      ok: false,
+      ownerKind: null,
+      ownerProfileId: null,
+      ownerLabel: null,
+      adminNote: null,
+    };
+  }
+
+  return {
+    ok: true,
+    ownerKind: normalizedKind,
+    ownerProfileId: null,
+    ownerLabel: normalizedLabel,
     adminNote,
   };
 }

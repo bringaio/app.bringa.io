@@ -68,6 +68,7 @@ async function main() {
     "create_item_flag",
     "review_item_suggestion",
     "apply_item_suggestion",
+    "apply_owner_item_suggestion",
     "review_item_flag",
     "record_item_version",
     "restore_item_version",
@@ -258,6 +259,14 @@ async function main() {
     ["suggestion application marks suggestion accepted", "status = 'accepted'"],
     ["suggestion application blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.apply_item_suggestion(uuid, text, text, text, text) FROM PUBLIC;"],
     ["suggestion application allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.apply_item_suggestion(uuid, text, text, text, text) TO authenticated;"],
+    ["owner suggestion application admin RPC", "CREATE OR REPLACE FUNCTION public.apply_owner_item_suggestion("],
+    ["owner suggestion application uses hardened search path", "RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$"],
+    ["owner suggestion application only applies owner suggestions", "AND suggestion_type = 'owner'"],
+    ["owner suggestion application validates profile owners", "PERFORM 1 FROM public.profiles WHERE id = owner_profile_id_input;"],
+    ["owner suggestion application updates owner fields", "owner_kind = normalized_kind,\n        owner_profile_id = selected_owner_profile_id,\n        owner_label = selected_owner_label"],
+    ["owner suggestion application records version", "SELECT public.record_item_version(selected_item_id, 'accepted owner suggestion') INTO new_version_id;"],
+    ["owner suggestion application blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.apply_owner_item_suggestion(uuid, text, uuid, text, text) FROM PUBLIC;"],
+    ["owner suggestion application allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.apply_owner_item_suggestion(uuid, text, uuid, text, text) TO authenticated;"],
   ];
 
   for (const [label, expectedSql] of requiredSuggestionApplicationSql) {
