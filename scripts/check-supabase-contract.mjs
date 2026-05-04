@@ -67,6 +67,7 @@ async function main() {
     "create_item_suggestion",
     "create_item_flag",
     "review_item_suggestion",
+    "apply_item_suggestion",
     "review_item_flag",
     "record_item_version",
     "restore_item_version",
@@ -238,6 +239,21 @@ async function main() {
 
   for (const [label, expectedSql] of requiredProfileValidationSql) {
     requireIncludes(schema, expectedSql, `Missing profile validation contract in supabase/schema.sql: ${label}`);
+  }
+
+  const requiredSuggestionApplicationSql = [
+    ["suggestion application admin RPC", "CREATE OR REPLACE FUNCTION public.apply_item_suggestion("],
+    ["suggestion application locks suggestion", "FROM public.item_suggestions\n    WHERE id = suggestion_id_input\n      AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])\n    FOR UPDATE;"],
+    ["suggestion application requires note", "IF normalized_note IS NULL OR length(normalized_note) < 3 THEN"],
+    ["suggestion application updates item", "UPDATE public.items\n    SET\n        name = normalized_name,"],
+    ["suggestion application records version", "SELECT public.record_item_version(selected_item_id, 'accepted suggestion') INTO new_version_id;"],
+    ["suggestion application marks suggestion accepted", "status = 'accepted'"],
+    ["suggestion application blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.apply_item_suggestion(uuid, text, text, text, text) FROM PUBLIC;"],
+    ["suggestion application allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.apply_item_suggestion(uuid, text, text, text, text) TO authenticated;"],
+  ];
+
+  for (const [label, expectedSql] of requiredSuggestionApplicationSql) {
+    requireIncludes(schema, expectedSql, `Missing suggestion application contract in supabase/schema.sql: ${label}`);
   }
 
   const requiredDeletionReviewSql = [

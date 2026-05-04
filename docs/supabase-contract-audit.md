@@ -103,7 +103,7 @@ Risk:
 
 Target:
 
-- Route ownership, accepted-suggestion application, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the remaining flows in UI.
+- Route ownership, remaining suggestion application, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the remaining flows in UI.
 - Keep `item_versions` as the versioning source of truth instead of JSON-in-row.
 
 ### Moderation Queue
@@ -114,15 +114,16 @@ Current model:
 - `item_flags` records validated-user item issue reports with a bounded reason set.
 - Users create both through `create_item_suggestion` and `create_item_flag`; direct browser inserts, updates, and deletes are blocked by RLS.
 - Admins inspect and transition queue status in `/admin/moderation` through `review_item_suggestion`, `review_item_flag`, and `set_item_visibility`.
+- Admins can apply content/image suggestions through `apply_item_suggestion`, which updates explicit item fields, marks the suggestion accepted, and records a new item version.
 
 Risk:
 
-- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions, but it does not yet apply accepted suggestions, send notifications, or dedupe Telegram messages.
+- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions. Content/image suggestion application updates current item fields and versions the item, but owner-specific application, image metadata application, user notifications, and Telegram dedupe remain incomplete.
 - Live projects must apply the moderation migration before enabling the user-facing queue controls.
 
 Target:
 
-- Add focused application RPCs for applying accepted suggestions, item/image-specific review actions, and Telegram seen-state.
+- Add focused RPCs for owner/image-metadata suggestion application, item/image-specific review actions, and Telegram seen-state.
 - Keep moderation rows in user export and table backups so users and operators can audit feedback history.
 
 ### Storage
@@ -232,6 +233,7 @@ Target:
 - `create_item_suggestion(...)`
 - `create_item_flag(...)`
 - `review_item_suggestion(...)`
+- `apply_item_suggestion(...)`
 - `review_item_flag(...)`
 - `mark_moderation_seen(...)`
 - `set_telegram_mute(...)`

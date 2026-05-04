@@ -64,7 +64,7 @@ Use these as concrete routes through the app. Adapt only the account names and f
 
 1. Open `/admin/moderation` or the admin dashboard section when flags, suggestions, image proposals, or pending-visible requests exist.
 2. Confirm each queue item shows type, target item/image/user, current status, submitted time, and a reason field for admin action.
-3. Mark suggestions as reviewing/accepted/rejected and flags as reviewing/resolved/dismissed; confirm status updates happen through RPCs and broad table writes remain blocked.
+3. Mark suggestions as reviewing/accepted/rejected and flags as reviewing/resolved/dismissed; apply a content/image suggestion with explicit item fields when available. Confirm updates happen through RPCs and broad table writes remain blocked.
 
 ### Invite And Unvalidated User
 

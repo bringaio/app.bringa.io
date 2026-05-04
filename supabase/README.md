@@ -49,6 +49,7 @@ The browser should call RPCs for these writes:
 - `create_item_suggestion`
 - `create_item_flag`
 - `review_item_suggestion`
+- `apply_item_suggestion`
 - `review_item_flag`
 - `restore_item_version`
 - `set_item_visibility`
@@ -72,6 +73,7 @@ Borrow history reads are admin-only by default.
 - item version capture on create/update and admin restore-by-republish through RPCs;
 - admin-only item visibility changes with required reasons;
 - admin-only profile validation changes with self-invalidation protection;
+- admin-only content/image suggestion application with item version capture;
 - prepared account deletion request table and non-destructive admin review RPC;
 - prepared item suggestion and item flag tables;
 - blocked direct browser writes to item versions and item image metadata;
@@ -89,7 +91,7 @@ Borrow history reads are admin-only by default.
 
 ## Moderation Queue
 
-`create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. `review_item_suggestion` and `review_item_flag` let admins transition moderation state through RPCs. Direct browser inserts, updates, and deletes remain blocked.
+`create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. `review_item_suggestion` and `review_item_flag` let admins transition moderation state through RPCs. `apply_item_suggestion` lets admins apply explicit content/image item fields from a suggestion review and captures a new item version. Direct browser inserts, updates, and deletes remain blocked.
 
 ## Before Live Review
 

@@ -9,11 +9,12 @@ import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { supabase } from "@/lib/supabaseclient"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { ItemDb, ItemFlag, ItemFlagStatus, ItemSuggestion, ItemSuggestionStatus, Profile } from "@/app/model/model"
-import { buildAdminModerationReviewNote, moderationReviewRequiresNote, type AdminModerationReviewStatus } from "@/lib/admin-moderation-review"
+import { buildAcceptedSuggestionApplication, buildAdminModerationReviewNote, moderationReviewRequiresNote, type AdminModerationReviewStatus } from "@/lib/admin-moderation-review"
 import { buildAdminVisibilityQueue, type AdminVisibilityQueueEntry, type AdminVisibilityQueueItem } from "@/lib/admin-visibility-queue"
 
-type ModerationItem = Pick<ItemDb, "id" | "name" | "status" | "visibility_state" | "image_url">
+type ModerationItem = Pick<ItemDb, "id" | "name" | "description" | "status" | "visibility_state" | "image_url">
 type ProfileSummary = Pick<Profile, "id" | "email" | "display_name" | "display_surname">
 
 type SuggestionQueueRow = ItemSuggestion & {
@@ -96,7 +97,7 @@ export default function AdminModerationPage() {
                         .from("item_suggestions")
                         .select(`
                             id,item_id,suggested_by,suggestion_type,suggestion,status,admin_note,reviewed_at,reviewed_by,created_at,
-                            item:items!item_suggestions_item_id_fkey(id,name,status,visibility_state,image_url),
+                            item:items!item_suggestions_item_id_fkey(id,name,description,status,visibility_state,image_url),
                             suggested_by_profile:profiles!item_suggestions_suggested_by_fkey(id,email,display_name,display_surname)
                         `)
                         .order("created_at", { ascending: false })
@@ -164,6 +165,63 @@ export default function AdminModerationPage() {
             if (review.adminNote) setReviewNote("")
         } catch {
             setActionError("Could not update the suggestion status.")
+        } finally {
+            setProcessingAction(null)
+        }
+    }
+
+    const applySuggestion = async (event: React.FormEvent<HTMLFormElement>, suggestion: SuggestionQueueRow) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const application = buildAcceptedSuggestionApplication({
+            name: String(formData.get("name") || ""),
+            description: String(formData.get("description") || ""),
+            imageUrl: String(formData.get("imageUrl") || ""),
+            note: reviewNote,
+        })
+
+        if (!application.ok) {
+            setActionError("Add an item name and a short admin note before applying this suggestion.")
+            return
+        }
+
+        const actionId = `suggestion-${suggestion.id}-apply`
+        setProcessingAction(actionId)
+        setActionError(null)
+        try {
+            const { data, error } = await supabase.rpc("apply_item_suggestion", {
+                suggestion_id_input: suggestion.id,
+                name_input: application.name,
+                description_input: application.description,
+                image_url_input: application.imageUrl,
+                admin_note_input: application.adminNote,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Suggestion application rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setSuggestions((rows) => rows.map((row) => {
+                if (row.id !== suggestion.id) return row
+                const item = relationOne(row.item)
+                return {
+                    ...row,
+                    status: "accepted",
+                    admin_note: application.adminNote,
+                    reviewed_at: reviewedAt,
+                    item: item
+                        ? {
+                            ...item,
+                            name: application.name || item.name,
+                            description: application.description,
+                            image_url: application.imageUrl,
+                        }
+                        : row.item,
+                }
+            }))
+            setReviewNote("")
+        } catch {
+            setActionError("Could not apply the suggestion to the item.")
         } finally {
             setProcessingAction(null)
         }
@@ -322,7 +380,7 @@ export default function AdminModerationPage() {
                             className="mt-2 min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             placeholder="Record the decision context before accepting, rejecting, resolving, or dismissing."
                         />
-                        <p className="mt-2 text-xs text-muted-foreground">Required for final suggestion and flag decisions.</p>
+                        <p className="mt-2 text-xs text-muted-foreground">Required for final suggestion and flag decisions, including applying item updates.</p>
                     </section>
 
                     <section className="flex flex-col gap-2">
@@ -415,6 +473,11 @@ export default function AdminModerationPage() {
                             suggestions.map((suggestion) => {
                                 const item = relationOne(suggestion.item)
                                 const profile = relationOne(suggestion.suggested_by_profile)
+                                const canApplySuggestion = Boolean(
+                                    item
+                                    && (suggestion.suggestion_type === "content" || suggestion.suggestion_type === "image")
+                                    && (suggestion.status === "pending" || suggestion.status === "reviewing")
+                                )
 
                                 return (
                                     <div key={suggestion.id} className="rounded-lg border bg-card p-4">
@@ -446,6 +509,38 @@ export default function AdminModerationPage() {
                                                     <p className="mt-2 text-xs text-muted-foreground">
                                                         {profileName(profile)} · {formatDate(suggestion.created_at)}
                                                     </p>
+                                                    {canApplySuggestion && item && (
+                                                        <form onSubmit={(event) => applySuggestion(event, suggestion)} className="mt-3 grid gap-3 rounded-md border bg-background p-3 sm:grid-cols-2">
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Item name
+                                                                <Input name="name" defaultValue={item.name} required className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Image URL
+                                                                <Input name="imageUrl" defaultValue={item.image_url || ""} className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground sm:col-span-2">
+                                                                Description
+                                                                <textarea
+                                                                    name="description"
+                                                                    defaultValue={item.description || ""}
+                                                                    rows={3}
+                                                                    className="min-h-20 rounded-md border bg-background px-3 py-2 text-sm font-normal text-foreground outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                                                />
+                                                            </label>
+                                                            <div className="flex justify-end sm:col-span-2">
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="secondary"
+                                                                    size="sm"
+                                                                    disabled={processingAction !== null || reviewNote.trim().length < 3}
+                                                                >
+                                                                    {processingAction === `suggestion-${suggestion.id}-apply` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                                    Apply update
+                                                                </Button>
+                                                            </div>
+                                                        </form>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
@@ -472,16 +567,18 @@ export default function AdminModerationPage() {
                                                     {processingAction === `suggestion-${suggestion.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                                                     Reviewing
                                                 </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => reviewSuggestion(suggestion.id, "accepted")}
-                                                    disabled={processingAction !== null || suggestion.status === "accepted" || !canSubmitReviewStatus("accepted")}
-                                                >
-                                                    {processingAction === `suggestion-${suggestion.id}-accepted` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                                                    Accept
-                                                </Button>
+                                                {!canApplySuggestion && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => reviewSuggestion(suggestion.id, "accepted")}
+                                                        disabled={processingAction !== null || suggestion.status === "accepted" || !canSubmitReviewStatus("accepted")}
+                                                    >
+                                                        {processingAction === `suggestion-${suggestion.id}-accepted` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                        Accept
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     type="button"
                                                     variant="outline"

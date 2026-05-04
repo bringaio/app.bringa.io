@@ -52,11 +52,12 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Admin dashboard links config, Supabase contract, Storage contract, backups, docs, and Telegram health to source-of-truth docs.
 - [x] Admin users route supports user validation, access revocation with self-protection, admin promotion, and admin demotion with self-demotion protection.
 - [x] Admin moderation route lists pending visibility requests, suggestions, and flags, and reviews status through RPCs with notes for final decisions.
+- [x] Admin moderation can apply content/image suggestions through an admin-only RPC with item version capture.
 - [x] Admin user item views group current borrower, owner, and creator relationships for one profile.
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
 - [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
 - [x] Admin notification settings route shows Telegram, mute-window, dedupe, and seen-state planning without mutating user data.
-- [ ] Accepted-suggestion application, approved deletion execution, and notification execution are complete.
+- [ ] Approved deletion execution, owner/image-metadata suggestion application, and notification execution are complete.
 
 ## Operations
 

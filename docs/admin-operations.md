@@ -15,7 +15,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 - `/admin/deletion-requests`: non-destructive operator queue for account deletion requests, review notes, cancellation, and per-user item review.
 - `/admin/notifications`: read-only notification settings view for Telegram status, mute windows, dedupe, and admin seen-state planning.
 - `/admin/invite-code`: current admin invite code display and update flow.
-- `/admin/moderation`: pending visibility requests, item suggestions, and flags, with admin review actions routed through RPCs.
+- `/admin/moderation`: pending visibility requests, item suggestions, and flags, with admin review and content/image suggestion application routed through RPCs.
 
 ## Review Queues
 
@@ -26,9 +26,9 @@ Moderation queue records live in Supabase:
 - `items.visibility_state = 'pending_visible'`: item visibility requests that require an admin reason before approval or hiding.
 - `account_deletion_requests`: user account deletion requests for operator triage before any approved destructive workflow.
 
-Users create these records through `create_item_suggestion`, `create_item_flag`, and `request_account_deletion`. Admins transition state through `review_item_suggestion`, `review_item_flag`, `set_item_visibility`, and `review_account_deletion_request`. Final suggestion and flag decisions require an admin note; cancelled deletion requests require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
+Users create these records through `create_item_suggestion`, `create_item_flag`, and `request_account_deletion`. Admins transition state through `review_item_suggestion`, `review_item_flag`, `set_item_visibility`, and `review_account_deletion_request`; content/image suggestions can be applied through `apply_item_suggestion`. Final suggestion and flag decisions require an admin note; cancelled deletion requests require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
-Status transitions currently record reviewer and reviewed time. They do not yet apply accepted suggestions to item records, notify users, or update Telegram seen-state.
+Status transitions record reviewer and reviewed time. Applying a content/image suggestion updates explicit item fields and creates a new `item_versions` snapshot. Owner-specific application, image metadata application, user notifications, and Telegram seen-state are still pending.
 
 Item creation, item updates, and admin version restore create append-only `item_versions` snapshots through `record_item_version`. Admin restore uses `restore_item_version` and records the restore reason as the newly current version.
 
@@ -55,7 +55,7 @@ The deletion request route is non-destructive. It can mark requests `reviewing` 
 
 Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 
-- accepted-suggestion application;
+- owner-specific and image-metadata suggestion application;
 - item/image-specific moderation;
 - hide/unhide reason flows from user item review;
 - Telegram dedupe, mute windows, and seen-state;
