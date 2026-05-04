@@ -14,6 +14,8 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
 - [ ] GitHub branch protection and manual Pages deployment settings have been confirmed in the repository UI.
 
+As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` is `false`, the Pages endpoint returns 404, and the branch-protection endpoint returns 403 unless the repository is public or on a plan that supports branch protection for private repositories. Confirm this item in the GitHub UI after the visibility or plan decision is made.
+
 ## Forkability
 
 - [x] Public configuration is layered through `config/base.config.jsonc` and `config/deployments/<slug>.jsonc`.
