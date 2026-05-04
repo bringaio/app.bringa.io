@@ -7,5 +7,7 @@
 - Keep texts compact, kind, and precise. Prefer one clear source of truth over repeated explanations.
 - Record useful but out-of-scope ideas in `docs/optimization-options.md`; do not implement them without user intent unless they are necessary for the current task.
 - Use Conventional Commits for meaningful checkpoints.
+- Push after every commit unless the user explicitly asks for local-only work or the remote is unavailable.
+- Document conventions that affect other developers in `docs/`, then add matching `.agents/` rules or skills when agents should enforce or remember them.
 - Before adding packages or tools, check current best practice from official docs or trusted current sources when network access is available.
 - The guiding ideal is the hyperoptimum: coherent, privacy-preserving, maintainable progress that improves the whole system without overbuilding the present step.

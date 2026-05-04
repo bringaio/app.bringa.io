@@ -5,4 +5,5 @@
 3. Ask whether GitHub/GitLab issues should be processed, unless the user already gave a narrower task.
 4. If Supabase service role access is configured, ask whether to run `pnpm backup:supabase`; honor a documented "always" preference.
 5. Review `docs/optimization-options.md` for relevant roadmap or anti-roadmap notes.
-6. Keep the current task central. Add newly discovered optimization ideas to the register instead of broadening scope.
+6. Remember that commits should be pushed immediately unless the user explicitly asks for local-only work.
+7. Keep the current task central. Add newly discovered optimization ideas to the register instead of broadening scope.
