@@ -1,4 +1,4 @@
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -157,6 +157,30 @@ function assertPublicPath(value, pathName) {
   }
 }
 
+function assertPublicDirectoryPath(value, pathName) {
+  assertString(value, pathName);
+
+  if (!value.startsWith("/")) {
+    throw new Error(`Expected ${pathName} to be an absolute public path starting with "/".`);
+  }
+
+  if (value === "/" || value.endsWith("/")) {
+    throw new Error(`Expected ${pathName} to point to a public directory without a trailing slash.`);
+  }
+
+  if (value.includes("\\") || value.split("/").includes("..")) {
+    throw new Error(`Expected ${pathName} to stay within the public directory.`);
+  }
+}
+
+function assertRelativeContentPath(value, pathName) {
+  assertString(value, pathName);
+
+  if (value.startsWith("/") || value.includes("\\") || value.split("/").includes("..")) {
+    throw new Error(`Expected ${pathName} to be a relative repository content path.`);
+  }
+}
+
 function isPlainObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
@@ -254,6 +278,13 @@ function validateConfig(config) {
   assertString(config.repository?.issuesUrl, "repository.issuesUrl");
   assertString(config.repository?.discussionsUrl, "repository.discussionsUrl", { allowEmpty: true });
   assertString(config.repository?.templateMode, "repository.templateMode");
+  assertRelativeContentPath(config.content?.sourcePath, "content.sourcePath");
+  assertRelativeContentPath(config.content?.deploymentPath, "content.deploymentPath");
+  assertPublicDirectoryPath(config.content?.publicPath, "content.publicPath");
+  assertStringArray(config.content?.requiredFiles, "content.requiredFiles");
+  for (const [index, requiredFile] of config.content.requiredFiles.entries()) {
+    assertRelativeContentPath(requiredFile, `content.requiredFiles[${index}]`);
+  }
   assertString(config.legal?.termsPath, "legal.termsPath");
   assertPublicPath(config.legal?.termsContentPath, "legal.termsContentPath");
   assertString(config.legal?.contentContributionLabel, "legal.contentContributionLabel");
@@ -293,11 +324,153 @@ async function assertPublicFileExists(root, publicPath, pathName) {
   }
 }
 
-async function validateReferencedPublicFiles(root, config) {
-  await Promise.all([
+async function validateReferencedPublicFiles(root, config, { skipLegalContent = false } = {}) {
+  const files = [
     assertPublicFileExists(root, config.branding.logoPath, "branding.logoPath"),
     assertPublicFileExists(root, config.branding.iconPath, "branding.iconPath"),
     assertPublicFileExists(root, config.branding.appleTouchIconPath, "branding.appleTouchIconPath"),
+  ];
+
+  if (!skipLegalContent) {
+    files.push(assertPublicFileExists(root, config.legal.termsContentPath, "legal.termsContentPath"));
+  }
+
+  await Promise.all(files);
+}
+
+function resolveRepoPath(root, relativePath, pathName) {
+  assertRelativeContentPath(relativePath, pathName);
+
+  const resolvedRoot = path.resolve(root);
+  const resolvedPath = path.resolve(resolvedRoot, relativePath);
+
+  if (resolvedPath !== resolvedRoot && !resolvedPath.startsWith(`${resolvedRoot}${path.sep}`)) {
+    throw new Error(`Expected ${pathName} to stay within the repository.`);
+  }
+
+  return resolvedPath;
+}
+
+async function collectContentFiles(rootDir, prefix = "") {
+  let entries;
+
+  try {
+    entries = await readdir(rootDir, { withFileTypes: true });
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      return new Map();
+    }
+    throw error;
+  }
+
+  const files = new Map();
+
+  for (const entry of entries) {
+    const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    const entryPath = path.join(rootDir, entry.name);
+
+    if (entry.isDirectory()) {
+      const nested = await collectContentFiles(entryPath, relativePath);
+      for (const [nestedPath, content] of nested.entries()) {
+        files.set(nestedPath, content);
+      }
+      continue;
+    }
+
+    if (entry.isFile()) {
+      files.set(relativePath, await readFile(entryPath, "utf8"));
+    }
+  }
+
+  return files;
+}
+
+function contentPublicPath(config, relativePath) {
+  assertRelativeContentPath(relativePath, "content file path");
+  return `${config.content.publicPath}/${relativePath}`;
+}
+
+export async function buildContentFiles(root, deploymentSlug, config) {
+  const defaultContentRoot = resolveRepoPath(root, config.content.sourcePath, "content.sourcePath");
+  const deploymentContentRoot = path.join(
+    resolveRepoPath(root, config.content.deploymentPath, "content.deploymentPath"),
+    deploymentSlug,
+  );
+  const files = await collectContentFiles(defaultContentRoot);
+  const deploymentFiles = await collectContentFiles(deploymentContentRoot);
+
+  for (const [relativePath, content] of deploymentFiles.entries()) {
+    files.set(relativePath, content);
+  }
+
+  for (const requiredFile of config.content.requiredFiles) {
+    if (!files.has(requiredFile)) {
+      throw new Error(`Missing required content file: ${requiredFile}`);
+    }
+  }
+
+  return [...files.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([relativePath, content]) => ({
+      relativePath,
+      publicPath: contentPublicPath(config, relativePath),
+      outputPath: path.resolve(root, "public", contentPublicPath(config, relativePath).slice(1)),
+      content,
+    }));
+}
+
+async function assertGeneratedFileCurrent(root, outputPath, expectedContent) {
+  let current;
+
+  try {
+    current = await readFile(outputPath, "utf8");
+  } catch {
+    throw new Error(`${path.relative(root, outputPath)} is out of date. Run pnpm generate:config.`);
+  }
+
+  if (current !== expectedContent) {
+    throw new Error(`${path.relative(root, outputPath)} is out of date. Run pnpm generate:config.`);
+  }
+}
+
+async function writeGeneratedFile(outputPath, content) {
+  await mkdir(path.dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, content);
+}
+
+async function syncGeneratedContent(root, contentFiles, checkOnly) {
+  for (const file of contentFiles) {
+    if (checkOnly) {
+      await assertGeneratedFileCurrent(root, file.outputPath, file.content);
+      continue;
+    }
+
+    await writeGeneratedFile(file.outputPath, file.content);
+  }
+}
+
+export async function buildConfigArtifacts(options = {}) {
+  const root = options.root ?? defaultRoot;
+  const deploymentSlug = options.deploymentSlug ?? resolveDeploymentSlug();
+  const includeLocalConfig = options.includeLocalConfig ?? resolveIncludeLocalConfig();
+  const config = await loadConfigObject({
+    root,
+    deploymentSlug,
+    includeLocalConfig,
+    validatePublicFiles: false,
+  });
+  const contentFiles = await buildContentFiles(root, deploymentSlug, config);
+
+  await validateReferencedPublicFiles(root, config, { skipLegalContent: true });
+
+  return {
+    configJson: `${JSON.stringify(config, null, 2)}\n`,
+    contentFiles,
+  };
+}
+
+async function validateReferencedGeneratedFiles(root, config) {
+  await Promise.all([
     assertPublicFileExists(root, config.legal.termsContentPath, "legal.termsContentPath"),
   ]);
 }
@@ -306,6 +479,7 @@ export async function loadConfigObject({
   root = defaultRoot,
   deploymentSlug = resolveDeploymentSlug(),
   includeLocalConfig = resolveIncludeLocalConfig(),
+  validatePublicFiles = true,
 } = {}) {
   const paths = getConfigLayerPaths(root, deploymentSlug);
   const layers = [
@@ -319,7 +493,9 @@ export async function loadConfigObject({
 
   const config = layers.reduce((merged, layer) => mergeConfigLayers(merged, layer), {});
   validateConfig(config);
-  await validateReferencedPublicFiles(root, config);
+  if (validatePublicFiles) {
+    await validateReferencedPublicFiles(root, config);
+  }
   return config;
 }
 
@@ -330,7 +506,7 @@ export async function buildConfigJson(options = {}) {
 
 async function main() {
   const root = defaultRoot;
-  const generated = await buildConfigJson({
+  const artifacts = await buildConfigArtifacts({
     root,
     deploymentSlug: resolveDeploymentSlug(),
     includeLocalConfig: resolveIncludeLocalConfig(),
@@ -340,15 +516,18 @@ async function main() {
   for (const outputPath of getOutputs(root)) {
     if (checkOnly) {
       const current = await readFile(outputPath, "utf8");
-      if (current !== generated) {
+      if (current !== artifacts.configJson) {
         throw new Error(`${path.relative(root, outputPath)} is out of date. Run pnpm generate:config.`);
       }
       continue;
     }
 
     await mkdir(path.dirname(outputPath), { recursive: true });
-    await writeFile(outputPath, generated);
+    await writeFile(outputPath, artifacts.configJson);
   }
+
+  await syncGeneratedContent(root, artifacts.contentFiles, checkOnly);
+  await validateReferencedGeneratedFiles(root, JSON.parse(artifacts.configJson));
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

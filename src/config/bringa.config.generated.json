@@ -37,9 +37,20 @@
     "discussionsUrl": "",
     "templateMode": "upstream"
   },
+  "content": {
+    "sourcePath": "content/default",
+    "deploymentPath": "content/deployments",
+    "publicPath": "/content/generated",
+    "requiredFiles": [
+      "legal/en.md",
+      "onboarding/en.md",
+      "help/en.md",
+      "issues/en.md"
+    ]
+  },
   "legal": {
     "termsPath": "/terms",
-    "termsContentPath": "/content/default/legal/en.md",
+    "termsContentPath": "/content/generated/legal/en.md",
     "contentContributionLabel": "Public-domain dedication where legally possible, fallback operator license.",
     "itemGiftLabel": "Private gift to the portal operator.",
     "publicDomainIntent": true

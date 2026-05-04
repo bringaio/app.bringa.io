@@ -29,6 +29,7 @@ This writes:
 
 - `public/bringa.config.json` for runtime/public inspection.
 - `src/config/bringa.config.generated.json` for typed app imports.
+- `public/content/generated/**` for deployment-resolved public Markdown content.
 
 Run:
 
@@ -36,7 +37,7 @@ Run:
 pnpm check:config
 ```
 
-This resolves the selected deployment profile, checks generated files for staleness, and verifies that configured public content and brand asset paths point to files in `public/`.
+This resolves the selected deployment profile, checks generated files and generated public content for staleness, and verifies that configured public content and brand asset paths point to files in `public/`.
 
 Run:
 
@@ -60,6 +61,18 @@ Nested objects are merged. Arrays and scalar values replace earlier values. `$sc
 
 Local overrides are opt-in because generated config is tracked. This avoids accidentally making `public/bringa.config.json` and `src/config/bringa.config.generated.json` depend on one developer's ignored local file.
 
+## Deployment Content
+
+Longer deployment-specific text is kept out of JSONC and layered as files:
+
+```text
+content/default/**
+content/deployments/<slug>/**
+public/content/generated/**  # generated artifact
+```
+
+Default content is copied first, then `content/deployments/<slug>` overrides matching files. `content.requiredFiles` lists files that every resolved content profile must provide. Set `legal.termsContentPath` to the generated public path used by the app, usually `/content/generated/legal/en.md`.
+
 ## Common Fork Fields
 
 - `app.name`, `app.shortName`, `branding.logoText`: visible app identity.
@@ -67,6 +80,8 @@ Local overrides are opt-in because generated config is tracked. This avoids acci
 - `branding.themeColor`, `branding.backgroundColor`: install and browser chrome colors for the generated manifest.
 - `operator.defaultOwnerLabel`: default owner label for operator-owned items.
 - `repository.url`, `repository.issuesUrl`: GitHub links shown in the app.
+- `content.sourcePath`, `content.deploymentPath`, `content.publicPath`: content profile inputs and generated public output.
+- `content.requiredFiles`: deployment content files required before config generation succeeds.
 - `legal.termsPath`: app route that displays terms.
 - `legal.termsContentPath`: public Markdown file fetched by the terms route.
 - `legal.publicDomainIntent`: contribution intent flag for UI and docs.

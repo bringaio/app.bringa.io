@@ -8,6 +8,7 @@
     "branding",
     "operator",
     "repository",
+    "content",
     "legal",
     "supabase",
     "invites",
@@ -30,6 +31,9 @@
     },
     "repository": {
       "$ref": "#/$defs/repository"
+    },
+    "content": {
+      "$ref": "#/$defs/content"
     },
     "legal": {
       "$ref": "#/$defs/legal"
@@ -228,6 +232,34 @@
         },
         "publicDomainIntent": {
           "type": "boolean"
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": [
+        "sourcePath",
+        "deploymentPath",
+        "publicPath",
+        "requiredFiles"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sourcePath": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "deploymentPath": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "publicPath": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "requiredFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
         }
       }
     },

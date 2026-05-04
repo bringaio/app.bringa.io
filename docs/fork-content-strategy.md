@@ -65,13 +65,22 @@ content/deployments/<deployment-slug>/legal/en.md
 content/deployments/<deployment-slug>/legal/de.md
 ```
 
-Current app default:
+Current app source:
 
 ```text
-public/content/default/legal/en.md
+content/default/legal/en.md
+content/default/onboarding/en.md
+content/default/help/en.md
+content/default/issues/en.md
 ```
 
-The resolved public config points `legal.termsContentPath` to the public Markdown file used by the `/terms` route.
+`pnpm generate:config` layers `content/default` with `content/deployments/<deployment-slug>` and writes generated public Markdown under:
+
+```text
+public/content/generated/
+```
+
+The resolved public config points `legal.termsContentPath` to the generated public Markdown file used by the `/terms` route. `pnpm check:config` treats generated public content as a stale-check surface.
 
 Upstream should validate that required content exists, but should not require every fork to use upstream wording.
 

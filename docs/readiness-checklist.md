@@ -23,7 +23,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Branding, public links, media limits, legal paths, SSO display, and feature flags are config-driven.
 - [x] Forking and fork-content strategy docs describe upstream sync and tracked fork overrides.
 - [x] Docs index links every top-level docs page and is covered by `pnpm check:docs-index`.
-- [ ] Deployment content profiles for longer local copy are implemented beyond legal content paths.
+- [x] Deployment content profiles generate legal, onboarding, help, and issue copy from `content/default` plus deployment overrides.
 
 ## Supabase Contract
 

@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { loadConfigObject, resolveDeploymentSlug } from "./generate-config.mjs";
+import { buildConfigArtifacts, loadConfigObject, resolveDeploymentSlug } from "./generate-config.mjs";
 
 const completeBaseConfig = {
   $schema: "./bringa.config.schema.json",
@@ -43,9 +43,15 @@ const completeBaseConfig = {
     discussionsUrl: "",
     templateMode: "upstream",
   },
+  content: {
+    sourcePath: "content/default",
+    deploymentPath: "content/deployments",
+    publicPath: "/content/generated",
+    requiredFiles: ["legal/en.md", "onboarding/en.md"],
+  },
   legal: {
     termsPath: "/terms",
-    termsContentPath: "/content/default/legal/en.md",
+    termsContentPath: "/content/generated/legal/en.md",
     contentContributionLabel: "Base contribution label",
     itemGiftLabel: "Base gift label",
     publicDomainIntent: true,
@@ -79,7 +85,7 @@ async function writeJsonc(filePath, value) {
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-async function createConfigProject({ deployment = {}, local = undefined } = {}) {
+async function createConfigProject({ deployment = {}, local = undefined, deploymentContent = {} } = {}) {
   const root = await mkdtemp(path.join(os.tmpdir(), "bringa-config-test-"));
 
   await writeJsonc(path.join(root, "config", "base.config.jsonc"), completeBaseConfig);
@@ -92,7 +98,7 @@ async function createConfigProject({ deployment = {}, local = undefined } = {}) 
   const publicFiles = [
     "icon.svg",
     "logo.svg",
-    "content/default/legal/en.md",
+    "content/generated/legal/en.md",
     "content/local/legal/en.md",
   ];
 
@@ -100,6 +106,23 @@ async function createConfigProject({ deployment = {}, local = undefined } = {}) 
     const filePath = path.join(root, "public", publicFile);
     await mkdir(path.dirname(filePath), { recursive: true });
     await writeFile(filePath, publicFile.endsWith(".svg") ? "<svg />\n" : "# Terms\n");
+  }
+
+  const defaultContent = {
+    "legal/en.md": "# Default Terms\n",
+    "onboarding/en.md": "# Default Onboarding\n",
+  };
+
+  for (const [contentPath, content] of Object.entries(defaultContent)) {
+    const filePath = path.join(root, "content", "default", contentPath);
+    await mkdir(path.dirname(filePath), { recursive: true });
+    await writeFile(filePath, content);
+  }
+
+  for (const [contentPath, content] of Object.entries(deploymentContent)) {
+    const filePath = path.join(root, "content", "deployments", "app.bringa.io", contentPath);
+    await mkdir(path.dirname(filePath), { recursive: true });
+    await writeFile(filePath, content);
   }
 
   return root;
@@ -139,6 +162,32 @@ test("loads base config with deployment overrides and strips layer schemas", asy
   assert.equal(config.$schema, undefined);
 });
 
+test("builds generated public content from default and deployment content profiles", async (t) => {
+  const root = await createConfigProject({
+    deploymentContent: {
+      "legal/en.md": "# Deployment Terms\n",
+    },
+  });
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const artifacts = await buildConfigArtifacts({ root, deploymentSlug: "app.bringa.io" });
+  const config = JSON.parse(artifacts.configJson);
+
+  assert.equal(config.legal.termsContentPath, "/content/generated/legal/en.md");
+  assert.deepEqual(artifacts.contentFiles.map((file) => file.publicPath).sort(), [
+    "/content/generated/legal/en.md",
+    "/content/generated/onboarding/en.md",
+  ]);
+  assert.equal(
+    artifacts.contentFiles.find((file) => file.publicPath === "/content/generated/legal/en.md")?.content,
+    "# Deployment Terms\n",
+  );
+  assert.equal(
+    artifacts.contentFiles.find((file) => file.publicPath === "/content/generated/onboarding/en.md")?.content,
+    "# Default Onboarding\n",
+  );
+});
+
 test("applies local overrides only when explicitly enabled", async (t) => {
   const root = await createConfigProject({
     deployment: {
@@ -165,7 +214,7 @@ test("applies local overrides only when explicitly enabled", async (t) => {
   });
 
   assert.equal(defaultConfig.app.name, "Deployed Portal");
-  assert.equal(defaultConfig.legal.termsContentPath, "/content/default/legal/en.md");
+  assert.equal(defaultConfig.legal.termsContentPath, "/content/generated/legal/en.md");
   assert.equal(localConfig.app.name, "Local Portal");
   assert.equal(localConfig.legal.termsContentPath, "/content/local/legal/en.md");
 });

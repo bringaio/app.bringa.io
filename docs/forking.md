@@ -18,20 +18,23 @@ Current structure:
 config/base.config.jsonc
 config/deployments/app.bringa.io.jsonc
 config/local.config.jsonc
-public/content/default/legal/en.md
+content/default/legal/en.md
+content/deployments/<fork-slug>/
+public/content/generated/
 public/icon.svg
 ```
 
 `config/local.config.jsonc` is ignored and only loaded when `BRINGA_CONFIG_INCLUDE_LOCAL=true`.
 
-Deployment-specific content and brand directories are the target direction for longer text and asset sets, but the current app still references public files through config paths.
+Deployment-specific content lives in `content/deployments/<fork-slug>/` and is generated into `public/content/generated/` with `pnpm generate:config`. The current app references generated public files through config paths.
 
 To create a fork profile:
 
 1. Add `config/deployments/<fork-slug>.jsonc`.
-2. Override only the values that differ from `config/base.config.jsonc`.
-3. Run `BRINGA_DEPLOYMENT=<fork-slug> pnpm generate:config`.
-4. Commit the profile and generated config outputs in the fork.
+2. Add matching longer text overrides under `content/deployments/<fork-slug>/` when local legal, onboarding, help, or issue copy differs.
+3. Override only the values that differ from `config/base.config.jsonc`.
+4. Run `BRINGA_DEPLOYMENT=<fork-slug> pnpm generate:config`.
+5. Commit the profile, content overrides, and generated outputs in the fork.
 
 ## What Forks Commonly Customize
 
