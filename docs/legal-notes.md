@@ -28,6 +28,6 @@ Forks should configure:
 
 ## Open Questions
 
-- Does the CONTEKT deployment need German-only terms or bilingual terms?
+- Does a specific deployment need English-only, German-only, or bilingual terms?
 - Should the upstream default be CC0-style language, a custom public-domain intent, or links to established licenses?
 - Which user export/delete obligations apply to each deployment?
