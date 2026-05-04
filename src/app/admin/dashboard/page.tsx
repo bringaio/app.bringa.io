@@ -15,6 +15,7 @@ import {
     Package,
     PackageCheck,
     ShieldCheck,
+    Sparkles,
     Users,
 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
@@ -32,6 +33,10 @@ export default function AdminDashboardPage() {
     }
 
     const [items, setItems] = useState<AdminItem[]>([]);
+    const [queueCounts, setQueueCounts] = useState<{ pendingSuggestions: number | null; pendingFlags: number | null }>({
+        pendingSuggestions: null,
+        pendingFlags: null,
+    });
     const [loading, setLoading] = useState(true);
     const { isAdmin, loading: adminLoading } = useIsAdmin();
 
@@ -60,6 +65,8 @@ export default function AdminDashboardPage() {
         { label: "Hidden", value: stats.hidden, icon: EyeOff },
         { label: "Pending visible", value: stats.pendingVisible, icon: Clock3 },
         { label: "With images", value: stats.withImages, icon: ImageIcon },
+        { label: "Suggestions", value: queueCounts.pendingSuggestions ?? "—", icon: Sparkles },
+        { label: "Flags", value: queueCounts.pendingFlags ?? "—", icon: Flag },
     ];
 
     const healthItems = [
@@ -80,7 +87,7 @@ export default function AdminDashboardPage() {
         },
         {
             label: "Flags",
-            value: "Queue prepared",
+            value: queueCounts.pendingFlags === null ? "Queue prepared" : `${queueCounts.pendingFlags} pending`,
             icon: Flag,
         },
     ];
@@ -166,6 +173,33 @@ export default function AdminDashboardPage() {
         }
     }, [isAdmin]);
 
+    useEffect(() => {
+        const fetchQueueCounts = async () => {
+            try {
+                const [suggestionsRes, flagsRes] = await Promise.all([
+                    supabase.from("item_suggestions").select("id,status"),
+                    supabase.from("item_flags").select("id,status"),
+                ]);
+
+                if (suggestionsRes.error || flagsRes.error) {
+                    setQueueCounts({ pendingSuggestions: null, pendingFlags: null });
+                    return;
+                }
+
+                setQueueCounts({
+                    pendingSuggestions: (suggestionsRes.data || []).filter((row) => row.status === "pending").length,
+                    pendingFlags: (flagsRes.data || []).filter((row) => row.status === "pending").length,
+                });
+            } catch {
+                setQueueCounts({ pendingSuggestions: null, pendingFlags: null });
+            }
+        };
+
+        if (isAdmin) {
+            fetchQueueCounts();
+        }
+    }, [isAdmin]);
+
     if (adminLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -188,6 +222,12 @@ export default function AdminDashboardPage() {
                             <p className="text-sm text-muted-foreground mt-1">Items, queues, and system readiness</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-3">
+                            <Link href="/admin/moderation">
+                                <button className="inline-flex items-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow transition-colors hover:bg-secondary/80">
+                                    <Flag className="h-4 w-4" />
+                                    Moderation Queue
+                                </button>
+                            </Link>
                             <Link href="/admin/users">
                                 <button className="px-4 py-2 rounded-md bg-orange-600 text-white shadow hover:bg-orange-700 transition-colors text-sm font-medium">
                                     Manage Users
@@ -201,7 +241,7 @@ export default function AdminDashboardPage() {
                         </div>
                     </div>
 
-                    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+                    <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                         {statCards.map(({ label, value, icon: Icon }) => (
                             <div key={label} className="rounded-lg border bg-card p-3">
                                 <div className="flex items-center justify-between gap-2">

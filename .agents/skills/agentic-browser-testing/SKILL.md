@@ -60,9 +60,9 @@ Use these as concrete routes through the app. Adapt only the account names and f
 
 ### Moderation Queue
 
-1. Open the moderation route or admin dashboard section when flags, suggestions, image proposals, or pending-visible requests exist.
+1. Open `/admin/moderation` or the admin dashboard section when flags, suggestions, image proposals, or pending-visible requests exist.
 2. Confirm each queue item shows type, target item/image/user, current status, submitted time, and a reason field for admin action.
-3. Approve, reject, or mark seen using mock or development data; confirm the queue updates without broad table writes from the browser.
+3. Until admin processing RPCs exist, confirm the route is read-only and links admins to the affected item without broad table writes from the browser.
 
 ### Invite And Unvalidated User
 

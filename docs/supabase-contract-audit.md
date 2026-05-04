@@ -106,6 +106,25 @@ Target:
 - Route ownership, visibility, version creation, restore-by-republish, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the flows in UI.
 - Keep `item_versions` as the versioning source of truth instead of JSON-in-row.
 
+### Moderation Queue
+
+Current model:
+
+- `item_suggestions` records validated-user suggestions for content, image, visibility, owner, or other item improvements.
+- `item_flags` records validated-user item issue reports with a bounded reason set.
+- Users create both through `create_item_suggestion` and `create_item_flag`; direct browser inserts, updates, and deletes are blocked by RLS.
+- Admins can inspect the prepared queue in `/admin/moderation`.
+
+Risk:
+
+- Admin processing is intentionally read-only for now; accepting, rejecting, resolving, marking seen, and notification dedupe still need focused RPCs.
+- Live projects must apply the moderation migration before enabling the user-facing queue controls.
+
+Target:
+
+- Add narrow admin review RPCs for status transitions, reason/admin notes, and Telegram seen-state before allowing browser-side queue processing.
+- Keep moderation rows in user export and table backups so users and operators can audit feedback history.
+
 ### Storage
 
 Current UI:
@@ -180,7 +199,7 @@ Current script:
 
 - `scripts/backup-supabase.mjs` backs up configured public tables.
 - It does not back up Supabase Auth users or Storage objects.
-- User-facing `export_my_data` returns profile, created items, currently borrowed items, borrow history, and deletion request history for the authenticated user.
+- User-facing `export_my_data` returns profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags for the authenticated user.
 - `request_account_deletion` records a pending operator-reviewed request but does not delete Auth users, Storage objects, or item rows.
 
 Risk:

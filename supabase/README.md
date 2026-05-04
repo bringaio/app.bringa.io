@@ -44,6 +44,8 @@ The browser should call RPCs for these writes:
 - `set_my_invite_code`
 - `export_my_data`
 - `request_account_deletion`
+- `create_item_suggestion`
+- `create_item_flag`
 
 Direct browser reads still use RLS policies where appropriate. Direct browser writes to core item state should be avoided.
 Direct browser writes to `borrow_history` are also blocked; borrow history is maintained by `borrow_item` and `return_item`.
@@ -60,16 +62,22 @@ Borrow history reads are admin-only by default.
 - item ownership, visibility, deletion, and handoff columns;
 - prepared `item_versions` and `item_images` tables;
 - prepared account deletion request table;
+- prepared item suggestion and item flag tables;
 - blocked direct browser writes to item versions and item image metadata;
 - blocked direct browser writes to account deletion request state;
+- blocked direct browser writes to moderation queue state;
 - `borrow_history.item_id` and `item_sharing.item_id` foreign keys to `items.id`;
 - unique admin invite codes.
 
 ## Data Export And Deletion Requests
 
-`export_my_data` returns the authenticated user's profile, created items, currently borrowed items, borrow history, and deletion request history as JSON.
+`export_my_data` returns the authenticated user's profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags as JSON.
 
 `request_account_deletion` records one pending operator-reviewed deletion request per user. It does not delete Supabase Auth users, Storage objects, or item records.
+
+## Moderation Queue
+
+`create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. Admins can inspect `item_suggestions` and `item_flags`; direct browser inserts, updates, and deletes are blocked so review actions can later move behind focused RPCs.
 
 ## Before Live Review
 

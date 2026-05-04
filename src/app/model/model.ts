@@ -7,6 +7,10 @@ export type ItemVisibilityState =
   | "deleted_user_hidden"
   | "archived";
 export type ItemHandoffPolicy = "return_to_owner" | "direct_handoff_allowed";
+export type ItemSuggestionType = "content" | "image" | "visibility" | "owner" | "other";
+export type ItemSuggestionStatus = "pending" | "reviewing" | "accepted" | "rejected" | "closed";
+export type ItemFlagReason = "incorrect" | "unavailable" | "unsafe" | "image" | "spam" | "other";
+export type ItemFlagStatus = "pending" | "reviewing" | "resolved" | "dismissed";
 
 export interface ItemDb {
   id: string; // UUID
@@ -81,5 +85,31 @@ export interface Admin {
   id: string; // UUID
   profile_id: string;
   invite_code: string; // Unique invite code for this admin
+  created_at: string;
+}
+
+export interface ItemSuggestion {
+  id: string;
+  item_id: string;
+  suggested_by: string | null;
+  suggestion_type: ItemSuggestionType;
+  suggestion: string;
+  status: ItemSuggestionStatus;
+  admin_note: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  created_at: string;
+}
+
+export interface ItemFlag {
+  id: string;
+  item_id: string;
+  flagged_by: string | null;
+  reason: ItemFlagReason;
+  note: string | null;
+  status: ItemFlagStatus;
+  admin_note: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
   created_at: string;
 }

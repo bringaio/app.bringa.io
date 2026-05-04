@@ -17,7 +17,7 @@ title: Maintenance
 
 `pnpm backup:supabase` exports configured Postgres tables to `backups/supabase/<timestamp>/`. It does not export Supabase Auth users or Storage objects. Treat those as separate backup tasks.
 
-User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, and deletion request history. Account deletion requests are operator-reviewed and do not remove Auth users or Storage objects by themselves.
+User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed and do not remove Auth users or Storage objects by themselves.
 
 ## Local Verification Notes
 

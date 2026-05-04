@@ -3,9 +3,9 @@
 import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabaseclient"
-import { ItemDb, BorrowHistoryWithProfile } from "@/app/model/model"
+import { ItemDb, BorrowHistoryWithProfile, ItemFlagReason, ItemSuggestionType } from "@/app/model/model"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { Flag, Lightbulb, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { User } from "@supabase/supabase-js"
 import ProtectedRoute from "@/components/auth/protected-route"
@@ -23,6 +23,12 @@ function ItemDetailsContent() {
     const [user, setUser] = useState<User | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [borrowHistory, setBorrowHistory] = useState<BorrowHistoryWithProfile[]>([])
+    const [suggestionType, setSuggestionType] = useState<ItemSuggestionType>("content")
+    const [flagReason, setFlagReason] = useState<ItemFlagReason>("incorrect")
+    const [moderationNote, setModerationNote] = useState("")
+    const [moderationMessage, setModerationMessage] = useState<string | null>(null)
+    const [moderationError, setModerationError] = useState<string | null>(null)
+    const [moderationLoading, setModerationLoading] = useState<"suggestion" | "flag" | null>(null)
     const { isAdmin, loading: adminLoading } = useIsAdmin()
 
     useEffect(() => {
@@ -142,6 +148,62 @@ function ItemDetailsContent() {
         } catch {
             alert("Fehler beim Löschen des Eintrags.")
             setActionLoading(false)
+        }
+    }
+
+    const submitSuggestion = async () => {
+        if (!item) return
+        const note = moderationNote.trim()
+        if (!note) {
+            setModerationError("Add a short suggestion before sending.")
+            setModerationMessage(null)
+            return
+        }
+
+        setModerationLoading("suggestion")
+        setModerationError(null)
+        setModerationMessage(null)
+        try {
+            const { data, error } = await supabase.rpc("create_item_suggestion", {
+                item_id_input: item.id,
+                suggestion_input: note,
+                suggestion_type_input: suggestionType,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Suggestion rejected")
+
+            setModerationNote("")
+            setModerationMessage("Suggestion sent for admin review.")
+        } catch {
+            setModerationError("Could not send the suggestion right now.")
+        } finally {
+            setModerationLoading(null)
+        }
+    }
+
+    const submitFlag = async () => {
+        if (!item) return
+
+        setModerationLoading("flag")
+        setModerationError(null)
+        setModerationMessage(null)
+        try {
+            const { data, error } = await supabase.rpc("create_item_flag", {
+                item_id_input: item.id,
+                reason_input: flagReason,
+                note_input: moderationNote.trim() || null,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Flag rejected")
+
+            setModerationNote("")
+            setModerationMessage("Issue flagged for admin review.")
+        } catch {
+            setModerationError("Could not flag this item right now.")
+        } finally {
+            setModerationLoading(null)
         }
     }
 
@@ -306,6 +368,91 @@ function ItemDetailsContent() {
                                     {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete Item"}
                                 </Button>
                             )}
+
+                            <div className="mt-5 border-t pt-4">
+                                <div className="flex items-center gap-2">
+                                    <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                                    <h2 className="text-sm font-semibold">Improve this item</h2>
+                                </div>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Send a suggestion or flag an issue for admin review.
+                                </p>
+
+                                <label htmlFor="moderation-note" className="sr-only">Suggestion or issue note</label>
+                                <textarea
+                                    id="moderation-note"
+                                    value={moderationNote}
+                                    onChange={(event) => setModerationNote(event.target.value)}
+                                    rows={3}
+                                    maxLength={1000}
+                                    placeholder="Add context for admins"
+                                    className="mt-3 flex min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+
+                                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                    <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                        Suggestion type
+                                        <select
+                                            value={suggestionType}
+                                            onChange={(event) => setSuggestionType(event.target.value as ItemSuggestionType)}
+                                            className="h-9 rounded-md border bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                                        >
+                                            <option value="content">Content</option>
+                                            <option value="image">Image</option>
+                                            <option value="visibility">Visibility</option>
+                                            <option value="owner">Owner</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </label>
+                                    <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                        Flag reason
+                                        <select
+                                            value={flagReason}
+                                            onChange={(event) => setFlagReason(event.target.value as ItemFlagReason)}
+                                            className="h-9 rounded-md border bg-background px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                                        >
+                                            <option value="incorrect">Incorrect</option>
+                                            <option value="unavailable">Unavailable</option>
+                                            <option value="unsafe">Unsafe</option>
+                                            <option value="image">Image</option>
+                                            <option value="spam">Spam</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-full"
+                                        onClick={submitSuggestion}
+                                        disabled={moderationLoading !== null}
+                                    >
+                                        {moderationLoading === "suggestion" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lightbulb className="h-4 w-4" />}
+                                        Suggest change
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        className="w-full"
+                                        onClick={submitFlag}
+                                        disabled={moderationLoading !== null}
+                                    >
+                                        {moderationLoading === "flag" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Flag className="h-4 w-4" />}
+                                        Flag issue
+                                    </Button>
+                                </div>
+
+                                {(moderationMessage || moderationError) && (
+                                    <p
+                                        role={moderationError ? "alert" : "status"}
+                                        className={`mt-3 text-sm ${moderationError ? "text-destructive" : "text-muted-foreground"}`}
+                                    >
+                                        {moderationError || moderationMessage}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

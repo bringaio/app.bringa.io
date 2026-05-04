@@ -13,6 +13,8 @@ const defaultTables = [
   "admins",
   "item_sharing",
   "account_deletion_requests",
+  "item_suggestions",
+  "item_flags",
 ];
 
 async function loadEnvFile(fileName) {

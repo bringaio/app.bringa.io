@@ -62,6 +62,8 @@ async function main() {
     "set_my_invite_code",
     "export_my_data",
     "request_account_deletion",
+    "create_item_suggestion",
+    "create_item_flag",
   ];
 
   for (const functionName of requiredFunctions) {
@@ -124,6 +126,14 @@ async function main() {
       "account_deletion_requests_user_id_fkey",
       "ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;",
     ],
+    [
+      "item_suggestions_item_id_fkey",
+      "ALTER TABLE public.item_suggestions ADD CONSTRAINT item_suggestions_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
+    [
+      "item_flags_item_id_fkey",
+      "ALTER TABLE public.item_flags ADD CONSTRAINT item_flags_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
     ["admins_invite_code_unique", "CONSTRAINT admins_invite_code_unique UNIQUE (invite_code)"],
   ];
 
@@ -171,6 +181,16 @@ async function main() {
       "one pending deletion request per user",
       "CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_pending_per_user ON public.account_deletion_requests(user_id) WHERE status = 'pending';",
     ],
+    ["item_suggestions table", "CREATE TABLE IF NOT EXISTS public.item_suggestions ("],
+    [
+      "item_suggestions status",
+      "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'accepted'::text, 'rejected'::text, 'closed'::text]))",
+    ],
+    ["item_flags table", "CREATE TABLE IF NOT EXISTS public.item_flags ("],
+    [
+      "item_flags status",
+      "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'resolved'::text, 'dismissed'::text]))",
+    ],
   ];
 
   for (const [label, expectedSql] of requiredProductModelSql) {
@@ -191,6 +211,16 @@ async function main() {
     "No direct deletion request inserts",
     "No direct deletion request updates",
     "No direct deletion request deletes",
+    "Users can view own item suggestions",
+    "Admins can view item suggestions",
+    "No direct item suggestion inserts",
+    "No direct item suggestion updates",
+    "No direct item suggestion deletes",
+    "Users can view own item flags",
+    "Admins can view item flags",
+    "No direct item flag inserts",
+    "No direct item flag updates",
+    "No direct item flag deletes",
   ];
 
   for (const policyName of requiredProductPolicies) {
