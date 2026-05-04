@@ -1,116 +1,31 @@
 ---
-status: open
+status: superseded
 ---
 
-# Supabase RLS Fix - Summary & Next Steps
+# Supabase RLS Prompt Notes
 
-## Status Update (2026-01-19)
+This historical manual-SQL prompt is not an implementation source.
 
-We identified a security gap where the `items` table allowed any authenticated user (OAuth-only) to interact with items, bypassing the invite code system (`profile_valid`).
+Do not apply old SQL from this file's history. It predated the current RPC-first contract and allowed browser writes that are now intentionally blocked.
 
-### Changes Made (Local)
-1.  **New Migration**: Created `supabase/migrations/20260119_rls_improvements.sql`.
-2.  **Schema Sync**: Updated `supabase/schema.sql` to include the new security model.
-3.  **Security Logic**: 
-    *   Added `is_validated()`: Checks if user has a valid invite code.
-    *   Added `is_admin()`: Checks if user is in the `admins` table.
-    *   Restricted `items` visibility/insertion to validated users.
-    *   Restricted `borrow_history` visibility to **Admins only**.
-    *   Restricted `profiles` visibility to own profile or Admins.
+Current sources of truth:
 
----
+- `supabase/schema.sql` for the consolidated fresh setup schema.
+- `supabase/migrations/` for incremental project upgrades.
+- `supabase/README.md` for repository-level Supabase contract notes.
+- `docs/supabase-contract-audit.md` for the local app/schema/Storage/Edge Function audit checklist.
+- `scripts/check-supabase-contract.mjs` for the static Supabase contract check.
 
-## Next Steps (Action Required)
+Current contract summary:
 
-Since the project is not linked to Supabase CLI locally (and no Docker daemon), **Manual Upload** is the required path.
+- Invite validation uses `verify_and_apply_invite`.
+- Item creation and updates use `create_item` and `update_item`.
+- Borrow and return use `borrow_item` and `return_item`.
+- Item deletion uses `delete_item`.
+- Admin role and invite-code changes use RPCs.
+- Direct `items` writes are blocked by RLS.
+- Direct `borrow_history` inserts are blocked by RLS.
+- Borrow-history reads are admin-only by default.
+- Item image uploads are constrained by the public config and the Storage bucket contract.
 
-### 1. Execute SQL in Supabase Dashboard
-1.  Go to your [Supabase SQL Editor](https://supabase.com/dashboard/project/rfeglkaexvwcytlifqte/sql/new).
-2.  Copy and paste the following SQL exactly:
-
-```sql
--- RLS Improvements Migration
--- Date: 2026-01-19
-
--- 1. Create Helper Functions for RLS
-CREATE OR REPLACE FUNCTION public.is_validated()
-RETURNS boolean AS $$
-    SELECT coalesce(
-        (SELECT profile_valid FROM public.profiles WHERE id = auth.uid()),
-        false
-    );
-$$ LANGUAGE sql SECURITY DEFINER;
-
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS boolean AS $$
-    SELECT EXISTS (
-        SELECT 1 FROM public.admins WHERE profile_id = auth.uid()
-    );
-$$ LANGUAGE sql SECURITY DEFINER;
-
--- 2. Secure profiles table
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
-CREATE POLICY "Users can view own profile"
-ON public.profiles FOR SELECT
-USING (auth.uid() = id OR public.is_admin());
-
-DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
-CREATE POLICY "Users can update own profile"
-ON public.profiles FOR UPDATE
-USING (auth.uid() = id);
-
--- 3. Secure items table
-ALTER TABLE public.items ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Validated users can view items" ON public.items;
-CREATE POLICY "Validated users can view items"
-ON public.items FOR SELECT
-USING (public.is_validated());
-
-DROP POLICY IF EXISTS "Validated users can insert items" ON public.items;
-CREATE POLICY "Validated users can insert items"
-ON public.items FOR INSERT
-WITH CHECK (public.is_validated());
-
-DROP POLICY IF EXISTS "Admins and creators can update items" ON public.items;
-CREATE POLICY "Admins and creators can update items"
-ON public.items FOR UPDATE
-USING (public.is_admin() OR created_by = auth.uid() OR public.is_validated());
-
--- 4. Secure borrow_history table
-ALTER TABLE public.borrow_history ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Admins can view history" ON public.borrow_history;
-CREATE POLICY "Admins can view history"
-ON public.borrow_history FOR SELECT
-USING (public.is_admin());
-
-DROP POLICY IF EXISTS "Validated users can insert history" ON public.borrow_history;
-CREATE POLICY "Validated users can insert history"
-ON public.borrow_history FOR INSERT
-WITH CHECK (public.is_validated());
-
--- 5. Secure admins table
-ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS "Anyone can select invite codes for verification" ON public.admins;
-CREATE POLICY "Anyone can select invite codes for verification"
-ON public.admins FOR SELECT
-USING (true);
-
-DROP POLICY IF EXISTS "Admins have full access to admins table" ON public.admins;
-CREATE POLICY "Admins have full access to admins table"
-ON public.admins FOR ALL
-USING (public.is_admin());
-```
-
-3.  Click **Run**.
-
-### 2. Verify
-- Log in with a user that has NO invite code.
-- Verify they CANNOT view items.
-- Log in with an admin/validated user.
-- Verify they CAN view items.
-
+Before live changes, use Supabase MCP or service-role access only after confirming the target project and privacy boundary with the user.

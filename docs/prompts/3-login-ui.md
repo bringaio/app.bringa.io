@@ -1,11 +1,13 @@
-# User Sign In flow order
+---
+status: captured
+---
 
-## Current flow
+# Login Flow Note
 
-O2AuthService -> Invitation Code -> Name and Surname
+Desired onboarding order:
 
-## Goal flow
+1. OAuth provider sign-in.
+2. Display name.
+3. Invitation code.
 
-O2AuthService -> Name and Surname -> Invitation Code
-
-
+This is a product decision still captured in `docs/optimization-options.md`. Before implementing it, verify the invite RPC, profile completion route, admin approval path for users without an invite code, and copy/i18n implications.

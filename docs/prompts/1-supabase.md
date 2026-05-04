@@ -1,18 +1,20 @@
-# Supabase Skill
+---
+status: superseded
+---
 
-## Introduction
+# Supabase Prompt Notes
 
-Nutze bitte deinen Creating Skills skill um ein supabase skill zu erstellen.
-Der Supabase mcp Server steht zur verfügung und soll auch verwendet werden, wenn supabase genutzt wird.
+These historical prompt notes are superseded by:
 
-## Skills / Fähigkeiten
+- `.agents/skills/supabase-mcp/SKILL.md`
+- `docs/supabase.md`
+- `docs/supabase-contract-audit.md`
+- `supabase/README.md`
 
-- Halte die migrations im Projekt immer up-to-date
-- Wenn sich das schema ändert, update die schema.sql, damit ich jederzeit die Datenbank neu aufsetzen kann
-- Beachte bitte auch Database Triggers/Functions wenn du die schema.sql updatest.
-- Beachte edge functions, verändere diese nur wenn nötig
+Current durable guidance:
 
-
-## Sonstiges
-
-Verwende bitte immer Context7 um die ganze supabase doc abzurufen, bevor du irgendetwas machst.
+- Keep migrations and `supabase/schema.sql` aligned.
+- Include tables, constraints, indexes, triggers, functions, RLS policies, Storage buckets, and Edge Functions in Supabase reviews.
+- Prefer schema and metadata review before row access.
+- Ask explicit approval before inspecting real user data.
+- Use official Supabase documentation, Context7, or current web research when adding Supabase tooling, MCP setup, custom domains, self-hosting, Auth providers, or new packages.
