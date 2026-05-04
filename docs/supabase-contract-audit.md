@@ -49,8 +49,8 @@ Target:
 
 Current UI:
 
-- `src/app/items/details/page.tsx` updates `items.status` and `items.borrowed_by` directly.
-- It inserts or updates `borrow_history` separately.
+- `src/app/items/details/page.tsx` calls `borrow_item` and `return_item`.
+- The client does not write item status or borrow history directly for borrow/return.
 
 Current schema:
 
@@ -59,7 +59,7 @@ Current schema:
 
 Risk:
 
-- Borrow/return can fail under strict RLS or become inconsistent when one write succeeds and the other fails.
+- Live projects must include the RPC migration before deploying the UI change.
 
 Target:
 

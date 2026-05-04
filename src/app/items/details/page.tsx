@@ -83,31 +83,16 @@ function ItemDetailsContent() {
         if (!user || !item) return
         setActionLoading(true)
         try {
-            // Update item status
-            const { error } = await supabase
-                .from('items')
-                .update({
-                    status: 'borrowed',
-                    borrowed_by: user.id
-                })
-                .eq('id', item.id)
+            const { data: borrowed, error } = await supabase.rpc('borrow_item', {
+                item_id_input: item.id,
+            })
 
             if (error) throw error
-
-            // Insert into borrow_history
-            const { error: historyError } = await supabase
-                .from('borrow_history')
-                .insert({
-                    item_id: item.id,
-                    borrower_id: user.id,
-                    borrowed_at: new Date().toISOString()
-                })
-
-            if (historyError) {
-                console.error('Failed to log borrow history:', historyError)
+            if (!borrowed) {
+                alert('Item is no longer available.')
+                return
             }
 
-            // Refresh item data
             setItem({ ...item, status: 'borrowed', borrowed_by: user.id })
             router.refresh()
         } catch {
@@ -121,30 +106,16 @@ function ItemDetailsContent() {
         if (!user || !item) return
         setActionLoading(true)
         try {
-            // Update item status
-            const { error } = await supabase
-                .from('items')
-                .update({
-                    status: 'inStock',
-                    borrowed_by: null
-                })
-                .eq('id', item.id)
+            const { data: returned, error } = await supabase.rpc('return_item', {
+                item_id_input: item.id,
+            })
 
             if (error) throw error
-
-            // Update borrow_history with return timestamp
-            const { error: historyError } = await supabase
-                .from('borrow_history')
-                .update({ returned_at: new Date().toISOString() })
-                .eq('item_id', item.id)
-                .eq('borrower_id', user.id)
-                .is('returned_at', null)
-
-            if (historyError) {
-                console.error('Failed to update borrow history:', historyError)
+            if (!returned) {
+                alert('Item could not be returned.')
+                return
             }
 
-            // Refresh item data
             setItem({ ...item, status: 'inStock', borrowed_by: null })
             router.refresh()
         } catch {
