@@ -21,8 +21,8 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 - Supabase integrity verifier coverage: enforce and check item-related foreign keys, invite-code uniqueness, and other invariants that can pass the current local contract checker. Impact: catches data-integrity regressions before live migrations. Uncertainty/research: confirm live-project drift and migration order with Supabase metadata before applying production changes.
 - RLS-safe mutations: move invite application, borrow/return, admin promotion, admin edits, moderation, deletion, and visibility changes behind RPCs where direct client table updates create weak or contradictory policies. Impact: protects data invariants and makes UI behavior testable. Side effect: migrations and UI calls must land in a careful sequence.
 - Storage and upload hardening: align create/edit upload validation, server-side bucket limits, MIME allowlists, max size, compression behavior, image cleanup, and image export. Impact: security, performance, and user trust. Uncertainty/research: verify current Supabase Storage controls from official docs before implementation.
-- Generic upstream identity: keep this repository centered on `app.bringa.io`; deployment-specific names, logos, legal text, invite copy, and operator labels must be fork configuration or fork content. Impact: forks can rebase without fighting upstream. Side effect: deployment profile layering still needs implementation beyond the current single config file.
-- Fork content strategy: implement layered deployment config/content profiles after the current single-file config foundation. Impact: forks can customize legal text, brand assets, docs links, app copy, and CI variables without repeated upstream conflicts. Uncertainty/research: choose exact deep-merge and generated-artifact policy before changing config generation.
+- Generic upstream identity: keep deployment-specific names, logos, legal text, invite copy, and operator labels in deployment config or content files. Impact: forks can rebase without fighting upstream. Side effect: app copy still needs a content/i18n source of truth beyond config fields.
+- Deployment content profiles: extend the implemented config profile layering into public content directories for legal text, onboarding copy, local help, and issue prompts. Impact: forks can customize longer text without bloating JSONC. Uncertainty/research: decide generated-artifact and stale-check policy for deployment content before automating it.
 - Repository template readiness: document GitHub Template, fork, and upstream remote workflows, including rebase-first sync, branch cleanup after merge, branch protection, and docs publishing. Impact: improves developer experience for open-source maintainers. Uncertainty/research: confirm GitHub's current fork/template metadata behavior before automating fork research.
 - CI/CD forkability: keep upstream workflows secret-free by default, preserve GitHub Pages docs, and document how forks add deployment secrets without editing shared workflow logic. Impact: forks stay close to upstream. Side effect: deployment-specific workflows may need optional examples instead of mandatory jobs.
 
@@ -74,9 +74,9 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 ## Developer Experience
 
 - Naming conventions audit: review component, hook, route, database, migration, branch, and commit naming for consistency. Impact: easier contribution. Uncertainty/research: do after schema direction is clear to avoid churn.
-- Test strategy: add focused tests for config generation, app-config fallbacks, Supabase RPC contracts, upload validation, and critical UI state. Impact: safer refactors. Side effect: respect the user's preference for agentic browser skills before adding browser-test packages.
+- Test strategy: extend focused tests beyond config generation to app-config fallbacks, Supabase RPC contracts, upload validation, and critical UI state. Impact: safer refactors. Side effect: respect the user's preference for agentic browser skills before adding browser-test packages.
 - Source-of-truth comments: where duplication is unavoidable, add a nearby note naming the canonical file. Impact: prevents future drift.
-- Generated backend config: media MIME and size limits currently exist in both `config/bringa.config.jsonc` and Supabase Storage SQL; `pnpm check:supabase-contract` now checks the committed schema. Impact: reduces deployment drift if future tooling generates backend settings from config. Uncertainty/research: wait until Supabase MCP confirms live bucket metadata and migration workflow.
+- Generated backend config: media MIME and size limits currently exist in resolved deployment config and Supabase Storage SQL; `pnpm check:supabase-contract` checks the committed schema. Impact: reduces deployment drift if future tooling generates backend settings from config. Uncertainty/research: wait until Supabase MCP confirms live bucket metadata and migration workflow.
 - Agent skill growth: when repeated friction appears, update `.agents/` and this register rather than relying on memory. Impact: future sessions start stronger.
 - Docs as GitHub Pages: keep docs minimal, elegant, searchable, and directly publishable from `docs/`. Impact: developers can understand setup, operations, and contribution paths quickly.
 - Share-worthy improvements: when a change would benefit other open-source app maintainers, consider adding it to release notes, social posts, or mailing-list material. Impact: community growth. Side effect: avoid marketing noise inside the product UI.
@@ -91,8 +91,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 ## Questions Waiting For User
 
-- What default operator label should generic upstream use: `bringa.io`, `the operator`, or a configurable placeholder?
-- Should legal/contribution text live in JSONC config, Markdown content files, or a layered content directory?
+- Should deployment content profiles be generated from `content/deployments/<slug>/`, or should public content files remain directly referenced by config paths?
 - Should GIF uploads be rejected, flattened to still WebP, or supported as animated media?
 - Which SSO providers beyond GitHub and Google should be supported first?
 - Should item contributions use CC0 wording, a public-domain dedication plus fallback license, or only deployment-specific legal text?

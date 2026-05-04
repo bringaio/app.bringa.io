@@ -2,14 +2,17 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const sourcePath = path.join(root, "config", "bringa.config.jsonc");
-const outputs = [
-  path.join(root, "public", "bringa.config.json"),
-  path.join(root, "src", "config", "bringa.config.generated.json"),
-];
+const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const defaultDeploymentSlug = "app.bringa.io";
 
-function stripComments(input) {
+function getOutputs(root) {
+  return [
+    path.join(root, "public", "bringa.config.json"),
+    path.join(root, "src", "config", "bringa.config.generated.json"),
+  ];
+}
+
+export function stripComments(input) {
   let output = "";
   let inString = false;
   let escaped = false;
@@ -72,7 +75,7 @@ function stripComments(input) {
   return output;
 }
 
-function removeTrailingCommas(input) {
+export function removeTrailingCommas(input) {
   let output = "";
   let inString = false;
   let escaped = false;
@@ -154,6 +157,75 @@ function assertPublicPath(value, pathName) {
   }
 }
 
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+export function mergeConfigLayers(base, override) {
+  const merged = { ...base };
+
+  for (const [key, value] of Object.entries(override)) {
+    if (key === "$schema") {
+      continue;
+    }
+
+    if (isPlainObject(value) && isPlainObject(merged[key])) {
+      merged[key] = mergeConfigLayers(merged[key], value);
+      continue;
+    }
+
+    merged[key] = value;
+  }
+
+  return merged;
+}
+
+export function resolveDeploymentSlug(env = process.env) {
+  const slug = env.BRINGA_DEPLOYMENT?.trim() || defaultDeploymentSlug;
+
+  if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(slug)) {
+    throw new Error(
+      "Expected BRINGA_DEPLOYMENT to contain only letters, numbers, dots, underscores, or hyphens.",
+    );
+  }
+
+  return slug;
+}
+
+function resolveIncludeLocalConfig(env = process.env) {
+  const flag = env.BRINGA_CONFIG_INCLUDE_LOCAL?.trim().toLowerCase();
+  return flag === "1" || flag === "true" || flag === "yes";
+}
+
+function getConfigLayerPaths(root, deploymentSlug) {
+  return {
+    base: path.join(root, "config", "base.config.jsonc"),
+    deployment: path.join(root, "config", "deployments", `${deploymentSlug}.jsonc`),
+    local: path.join(root, "config", "local.config.jsonc"),
+  };
+}
+
+async function readConfigLayer(filePath, label, { optional = false } = {}) {
+  let source;
+
+  try {
+    source = await readFile(filePath, "utf8");
+  } catch (error) {
+    if (optional && error?.code === "ENOENT") {
+      return {};
+    }
+    throw new Error(`Missing ${label} config layer: ${filePath}`);
+  }
+
+  const parsed = JSON.parse(removeTrailingCommas(stripComments(source)));
+
+  if (!isPlainObject(parsed)) {
+    throw new Error(`Expected ${label} config layer to contain a JSON object.`);
+  }
+
+  return parsed;
+}
+
 function validateConfig(config) {
   assertString(config.app?.name, "app.name");
   assertString(config.app?.shortName, "app.shortName");
@@ -203,7 +275,7 @@ function validateConfig(config) {
   assertBoolean(config.features?.profilePages, "features.profilePages");
 }
 
-async function assertPublicFileExists(publicPath, pathName) {
+async function assertPublicFileExists(root, publicPath, pathName) {
   const publicRoot = path.join(root, "public");
   const filePath = path.resolve(publicRoot, publicPath.slice(1));
 
@@ -221,30 +293,51 @@ async function assertPublicFileExists(publicPath, pathName) {
   }
 }
 
-async function validateReferencedPublicFiles(config) {
+async function validateReferencedPublicFiles(root, config) {
   await Promise.all([
-    assertPublicFileExists(config.branding.logoPath, "branding.logoPath"),
-    assertPublicFileExists(config.branding.iconPath, "branding.iconPath"),
-    assertPublicFileExists(config.branding.appleTouchIconPath, "branding.appleTouchIconPath"),
-    assertPublicFileExists(config.legal.termsContentPath, "legal.termsContentPath"),
+    assertPublicFileExists(root, config.branding.logoPath, "branding.logoPath"),
+    assertPublicFileExists(root, config.branding.iconPath, "branding.iconPath"),
+    assertPublicFileExists(root, config.branding.appleTouchIconPath, "branding.appleTouchIconPath"),
+    assertPublicFileExists(root, config.legal.termsContentPath, "legal.termsContentPath"),
   ]);
 }
 
-async function loadConfig() {
-  const source = await readFile(sourcePath, "utf8");
-  const json = removeTrailingCommas(stripComments(source));
-  const config = JSON.parse(json);
-  delete config.$schema;
+export async function loadConfigObject({
+  root = defaultRoot,
+  deploymentSlug = resolveDeploymentSlug(),
+  includeLocalConfig = resolveIncludeLocalConfig(),
+} = {}) {
+  const paths = getConfigLayerPaths(root, deploymentSlug);
+  const layers = [
+    await readConfigLayer(paths.base, "base"),
+    await readConfigLayer(paths.deployment, `deployment "${deploymentSlug}"`),
+  ];
+
+  if (includeLocalConfig) {
+    layers.push(await readConfigLayer(paths.local, "local", { optional: true }));
+  }
+
+  const config = layers.reduce((merged, layer) => mergeConfigLayers(merged, layer), {});
   validateConfig(config);
-  await validateReferencedPublicFiles(config);
+  await validateReferencedPublicFiles(root, config);
+  return config;
+}
+
+export async function buildConfigJson(options = {}) {
+  const config = await loadConfigObject(options);
   return `${JSON.stringify(config, null, 2)}\n`;
 }
 
 async function main() {
-  const generated = await loadConfig();
+  const root = defaultRoot;
+  const generated = await buildConfigJson({
+    root,
+    deploymentSlug: resolveDeploymentSlug(),
+    includeLocalConfig: resolveIncludeLocalConfig(),
+  });
   const checkOnly = process.argv.includes("--check");
 
-  for (const outputPath of outputs) {
+  for (const outputPath of getOutputs(root)) {
     if (checkOnly) {
       const current = await readFile(outputPath, "utf8");
       if (current !== generated) {
@@ -258,7 +351,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}

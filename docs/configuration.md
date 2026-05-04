@@ -4,12 +4,25 @@ title: Configuration
 
 # Configuration
 
-Public deployment settings live in `config/bringa.config.jsonc`.
+Public deployment settings are resolved from layered JSONC config.
+
+Current sources of truth:
+
+- `config/base.config.jsonc`: shared defaults for all deployments.
+- `config/deployments/app.bringa.io.jsonc`: default upstream deployment profile.
+- `config/deployments/<slug>.jsonc`: fork or environment profile, selected with `BRINGA_DEPLOYMENT`.
+- `config/local.config.jsonc`: ignored local override, only used when `BRINGA_CONFIG_INCLUDE_LOCAL=true`.
 
 Run:
 
 ```bash
 pnpm generate:config
+```
+
+The default deployment is `app.bringa.io`. To generate another deployment:
+
+```bash
+BRINGA_DEPLOYMENT=example-community pnpm generate:config
 ```
 
 This writes:
@@ -23,9 +36,29 @@ Run:
 pnpm check:config
 ```
 
-This also checks that configured public content and brand asset paths point to files in `public/`.
+This resolves the selected deployment profile, checks generated files for staleness, and verifies that configured public content and brand asset paths point to files in `public/`.
+
+Run:
+
+```bash
+pnpm test:config
+```
+
+This verifies the config-layering behavior itself.
 
 Use `.env.local` for secrets and deployment-specific values that must not be public. Service role keys never belong in JSONC config.
+
+## Layering Rules
+
+Later layers override earlier layers:
+
+1. base config;
+2. selected deployment profile;
+3. local override when explicitly enabled.
+
+Nested objects are merged. Arrays and scalar values replace earlier values. `$schema` is allowed in source layers but is removed from generated public config.
+
+Local overrides are opt-in because generated config is tracked. This avoids accidentally making `public/bringa.config.json` and `src/config/bringa.config.generated.json` depend on one developer's ignored local file.
 
 ## Common Fork Fields
 

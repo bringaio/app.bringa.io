@@ -29,7 +29,7 @@ Recommended branch names:
 
 Every durable fact should have one home.
 
-- Public deployment config: `config/bringa.config.jsonc`
+- Public deployment config: `config/base.config.jsonc` plus `config/deployments/<slug>.jsonc`
 - Generated public config: `public/bringa.config.json`
 - Typed app config: `src/config/bringa.config.generated.json`
 - Secrets: `.env.local`, deployment secrets, or Supabase function secrets

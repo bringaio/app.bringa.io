@@ -21,7 +21,7 @@ Include:
 - Back up production data before migrations or destructive admin work.
 - Treat Supabase Auth users, Postgres rows, and Storage objects as separate backup surfaces.
 - Do not inspect real user data unless the user or operator explicitly approves that inspection for the task.
-- Keep public config in `config/bringa.config.jsonc`; keep secrets in environment variables.
+- Keep public config in `config/base.config.jsonc` and `config/deployments/<slug>.jsonc`; keep secrets in environment variables.
 
 ## Current Security Surfaces
 

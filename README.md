@@ -28,12 +28,14 @@ Open `http://localhost:3000`.
 
 ## Configuration
 
-Public deployment settings live in `config/bringa.config.jsonc`.
+Public deployment settings are resolved from `config/base.config.jsonc` plus a deployment profile in `config/deployments/`.
 
 ```bash
 pnpm generate:config
 pnpm check:config
 ```
+
+Set `BRINGA_DEPLOYMENT=<profile-slug>` to generate a fork profile. The upstream default is `app.bringa.io`.
 
 Secrets stay in `.env.local` or the deployment provider. Never put service role keys in public config.
 
@@ -64,6 +66,7 @@ Important sources of truth:
 
 ```bash
 pnpm check:config
+pnpm test:config
 pnpm exec tsc --noEmit
 pnpm lint
 pnpm build

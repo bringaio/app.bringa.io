@@ -12,20 +12,26 @@ For the content layering model, see [Fork Content Strategy](fork-content-strateg
 
 Use deployment profiles instead of editing the same root files in every fork.
 
-Target direction:
+Current structure:
 
 ```text
 config/base.config.jsonc
 config/deployments/app.bringa.io.jsonc
-config/deployments/example-community.jsonc
 config/local.config.jsonc
-content/legal/starter/en.md
-content/legal/starter/de.md
-content/deployments/<fork-slug>/legal/*.md
-public/brand/<fork-slug>/...
+public/content/default/legal/en.md
+public/icon.svg
 ```
 
-The current repository still uses `config/bringa.config.jsonc`; migration to deployment profiles should be done as a focused change.
+`config/local.config.jsonc` is ignored and only loaded when `BRINGA_CONFIG_INCLUDE_LOCAL=true`.
+
+Deployment-specific content and brand directories are the target direction for longer text and asset sets, but the current app still references public files through config paths.
+
+To create a fork profile:
+
+1. Add `config/deployments/<fork-slug>.jsonc`.
+2. Override only the values that differ from `config/base.config.jsonc`.
+3. Run `BRINGA_DEPLOYMENT=<fork-slug> pnpm generate:config`.
+4. Commit the profile and generated config outputs in the fork.
 
 ## What Forks Commonly Customize
 
@@ -42,15 +48,15 @@ The current repository still uses `config/bringa.config.jsonc`; migration to dep
 
 Legal text is expected to diverge. Upstream should provide starter text only, with clear disclaimers that it is not legal advice and must be reviewed by each operator.
 
-Forks should keep their own legal documents in deployment-specific content paths once deployment profiles exist. CI should validate that required files exist, not that every fork uses upstream wording.
+Forks should keep their own legal documents in deployment-specific content paths. CI should validate that required files exist, not that every fork uses upstream wording.
 
 ## Updating From Upstream
 
 1. Fetch upstream changes.
-2. Review config schema, docs, migrations, and breaking changes.
+2. Review config schema, base config, docs, migrations, and breaking changes.
 3. Rebase or merge upstream into the fork branch according to the fork's policy.
 4. Preserve fork-specific deployment config, legal text, and brand assets.
-5. Regenerate config and run CI.
+5. Regenerate config with the fork's `BRINGA_DEPLOYMENT` and run CI.
 6. Resolve conflicts explicitly; do not hide legal/config conflicts with custom merge drivers.
 
 ## CI/CD For Forks

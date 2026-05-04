@@ -2,7 +2,7 @@
 
 - Before adding durable text, config, or conventions, identify the source of truth.
 - Prefer links and short summaries over duplicated prose.
-- Public deployment settings belong in config, not scattered through components.
+- Public deployment settings belong in layered config, not scattered through components.
 - Secrets belong only in local environment files, deployment secrets, or Supabase function secrets.
 - Developer-facing conventions belong in `docs/conventions.md`.
 - Hyperoptimum and ultraoptimum interpretation belongs in `docs/hyperoptimum.md`.

@@ -5,6 +5,7 @@
   "packageManager": "pnpm@10.33.2",
   "scripts": {
     "generate:config": "node scripts/generate-config.mjs",
+    "test:config": "node --test scripts/generate-config.test.mjs",
     "check:config": "node scripts/generate-config.mjs --check",
     "check:supabase-contract": "node scripts/check-supabase-contract.mjs",
     "backup:supabase": "node scripts/backup-supabase.mjs",

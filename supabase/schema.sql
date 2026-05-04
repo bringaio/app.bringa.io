@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS public.item_sharing (
 );
 
 -- Storage bucket for item images.
--- Keep limits aligned with config/bringa.config.jsonc media settings.
+-- Keep limits aligned with resolved deployment config media settings.
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
     'items',

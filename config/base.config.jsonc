@@ -1,19 +1,19 @@
 {
-  // Human-friendly source of truth for fork-specific public configuration.
-  // Run `pnpm generate:config` after changing this file.
+  // Shared public defaults for all deployments. Deployment profiles layer on top.
+  // Run `pnpm generate:config` after changing config layers.
   "$schema": "./bringa.config.schema.json",
   "app": {
-    "name": "bringa.io",
+    "name": "bringa",
     "shortName": "bringa",
     "description": "Open source sharing and borrowing portal for communities.",
     "defaultLocale": "en",
     "locales": ["en", "de"],
-    "titleTemplate": "%s | bringa.io",
+    "titleTemplate": "%s | bringa",
     "canonicalUrl": "https://app.bringa.io",
     "homeHref": "/dashboard"
   },
   "branding": {
-    "logoText": "bringa.io",
+    "logoText": "bringa",
     "logoPath": "/icon.svg",
     "iconPath": "/icon.svg",
     "appleTouchIconPath": "/icon.svg",
@@ -22,8 +22,8 @@
     "bornAndHostedBy": "Born and hosted by bringa.io"
   },
   "operator": {
-    "organizationName": "bringa.io",
-    "defaultOwnerLabel": "bringa.io",
+    "organizationName": "the operator",
+    "defaultOwnerLabel": "the operator",
     "contactEmail": "",
     "privacyEmail": "",
     "jurisdiction": ""

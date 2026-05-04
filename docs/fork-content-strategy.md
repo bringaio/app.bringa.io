@@ -13,7 +13,7 @@ Do not solve fork customization by ignoring files, hiding conflicts, or editing 
 Prefer layered sources of truth:
 
 1. upstream defaults;
-2. documented deployment config;
+2. documented deployment config profiles;
 3. deployment content overrides;
 4. deployment secrets;
 5. generated artifacts.
@@ -32,16 +32,17 @@ Use config for short, structured values:
 - media limits and accepted MIME types;
 - feature switches.
 
-Current source of truth: `config/bringa.config.jsonc`.
-
-Target direction:
+Current source of truth:
 
 ```text
 config/base.config.jsonc
 config/deployments/app.bringa.io.jsonc
-config/deployments/example-community.jsonc
 config/local.config.jsonc
 ```
+
+`BRINGA_DEPLOYMENT=<slug>` selects `config/deployments/<slug>.jsonc`. If unset, the upstream default is `app.bringa.io`.
+
+`config/local.config.jsonc` is ignored and only loaded when `BRINGA_CONFIG_INCLUDE_LOCAL=true`.
 
 ### Longer Local Text
 
@@ -70,7 +71,7 @@ Current app default:
 public/content/default/legal/en.md
 ```
 
-`config/bringa.config.jsonc` points `legal.termsContentPath` to the public Markdown file used by the `/terms` route.
+The resolved public config points `legal.termsContentPath` to the public Markdown file used by the `/terms` route.
 
 Upstream should validate that required content exists, but should not require every fork to use upstream wording.
 
@@ -85,7 +86,7 @@ public/brand/deployments/<deployment-slug>/logo.svg
 public/brand/deployments/<deployment-slug>/icon.svg
 ```
 
-Current source of truth: `branding.logoPath`, `branding.iconPath`, and `branding.appleTouchIconPath` in `config/bringa.config.jsonc`.
+Current source of truth: `branding.logoPath`, `branding.iconPath`, and `branding.appleTouchIconPath` in resolved deployment config.
 
 `pnpm check:config` validates that configured paths point to files inside `public/`.
 

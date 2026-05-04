@@ -31,7 +31,7 @@ Use the audit checklist to compare local UI behavior, schema, migrations, Storag
 
 ## Storage Contract
 
-The upstream schema creates a public `items` bucket for item images and mirrors the default media settings from `config/bringa.config.jsonc`:
+The upstream schema creates a public `items` bucket for item images and mirrors the default media settings from resolved deployment config:
 
 - MIME types: `image/jpeg`, `image/png`, `image/webp`
 - File size limit: `10485760` bytes

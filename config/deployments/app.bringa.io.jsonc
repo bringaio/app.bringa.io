@@ -1,0 +1,25 @@
+{
+  // Default deployment profile for the generic upstream app.
+  "app": {
+    "name": "bringa.io",
+    "shortName": "bringa",
+    "titleTemplate": "%s | bringa.io",
+    "canonicalUrl": "https://app.bringa.io"
+  },
+  "branding": {
+    "logoText": "bringa.io",
+    "bornAndHostedBy": "Born and hosted by bringa.io"
+  },
+  "operator": {
+    "organizationName": "bringa.io",
+    "defaultOwnerLabel": "bringa.io"
+  },
+  "repository": {
+    "provider": "github",
+    "owner": "bringaio",
+    "name": "app.bringa.io",
+    "url": "https://github.com/bringaio/app.bringa.io",
+    "issuesUrl": "https://github.com/bringaio/app.bringa.io/issues",
+    "templateMode": "upstream"
+  }
+}

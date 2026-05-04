@@ -126,7 +126,7 @@ Risk:
 Target:
 
 - Define bucket creation, MIME allowlist, size limits, ownership paths, public/private access, cleanup, and export behavior in one place.
-- Keep create/edit upload validation aligned with `config/bringa.config.jsonc`.
+- Keep create/edit upload validation aligned with resolved deployment config.
 
 ### Edge Functions And Telegram
 

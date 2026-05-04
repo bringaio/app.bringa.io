@@ -5,7 +5,7 @@ const supabaseUrl = appConfig.supabase.url || process.env.NEXT_PUBLIC_SUPABASE_U
 const supabasePublishableKey = appConfig.supabase.publishableKey || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
 
 if (!supabaseUrl || !supabasePublishableKey) {
-  throw new Error("Missing Supabase public configuration. Set config/bringa.config.jsonc or NEXT_PUBLIC_SUPABASE_*.");
+  throw new Error("Missing Supabase public configuration. Set deployment config or NEXT_PUBLIC_SUPABASE_*.");
 }
 
 export const supabase = createClient(supabaseUrl, supabasePublishableKey)

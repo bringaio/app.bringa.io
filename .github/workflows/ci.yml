@@ -38,6 +38,9 @@ jobs:
       - name: Check generated config
         run: pnpm check:config
 
+      - name: Test config layering
+        run: pnpm test:config
+
       - name: Check Supabase contract
         run: pnpm check:supabase-contract
 
