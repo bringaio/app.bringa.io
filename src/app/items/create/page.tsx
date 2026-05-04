@@ -86,19 +86,14 @@ export default function CreateItemPage() {
                 imageUrl = await uploadImage(file)
             }
 
-            const { data: { user } } = await supabase.auth.getUser()
-
-            const { error: insertError } = await supabase
-                .from('items')
-                .insert({
-                    name: name.trim(),
-                    description: description.trim(),
-                    image_url: imageUrl || null, // Ensure null if empty string
-                    status: 'inStock',
-                    created_by: user?.id
-                })
+            const { data: itemId, error: insertError } = await supabase.rpc('create_item', {
+                name_input: name,
+                description_input: description,
+                image_url_input: imageUrl,
+            })
 
             if (insertError) throw insertError
+            if (!itemId) throw new Error("Item could not be created")
 
             router.push('/dashboard')
             router.refresh()

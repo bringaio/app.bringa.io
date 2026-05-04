@@ -142,16 +142,15 @@ function EditItemContent() {
                 imageUrl = await uploadImage(file)
             }
 
-            const { error: updateError } = await supabase
-                .from('items')
-                .update({
-                    name,
-                    description,
-                    image_url: imageUrl,
-                })
-                .eq('id', id)
+            const { data: updated, error: updateError } = await supabase.rpc('update_item', {
+                item_id_input: id,
+                name_input: name,
+                description_input: description,
+                image_url_input: imageUrl,
+            })
 
             if (updateError) throw updateError
+            if (!updated) throw new Error("Item could not be updated")
 
             router.push(`/items/details?id=${id}`)
             router.refresh()

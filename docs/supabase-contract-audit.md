@@ -69,6 +69,8 @@ Target:
 
 Current UI:
 
+- Item create calls `create_item`.
+- Item edit calls `update_item`.
 - `src/app/admin/users/page.tsx` calls `promote_admin` and `demote_admin`.
 - `src/app/admin/invite-code/page.tsx` calls `get_my_invite_code` and `set_my_invite_code`.
 - Admins can open the item edit UI for non-created items.
@@ -76,12 +78,12 @@ Current UI:
 
 Risk:
 
-- Live projects must include the admin RPC migrations before deploying the admin role or invite-code UI changes.
+- Live projects must include the item/admin RPC migrations before deploying these UI changes.
 - Item delete is still a hard delete internally and needs lifecycle, versioning, retention, and Storage cleanup design.
 
 Target:
 
-- Use RPCs for admin promotion/demotion, item visibility changes, admin edits, and deletion/archive behavior.
+- Use RPCs for item creation, item updates, admin promotion/demotion, item visibility changes, admin edits, and deletion/archive behavior.
 - Keep role escalation and moderation rules out of browser-controlled table updates.
 
 ### Item Lifecycle
