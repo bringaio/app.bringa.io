@@ -1,6 +1,6 @@
 # Core Agent Rules
 
-- Treat `config/bringa.config.jsonc` as the public deployment source of truth; regenerate with `pnpm generate:config`.
+- Treat `config/base.config.jsonc` plus `config/deployments/<slug>.jsonc` as the public deployment source of truth; regenerate with `pnpm generate:config`.
 - Treat this repository as the generic `app.bringa.io` upstream. Keep CONTEKT or other operator-specific content in fork configuration or documented override content, not in shared app logic.
 - Ask whether GitHub/GitLab issues should be processed at the start of a new session.
 - Ask whether a Supabase backup should be run when a service role key is available; if the user has previously answered "always", run `pnpm backup:supabase` first.

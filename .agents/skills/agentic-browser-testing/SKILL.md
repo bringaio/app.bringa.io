@@ -26,6 +26,64 @@ Use existing browser-agent capabilities first. Do not add Playwright or another 
 - Responsive: narrow mobile, tablet, desktop, touch scrolling, keyboard navigation, long item names, long words, image-heavy lists, dark and light themes.
 - PWA: manifest, icons, install behavior, persisted Supabase session after home-screen install, offline behavior if supported, and logout.
 
+## Scenario Sets
+
+Use these as concrete routes through the app. Adapt only the account names and fixture records.
+
+### Mobile Item Browsing
+
+1. Open `/dashboard` as a validated user with no borrowed items at 375x812.
+2. Confirm available items are shown first, search is reachable without horizontal scroll, and bottom actions do not cover list content.
+3. Search for a long word and a missing item; confirm result and empty states keep navigation visible.
+4. Rotate or resize to tablet width and confirm cards, filters, and create action do not jump or overlap.
+
+### Borrowed-First Dashboard
+
+1. Open `/dashboard` as a validated user with at least one borrowed item.
+2. Confirm borrowed items are the initial view and available/all controls remain discoverable.
+3. Return one item from details, go back to dashboard, and confirm the default view updates only when no borrowed items remain.
+
+### Create And Edit Image Preview
+
+1. Open `/items/create`.
+2. Try a disallowed MIME type and an oversized image; confirm the error is specific and does not clear entered text.
+3. Select a valid image; confirm preview appears immediately before upload and remains stable on mobile.
+4. Replace the image; confirm only the new preview remains.
+5. Save, open `/items/edit` for the item, and repeat replacement plus no-image behavior.
+
+### Admin Dashboard And User Item Views
+
+1. Open `/admin/dashboard` as an admin on desktop and mobile.
+2. Confirm stats are scannable, headings fit, and placeholders for Telegram, backup, Supabase, Storage, and moderation health are clear when present.
+3. Open `/admin/users`, promote/demote only with the intended admin role, and confirm self-demotion is blocked.
+4. From a user row or detail route, inspect that user's items when the feature exists; confirm owner, visibility, and status are visible without exposing unnecessary personal data.
+
+### Moderation Queue
+
+1. Open the moderation route or admin dashboard section when flags, suggestions, image proposals, or pending-visible requests exist.
+2. Confirm each queue item shows type, target item/image/user, current status, submitted time, and a reason field for admin action.
+3. Approve, reject, or mark seen using mock or development data; confirm the queue updates without broad table writes from the browser.
+
+### Invite And Unvalidated User
+
+1. Sign in as a user without a valid invite.
+2. Confirm protected app routes redirect to `/invite` or the configured pending approval flow.
+3. Enter an invalid invite code and verify the error is reachable by keyboard and screen reader.
+4. Enter a valid code and verify the profile/dashboard transition.
+
+### PWA Installed Flow
+
+1. Verify `/manifest.webmanifest` uses configured app name, icons, theme color, and background color.
+2. Install the app or simulate installed mode where the browser supports it.
+3. Confirm Supabase session persistence, logout, and relaunch behavior.
+4. Test offline or slow-network behavior only as a capability check; do not claim offline support unless the app provides it.
+
+### Long Content And Empty States
+
+1. Use fixture items with long names, long unbroken words, long owner labels, missing images, and image-heavy lists.
+2. Check `/dashboard`, `/items/details`, `/items/create`, `/items/edit`, and admin routes at mobile and desktop widths.
+3. Confirm text wraps or truncates intentionally, buttons keep stable dimensions, and empty/error/loading states keep the next action clear.
+
 ## Role Matrix
 
 - Anonymous visitor: landing/login/terms only; protected routes redirect safely.

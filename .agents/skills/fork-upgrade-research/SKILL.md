@@ -17,6 +17,6 @@ This upstream change may help your fork because: `<benefit>`. It may be risky be
 
 ## Guardrails
 
-- Preserve fork-specific `config/bringa.config.jsonc`.
+- Preserve fork-specific `config/deployments/<slug>.jsonc` and public content/brand assets.
 - Treat migrations and RLS changes as high-risk until reviewed.
 - Ask before modifying legal terms, privacy text, branding, or production data behavior.
