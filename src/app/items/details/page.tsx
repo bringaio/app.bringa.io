@@ -282,7 +282,7 @@ function ItemDetailsContent() {
                             )}
 
 
-                            {user && item.created_by === user.id && (
+                            {(isAdmin || (user && item.created_by === user.id)) && (
                                 <Link href={`/items/edit?id=${item.id}`}>
                                     <Button
                                         className="w-full mt-4"

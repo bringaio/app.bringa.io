@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Upload, Loader2 } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { AppImage } from "@/components/ui/app-image"
+import { useIsAdmin } from "@/hooks/useIsAdmin"
 
 function EditItemContent() {
     const router = useRouter()
@@ -26,8 +27,11 @@ function EditItemContent() {
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [formError, setFormError] = useState<string | null>(null)
+    const { isAdmin, loading: adminLoading } = useIsAdmin()
 
     useEffect(() => {
+        if (adminLoading) return
+
         const loadItem = async () => {
             if (!id) {
                 setError("No item ID provided")
@@ -56,9 +60,7 @@ function EditItemContent() {
                     return
                 }
 
-                // Check ownership: Only creator can edit
-                // Note: Admins can edit ONLY if they are the creator
-                if (item.created_by !== user.id) {
+                if (!isAdmin && item.created_by !== user.id) {
                     setError("You do not have permission to edit this item.")
                     setLoading(false)
                     return
@@ -75,7 +77,7 @@ function EditItemContent() {
             }
         }
         loadItem()
-    }, [id, router])
+    }, [adminLoading, id, isAdmin, router])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0] || null
