@@ -1,51 +1,48 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react";
-import TopBar from "@/components/layout/topbar";
+import { useCallback, useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { supabase } from "@/lib/supabaseclient";
-import {
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-} from "@/components/ui/popover";
 import { ItemDb } from "@/app/model/model";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Item, ItemContent, ItemTitle, ItemDescription, ItemHeader, ItemActions, ItemFooter, ItemGroup, ItemSeparator } from "@/components/items/item-card";
+import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item-card";
 import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { Package } from "lucide-react";
+
+type DashboardView = "borrowed" | "available" | "all";
 
 export default function DashboardPage() {
-    const router = useRouter();
     const [query, setQuery] = useState("")
     const [results, setResults] = useState<ItemDb[]>([])
     const [user, setUser] = useState<User | null>(null);
-    const [showAll, setShowAll] = useState(false);
+    const [view, setView] = useState<DashboardView>("available");
+    const [hasBorrowedItems, setHasBorrowedItems] = useState(false);
+    const [ready, setReady] = useState(false);
+    const [loading, setLoading] = useState(true);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startY, setStartY] = useState(0);
     const [scrollTop, setScrollTop] = useState(0);
 
-    const fetchItems = async (currentUser: User | null, searchQuery: string, isViewAll: boolean) => {
+    const fetchItems = useCallback(async (currentUser: User | null, searchQuery: string, selectedView: DashboardView) => {
         try {
-            let queryBuilder = supabase.from('items').select('*');
+            setLoading(true);
+            let queryBuilder = supabase.from('items').select('*').order('name', { ascending: true });
 
             if (searchQuery) {
-                // Global search
                 queryBuilder = queryBuilder.ilike('name', `%${searchQuery}%`);
-            } else if (isViewAll) {
-                // Show all items
-            } else {
+            } else if (selectedView === "borrowed") {
                 if (currentUser) {
                     queryBuilder = queryBuilder.eq('borrowed_by', currentUser.id);
                 } else {
                     setResults([]);
                     return;
                 }
+            } else if (selectedView === "available") {
+                queryBuilder = queryBuilder.eq('status', 'inStock');
             }
 
             const { data, error } = await queryBuilder;
@@ -54,26 +51,43 @@ export default function DashboardPage() {
             setResults(data || []);
         } catch (err) {
             console.error('Error fetching items:', err)
+        } finally {
+            setLoading(false);
         }
-    }
+    }, [])
 
     useEffect(() => {
-        const loadUserAndItems = async () => {
+        const loadUserAndInitialView = async () => {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
-                await fetchItems(user, query, false);
+                if (user) {
+                    const { count, error } = await supabase
+                        .from('items')
+                        .select('id', { count: 'exact', head: true })
+                        .eq('borrowed_by', user.id);
+
+                    if (error) throw error;
+
+                    const userHasBorrowedItems = Boolean(count && count > 0);
+                    setHasBorrowedItems(userHasBorrowedItems);
+                    setView(userHasBorrowedItems ? "borrowed" : "available");
+                }
             } catch (err) {
                 console.error(err);
+            } finally {
+                setReady(true);
             }
         };
-        loadUserAndItems();
+        loadUserAndInitialView();
     }, [])
 
 
     useEffect(() => {
-        fetchItems(user, query, showAll);
-    }, [query, user, showAll]);
+        if (!ready) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- item results are loaded from Supabase after auth/view changes.
+        fetchItems(user, query, view);
+    }, [fetchItems, query, ready, user, view]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
@@ -94,20 +108,32 @@ export default function DashboardPage() {
         setIsDragging(false);
     };
 
-
+    const emptyMessage = query
+        ? "No items match your search."
+        : view === "borrowed"
+            ? "You haven't borrowed any items right now."
+            : view === "available"
+                ? "No items are currently available."
+                : "No items found.";
 
     return (
         <ProtectedRoute>
             <div className="flex flex-col h-screen">
-                {!query && !showAll && results.length === 0 && (
+                {loading && (
+                    <div className="flex-1 flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Loading items...</p>
+                    </div>
+                )}
+
+                {!loading && results.length === 0 && (
                     <div className="flex-1 flex items-center justify-center">
                         <div className="text-center text-muted-foreground flex flex-col items-center gap-2">
-                            <p>You haven't borrowed any items yet.</p>
+                            <p>{emptyMessage}</p>
                         </div>
                     </div>
                 )}
 
-                {results.length > 0 && (
+                {!loading && results.length > 0 && (
                     <div
                         ref={scrollContainerRef}
                         onMouseDown={handleMouseDown}
@@ -131,8 +157,8 @@ export default function DashboardPage() {
                                                     className="w-14 h-14 rounded-lg object-cover border"
                                                 />
                                             ) : (
-                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border text-xl">
-                                                    📦
+                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border">
+                                                    <Package className="h-6 w-6 text-muted-foreground" />
                                                 </div>
                                             )}
                                             <ItemContent>
@@ -155,24 +181,40 @@ export default function DashboardPage() {
 
                 <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4 flex flex-col gap-2 ">
                     {!query && (
-                        <>
+                        <div className="grid grid-cols-2 gap-2">
+                            {hasBorrowedItems && (
+                                <Button
+                                    variant={view === "borrowed" ? "default" : "secondary"}
+                                    onClick={() => setView("borrowed")}
+                                    className="w-full shadow-lg cursor-pointer"
+                                >
+                                    Borrowed
+                                </Button>
+                            )}
                             <Button
-                                variant="secondary"
-                                onClick={() => setShowAll(!showAll)}
+                                variant={view === "available" ? "default" : "secondary"}
+                                onClick={() => setView("available")}
                                 className="w-full shadow-lg cursor-pointer"
                             >
-                                {showAll ? "Show my items" : "Browse all items"}
+                                Available
+                            </Button>
+                            <Button
+                                variant={view === "all" ? "default" : "secondary"}
+                                onClick={() => setView("all")}
+                                className="w-full shadow-lg cursor-pointer"
+                            >
+                                All Items
                             </Button>
                             <Button
                                 asChild
                                 variant="secondary"
-                                className="w-full shadow-lg "
+                                className="w-full shadow-lg"
                             >
                                 <Link href="/items/create">
                                     Create Item
                                 </Link>
                             </Button>
-                        </>
+                        </div>
                     )}
                     <div className="flex items-center gap-2 bg-card border rounded-xl shadow-lg p-2">
                         <Input
