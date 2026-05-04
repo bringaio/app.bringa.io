@@ -73,7 +73,7 @@ Current UI:
 
 - Item create calls `create_item`.
 - Item edit calls `update_item`.
-- `src/app/admin/users/page.tsx` calls `promote_admin` and `demote_admin`.
+- `src/app/admin/users/page.tsx` calls `set_profile_validation`, `promote_admin`, and `demote_admin`.
 - `src/app/admin/invite-code/page.tsx` calls `get_my_invite_code` and `set_my_invite_code`.
 - Admins can open the item edit UI for non-created items.
 - Item delete calls `delete_item`; direct item deletes are blocked by RLS.
@@ -223,6 +223,7 @@ Target:
 - `set_item_visibility(...)`
 - `delete_item(item_id uuid)`
 - `archive_or_delete_item(...)`
+- `set_profile_validation(profile_id uuid, profile_valid boolean)`
 - `promote_admin(profile_id uuid)`
 - `demote_admin(profile_id uuid)`
 - `get_my_invite_code()`

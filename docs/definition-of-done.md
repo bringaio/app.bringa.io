@@ -25,6 +25,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:admin-notification-settings` when admin notification settings or planned notification controls change
 - `pnpm test:admin-deletion-requests` when admin deletion request summaries or review queues change
 - `pnpm test:admin-moderation-review` when moderation review-note requirements change
+- `pnpm test:admin-profile-validation` when admin user validation actions or labels change
 - `pnpm test:admin-queue-counts` when admin dashboard queue-count logic changes
 - `pnpm test:admin-recent-activity` when admin dashboard recent activity signals change
 - `pnpm test:admin-system-health` when admin dashboard system-health signals change

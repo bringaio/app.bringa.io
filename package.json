@@ -16,6 +16,7 @@
     "test:admin-notification-settings": "node --test scripts/admin-notification-settings.test.mjs",
     "test:admin-deletion-requests": "node --test scripts/admin-deletion-requests.test.mjs",
     "test:admin-moderation-review": "node --test scripts/admin-moderation-review.test.mjs",
+    "test:admin-profile-validation": "node --test scripts/admin-profile-validation.test.mjs",
     "test:admin-queue-counts": "node --test scripts/admin-queue-counts.test.mjs",
     "test:admin-recent-activity": "node --test scripts/admin-recent-activity.test.mjs",
     "test:admin-system-health": "node --test scripts/admin-system-health.test.mjs",

@@ -5,11 +5,12 @@ import ProtectedRoute from "@/components/auth/protected-route"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseclient"
-import { Loader2, Package, Users, ShieldAlert, ShieldCheck } from "lucide-react"
+import { Loader2, Package, Users, ShieldAlert, ShieldCheck, UserCheck, UserX } from "lucide-react"
 import { Admin, Profile } from "@/app/model/model"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { buildAdminProfileValidationAction, profileDisplayName } from "@/lib/admin-profile-validation"
 
 export default function AdminUsersPage() {
     const router = useRouter()
@@ -93,6 +94,25 @@ export default function AdminUsersPage() {
         }
     }
 
+    const handleSetProfileValidation = async (profileId: string, profileValid: boolean) => {
+        try {
+            setProcessingId(profileId)
+            const { data: updated, error } = await supabase.rpc('set_profile_validation', {
+                profile_id_input: profileId,
+                profile_valid_input: profileValid,
+            })
+
+            if (error) throw error
+            if (!updated) throw new Error('Profile validation rejected')
+
+            await fetchData()
+        } catch {
+            alert(profileValid ? 'Failed to validate user.' : 'Failed to revoke user access.')
+        } finally {
+            setProcessingId(null)
+        }
+    }
+
     if (adminLoading || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -112,7 +132,7 @@ export default function AdminUsersPage() {
                     <h1 className="text-2xl font-bold flex items-center gap-2">
                         <Users className="w-6 h-6" /> Manage Users
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-1">View all users and promote them to administrators.</p>
+                    <p className="text-sm text-muted-foreground mt-1">Validate access and manage administrators.</p>
                 </div>
 
                 <div className="w-full space-y-3">
@@ -120,6 +140,11 @@ export default function AdminUsersPage() {
                         const isUserAdmin = admins.some(a => a.profile_id === profile.id)
                         const isProcessing = processingId === profile.id
                         const isCurrentUser = currentUserId === profile.id
+                        const validationAction = buildAdminProfileValidationAction({
+                            profileId: profile.id,
+                            currentUserId,
+                            profileValid: profile.profile_valid,
+                        })
 
                         return (
                             <div key={profile.id} className="border rounded-lg p-4 bg-card shadow-sm flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -140,7 +165,7 @@ export default function AdminUsersPage() {
                                     )}
                                     <div className="w-full overflow-hidden">
                                         <h3 className="font-semibold flex items-center gap-2">
-                                            {profile.display_name} {profile.display_surname}
+                                            {profileDisplayName(profile)}
                                             {isUserAdmin && (
                                                 <span title="Admin" className="text-blue-600 dark:text-blue-400">
                                                     <ShieldCheck className="w-4 h-4" />
@@ -152,12 +177,27 @@ export default function AdminUsersPage() {
                                 </div>
 
                                 <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                                    <div className={`px-3 py-1 text-xs rounded-full font-medium flex items-center gap-1 ${profile.profile_valid
+                                        ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200'
+                                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200'
+                                        }`}>
+                                        {profile.profile_valid ? <UserCheck className="w-3 h-3" /> : <UserX className="w-3 h-3" />}
+                                        {profile.profile_valid ? "Validated" : "Pending"}
+                                    </div>
                                     <Button asChild variant="outline" size="sm">
                                         <Link href={`/admin/user-items?id=${profile.id}`}>
                                             <Package className="h-4 w-4" />
                                             Items
                                         </Link>
                                     </Button>
+                                    <button
+                                        onClick={() => handleSetProfileValidation(profile.id, validationAction.action === "validate")}
+                                        disabled={isProcessing || validationAction.disabled}
+                                        className="px-3 py-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 border rounded-md text-xs font-medium flex items-center gap-1 disabled:opacity-50 transition-colors whitespace-nowrap"
+                                    >
+                                        {isProcessing ? <Loader2 className="w-3 h-3 animate-spin" /> : validationAction.action === "validate" ? <UserCheck className="w-3 h-3" /> : <UserX className="w-3 h-3" />}
+                                        {validationAction.label}
+                                    </button>
                                     {isUserAdmin ? (
                                         <div className="flex items-center gap-2">
                                             <div className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs rounded-full font-medium flex items-center gap-1">

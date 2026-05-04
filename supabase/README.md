@@ -40,6 +40,7 @@ The browser should call RPCs for these writes:
 - `delete_item`
 - `promote_admin`
 - `demote_admin`
+- `set_profile_validation`
 - `get_my_invite_code`
 - `set_my_invite_code`
 - `export_my_data`
@@ -69,6 +70,7 @@ Borrow history reads are admin-only by default.
 - prepared `item_versions` and `item_images` tables;
 - item version capture on create/update and admin restore-by-republish through RPCs;
 - admin-only item visibility changes with required reasons;
+- admin-only profile validation changes with self-invalidation protection;
 - prepared account deletion request table;
 - prepared item suggestion and item flag tables;
 - blocked direct browser writes to item versions and item image metadata;

@@ -54,6 +54,9 @@ jobs:
       - name: Test admin moderation review notes
         run: pnpm test:admin-moderation-review
 
+      - name: Test admin profile validation
+        run: pnpm test:admin-profile-validation
+
       - name: Test admin queue counts
         run: pnpm test:admin-queue-counts
 

@@ -58,6 +58,7 @@ async function main() {
     "delete_item",
     "promote_admin",
     "demote_admin",
+    "set_profile_validation",
     "get_my_invite_code",
     "set_my_invite_code",
     "export_my_data",
@@ -224,6 +225,18 @@ async function main() {
 
   for (const [label, expectedSql] of requiredVisibilitySql) {
     requireIncludes(schema, expectedSql, `Missing item visibility contract in supabase/schema.sql: ${label}`);
+  }
+
+  const requiredProfileValidationSql = [
+    ["profile validation admin RPC", "CREATE OR REPLACE FUNCTION public.set_profile_validation("],
+    ["profile validation rejects null state", "IF profile_valid_input IS NULL THEN"],
+    ["profile validation prevents self invalidation", "profile_id_input = auth.uid() AND NOT profile_valid_input"],
+    ["trusted profile validity update flag", "PERFORM set_config('app.profile_valid_update', 'trusted', true);"],
+    ["profile escalation trigger honors trusted RPCs", "current_setting('app.profile_valid_update', true) IS DISTINCT FROM 'trusted'"],
+  ];
+
+  for (const [label, expectedSql] of requiredProfileValidationSql) {
+    requireIncludes(schema, expectedSql, `Missing profile validation contract in supabase/schema.sql: ${label}`);
   }
 
   const requiredProductPolicies = [
