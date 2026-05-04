@@ -8,7 +8,7 @@ import {
     Download,
     ExternalLink,
     FileText,
-    Github,
+    GitBranch,
     Loader2,
     MessageSquare,
     Trash2,
@@ -153,7 +153,7 @@ export default function SettingsPage() {
                     <div className="grid gap-2 p-3 sm:grid-cols-2">
                         <Button asChild variant="secondary" className="justify-start">
                             <a href={appConfig.repository.url} target="_blank" rel="noreferrer">
-                                <Github className="h-4 w-4" />
+                                <GitBranch className="h-4 w-4" />
                                 Source code
                                 <ExternalLink className="ml-auto h-4 w-4" />
                             </a>

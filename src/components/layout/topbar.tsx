@@ -11,7 +11,7 @@ import {
     MenubarContent,
     MenubarItem,
 } from "@/components/ui/menubar";
-import { Github, LogOutIcon, UserIcon, ShieldCheck } from "lucide-react";
+import { GitBranch, LogOutIcon, UserIcon, ShieldCheck } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle"
@@ -64,7 +64,7 @@ export default function TopBar() {
                                 aria-label={`${appConfig.app.name} on GitHub`}
                                 className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
                             >
-                                <Github className="h-4 w-4" />
+                                <GitBranch className="h-4 w-4" />
                             </a>
                         )}
                         <MenubarMenu>
