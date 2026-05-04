@@ -56,6 +56,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:admin-recent-activity`
 - `pnpm test:admin-system-health`
 - `pnpm test:admin-user-items`
+- `pnpm test:pwa-manifest`
 - `pnpm check:copy`
 - `pnpm test:static-export`
 - `pnpm check:static-export`

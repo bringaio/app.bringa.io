@@ -39,6 +39,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Create/edit image flow has config-driven validation and immediate preview.
 - [x] Settings exposes repo links, issue prompt copy, JSON data export, and account deletion request.
 - [x] Item details let users suggest changes or flag issues for admin review.
+- [x] PWA manifest fields are generated from public app and branding config and covered by `pnpm test:pwa-manifest`.
 - [ ] Auth persistence, logout, PWA install, slow network, and long-content states have been browser-tested across target browsers.
 
 ## Admin Experience
@@ -71,6 +72,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [ ] `pnpm test:admin-recent-activity`
 - [ ] `pnpm test:admin-system-health`
 - [ ] `pnpm test:admin-user-items`
+- [ ] `pnpm test:pwa-manifest`
 - [ ] `pnpm check:copy`
 - [ ] `pnpm test:static-export`
 - [ ] `pnpm check:static-export`

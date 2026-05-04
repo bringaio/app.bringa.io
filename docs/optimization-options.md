@@ -58,7 +58,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 ## App Experience
 
 - Responsive and browser QA: test mobile, tablet, desktop, touch, keyboard, Safari, Firefox, Chromium, installed PWA, slow network, empty states, long names, long words, and image-heavy lists. Impact: accessibility and reliability. Uncertainty/research: use agentic browser skills first; add packages only after explicit decision.
-- PWA polish: verify manifest, maskable icons, Apple touch icons, offline behavior, update behavior, installed auth persistence, and logout. Impact: mobile trust. Uncertainty/research: current browser/platform behavior must be tested.
+- PWA polish: build on the config-driven, tested manifest by adding generated maskable PNG icons, Apple touch icon verification, offline behavior review, update behavior, installed auth persistence, and logout testing. Impact: mobile trust. Uncertainty/research: current browser/platform behavior must be tested.
 - Typography and FOUT/FOUC: document system-font choice or self-hosted font policy; verify first paint and theme flash. Impact: perceived quality and performance. Uncertainty/research: needs visual QA.
 - Routes and navigation: evaluate breadcrumbs for deep item/admin/profile routes, and keep primary mobile navigation predictable. Impact: wayfinding without clutter. Side effect: avoid adding navigation chrome that competes with core borrowing flow.
 - Markdown or rich descriptions: decide between plain text, safe Markdown, or constrained formatting for item descriptions. Impact: usefulness and XSS risk. Uncertainty/research: package/tool choice requires current best-practice check.

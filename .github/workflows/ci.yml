@@ -54,6 +54,9 @@ jobs:
       - name: Test admin user item grouping
         run: pnpm test:admin-user-items
 
+      - name: Test PWA manifest
+        run: pnpm test:pwa-manifest
+
       - name: Check English documentation copy
         run: pnpm check:copy
 
