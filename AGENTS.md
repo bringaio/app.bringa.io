@@ -6,3 +6,4 @@ Before changing behavior, read the relevant rules, skills, and workflows in `.ag
 
 Start each new session with `.agents/workflows/session-start.md`.
 Finish meaningful work with `.agents/workflows/finishing-work.md` and `.agents/workflows/quality-loop.md`.
+Use `.agents/skills/hyperoptimum-stewardship/` when judging refactors, modularization, architecture, or optimization opportunities.

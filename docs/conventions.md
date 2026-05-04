@@ -75,4 +75,4 @@ Documentation should be compact, practical, and link to the source of truth.
 
 ## Hyperoptimum Practice
 
-The best change is the most coherent next improvement, not the largest possible change. Prefer work that reduces hidden complexity, improves forkability, protects privacy, and makes the next contributor more confident.
+The best change is the most coherent next improvement, not the largest possible change. Prefer work that reduces hidden complexity, improves forkability, protects privacy, and makes the next contributor more confident. See `docs/hyperoptimum.md` for the durable interpretation.
