@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Edit, Loader2, Package, ShieldAlert, UserRound } from "lucide-react"
+import { ArrowLeft, Edit, History, Loader2, Package, ShieldAlert, UserRound } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
@@ -236,6 +236,12 @@ function AdminUserItemsContent() {
                                             <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
                                                 <Button asChild variant="outline" size="sm">
                                                     <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                                </Button>
+                                                <Button asChild variant="outline" size="sm">
+                                                    <Link href={`/admin/item-versions?itemId=${item.id}`}>
+                                                        <History className="h-4 w-4" />
+                                                        Versions
+                                                    </Link>
                                                 </Button>
                                                 <Button asChild variant="secondary" size="sm">
                                                     <Link href={`/items/edit?id=${item.id}`}>

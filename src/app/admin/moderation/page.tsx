@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { CheckCircle2, Eye, Flag, Inbox, Lightbulb, Loader2, Package, XCircle } from "lucide-react"
+import { CheckCircle2, Eye, Flag, History, Inbox, Lightbulb, Loader2, Package, XCircle } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { supabase } from "@/lib/supabaseclient"
@@ -279,6 +279,14 @@ export default function AdminModerationPage() {
                                                         <Link href={`/items/details?id=${item.id}`}>Open item</Link>
                                                     </Button>
                                                 )}
+                                                {item && (
+                                                    <Button asChild variant="outline" size="sm" className="sm:shrink-0">
+                                                        <Link href={`/admin/item-versions?itemId=${item.id}`}>
+                                                            <History className="h-4 w-4" />
+                                                            Versions
+                                                        </Link>
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     type="button"
                                                     variant="secondary"
@@ -367,6 +375,14 @@ export default function AdminModerationPage() {
                                                 {item && (
                                                     <Button asChild variant="outline" size="sm" className="sm:shrink-0">
                                                         <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                                    </Button>
+                                                )}
+                                                {item && (
+                                                    <Button asChild variant="outline" size="sm" className="sm:shrink-0">
+                                                        <Link href={`/admin/item-versions?itemId=${item.id}`}>
+                                                            <History className="h-4 w-4" />
+                                                            Versions
+                                                        </Link>
                                                     </Button>
                                                 )}
                                                 <Button

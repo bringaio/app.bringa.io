@@ -11,6 +11,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 - `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, pending queue counts, recent activity, recent uploads, and system-readiness links for config, Supabase, Storage, backups, docs, and Telegram.
 - `/admin/users`: profile list, admin promotion, admin demotion, and self-demotion protection.
 - `/admin/user-items?id=<profile-id>`: admin-only item view grouped by current borrower, owner, and creator relationship for one profile.
+- `/admin/item-versions?itemId=<item-id>`: admin-only item version timeline with restore-by-republish through the Supabase RPC contract.
 - `/admin/deletion-requests`: read-only operator queue for account deletion requests, linked to per-user item review.
 - `/admin/notifications`: read-only notification settings view for Telegram status, mute windows, dedupe, and admin seen-state planning.
 - `/admin/invite-code`: current admin invite code display and update flow.
@@ -26,7 +27,9 @@ Moderation queue records live in Supabase:
 
 Users create these records through `create_item_suggestion` and `create_item_flag`. Admins transition state through `review_item_suggestion` and `review_item_flag`. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
-Status transitions currently record reviewer and reviewed time. They do not yet apply accepted suggestions to item records, create item versions, notify users, or update Telegram seen-state.
+Status transitions currently record reviewer and reviewed time. They do not yet apply accepted suggestions to item records, notify users, or update Telegram seen-state.
+
+Item creation, item updates, and admin version restore create append-only `item_versions` snapshots through `record_item_version`. Admin restore uses `restore_item_version` and records the restore reason as the newly current version.
 
 The deletion request route is read-only. It does not delete Supabase Auth users, Storage objects, item images, item records, or profile rows.
 
@@ -53,7 +56,6 @@ Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 
 - accepted-suggestion application;
 - item/image-specific moderation;
-- item version restore-by-republish;
 - hide/unhide reason flows from user item review;
 - Telegram dedupe, mute windows, and seen-state;
 - backup freshness and Supabase health visibility;

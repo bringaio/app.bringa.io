@@ -18,7 +18,7 @@ Bringa starts as a focused sharing and borrowing app for communities. The long-t
 - Better dashboard defaults, search actions, breadcrumbs, responsive polish, PWA manifest/icons, and offline-safe fonts.
 - Multi-image item handling with previews, title image, newest-first ordering, moderation, and export/download.
 - Ownership and visibility policies that survive user deletion without losing operator-owned community contributions.
-- Admin views for user items, proposed changes, flags, muted Telegram notifications, and version restore.
+- Admin views for user items, proposed changes, flags, item version history/restore, muted Telegram notifications, and remaining moderation follow-through.
 
 ## Data And Trust
 

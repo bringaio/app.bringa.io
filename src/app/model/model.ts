@@ -34,6 +34,22 @@ export interface ItemDb {
   handoff_policy?: ItemHandoffPolicy | null;
 }
 
+export interface ItemVersion {
+  id: string;
+  item_id: string;
+  version_number: number;
+  name: string | null;
+  description: string | null;
+  image_url: string | null;
+  owner_kind: ItemOwnerKind;
+  owner_profile_id: string | null;
+  owner_label: string | null;
+  visibility_state: ItemVisibilityState;
+  actor_id: string | null;
+  reason: string | null;
+  created_at: string | null;
+}
+
 export interface BorrowedItem extends ItemDb {
   status: "borrowed";
 }

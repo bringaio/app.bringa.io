@@ -94,7 +94,7 @@ Current model:
 
 - `items` keeps current `status`, `borrowed_by`, `created_by`, and legacy `image_url` fields for the existing UI.
 - `items` also prepares `owner_kind`, `owner_profile_id`, `owner_label`, `visibility_state`, deletion metadata, and `handoff_policy`.
-- `item_versions` exists as a queryable append-only target table, but restore-by-republish RPCs and automatic version creation still need a focused implementation.
+- `item_versions` is the queryable append-only versioning source of truth. `create_item`, `update_item`, and `restore_item_version` capture snapshots through `record_item_version`.
 - `item_images` exists as prepared metadata for multiple item images, cover image selection, captions, alt text, and moderation state. The current UI still writes one legacy `image_url`.
 
 Risk:
@@ -103,7 +103,7 @@ Risk:
 
 Target:
 
-- Route ownership, visibility, version creation, restore-by-republish, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the flows in UI.
+- Route ownership, visibility changes, accepted-suggestion application, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the remaining flows in UI.
 - Keep `item_versions` as the versioning source of truth instead of JSON-in-row.
 
 ### Moderation Queue

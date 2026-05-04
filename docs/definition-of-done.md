@@ -27,6 +27,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:admin-recent-activity` when admin dashboard recent activity signals change
 - `pnpm test:admin-system-health` when admin dashboard system-health signals change
 - `pnpm test:admin-user-items` when admin user item grouping or per-user admin item review changes
+- `pnpm test:admin-item-versions` when admin item version timelines or restore flows change
 - `pnpm test:pwa-manifest` when app metadata, manifest, PWA config, or brand icon config changes
 - `pnpm test:copy` and `pnpm check:copy` when docs, agent instructions, or public source-of-truth copy changes
 - `pnpm test:docs-index` and `pnpm check:docs-index` when top-level docs are added, removed, or renamed

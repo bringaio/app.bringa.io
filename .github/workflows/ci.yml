@@ -60,6 +60,9 @@ jobs:
       - name: Test admin user item grouping
         run: pnpm test:admin-user-items
 
+      - name: Test admin item versions
+        run: pnpm test:admin-item-versions
+
       - name: Test PWA manifest
         run: pnpm test:pwa-manifest
 

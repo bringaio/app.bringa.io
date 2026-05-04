@@ -66,6 +66,8 @@ async function main() {
     "create_item_flag",
     "review_item_suggestion",
     "review_item_flag",
+    "record_item_version",
+    "restore_item_version",
   ];
 
   for (const functionName of requiredFunctions) {
@@ -197,6 +199,18 @@ async function main() {
 
   for (const [label, expectedSql] of requiredProductModelSql) {
     requireIncludes(schema, expectedSql, `Missing product model contract in supabase/schema.sql: ${label}`);
+  }
+
+  const requiredVersioningSql = [
+    ["initial item version capture", "SELECT public.record_item_version(new_item_id, 'created') INTO new_version_id;"],
+    ["item update version capture", "SELECT public.record_item_version(item_id_input, 'updated') INTO new_version_id;"],
+    ["restore appends a republished version", "SELECT public.record_item_version(selected_item_id, restore_reason) INTO new_version_id;"],
+    ["restore locks the current item", "FOR UPDATE;"],
+    ["internal version helper is not browser-executable", "REVOKE EXECUTE ON FUNCTION public.record_item_version(uuid, text) FROM PUBLIC;"],
+  ];
+
+  for (const [label, expectedSql] of requiredVersioningSql) {
+    requireIncludes(schema, expectedSql, `Missing item versioning contract in supabase/schema.sql: ${label}`);
   }
 
   const requiredProductPolicies = [

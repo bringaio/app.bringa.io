@@ -48,6 +48,9 @@ The browser should call RPCs for these writes:
 - `create_item_flag`
 - `review_item_suggestion`
 - `review_item_flag`
+- `restore_item_version`
+
+`record_item_version` is an internal SQL helper used by item create, update, and restore functions. Direct browser execution is revoked.
 
 Direct browser reads still use RLS policies where appropriate. Direct browser writes to core item state should be avoided.
 Direct browser writes to `borrow_history` are also blocked; borrow history is maintained by `borrow_item` and `return_item`.
@@ -63,6 +66,7 @@ Borrow history reads are admin-only by default.
 - item-image Storage bucket limits aligned with resolved deployment config;
 - item ownership, visibility, deletion, and handoff columns;
 - prepared `item_versions` and `item_images` tables;
+- item version capture on create/update and admin restore-by-republish through RPCs;
 - prepared account deletion request table;
 - prepared item suggestion and item flag tables;
 - blocked direct browser writes to item versions and item image metadata;

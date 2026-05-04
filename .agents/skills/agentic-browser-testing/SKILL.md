@@ -22,7 +22,7 @@ Use existing browser-agent capabilities first. Do not add Playwright or another 
 - Item create: configured MIME types and max size are enforced; selected image preview appears immediately; replacing a file revokes the old preview; create without image still works.
 - Item edit: existing image is visible; replacement follows the same media rules as create; permission errors are understandable for non-owners until admin edit support exists.
 - Item details: description, status, borrow, return, history for admins, edit/delete permissions, and route reloads behave consistently.
-- Admin: users, invite codes, item visibility, proposed edits, flags, user item lists, and Telegram mute controls once those features exist.
+- Admin: dashboard health, users, invite codes, item visibility, proposed edits, flags, deletion requests, notification settings, user item lists, item versions, and Telegram mute controls once those features exist.
 - Responsive: narrow mobile, tablet, desktop, touch scrolling, keyboard navigation, long item names, long words, image-heavy lists, dark and light themes.
 - PWA: manifest, icons, install behavior, persisted Supabase session after home-screen install, offline behavior if supported, and logout.
 
@@ -56,7 +56,9 @@ Use these as concrete routes through the app. Adapt only the account names and f
 1. Open `/admin/dashboard` as an admin on desktop and mobile.
 2. Confirm stats are scannable, headings fit, and placeholders for Telegram, backup, Supabase, Storage, and moderation health are clear when present.
 3. Open `/admin/users`, promote/demote only with the intended admin role, and confirm self-demotion is blocked.
-4. From a user row or detail route, inspect that user's items when the feature exists; confirm owner, visibility, and status are visible without exposing unnecessary personal data.
+4. From a user row or detail route, inspect that user's items; confirm owner, visibility, and status are visible without exposing unnecessary personal data.
+5. Open item versions from an admin item row, add a restore reason, and confirm restore is routed through the RPC flow and records a new version.
+6. Open `/admin/deletion-requests` and `/admin/notifications`; confirm read-only queues and settings do not expose more personal data than needed.
 
 ### Moderation Queue
 
