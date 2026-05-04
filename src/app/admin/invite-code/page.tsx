@@ -45,7 +45,7 @@ export default function AdminInviteCodePage() {
                     setInviteCode(data.invite_code)
                     setNewCode(data.invite_code)
                 }
-            } catch (err: any) {
+            } catch {
                 setError('Fehler beim Laden des Codes')
             } finally {
                 setLoading(false)
@@ -77,7 +77,7 @@ export default function AdminInviteCodePage() {
             setSuccess('Invite code updated successfully!')
 
             setTimeout(() => setSuccess(null), 3000)
-        } catch (err: any) {
+        } catch {
             setError('Fehler beim Aktualisieren des Codes')
         } finally {
             setSaving(false)
@@ -189,7 +189,7 @@ export default function AdminInviteCodePage() {
                                 </Button>
                             </div>
                             <p className="text-xs text-muted-foreground mt-2">
-                                Note: Changing the code won't affect users who have already entered it
+                                Note: Changing the code will not affect users who have already entered it
                             </p>
                         </div>
 

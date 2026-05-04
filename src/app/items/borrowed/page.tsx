@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseclient";
 import { ItemDb } from "@/app/model/model";
-import { Loader2 } from "lucide-react";
+import { Loader2, Package } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
-import { Item, ItemContent, ItemTitle, ItemDescription, ItemHeader, ItemActions, ItemFooter, ItemGroup, ItemSeparator } from "@/components/items/item-card";
+import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item-card";
 
 export default function BorrowedItemsPage() {
     const [items, setItems] = useState<ItemDb[]>([]);
@@ -53,7 +53,7 @@ export default function BorrowedItemsPage() {
 
                     {items.length === 0 ? (
                         <div className="text-center text-muted-foreground mt-10">
-                            <p>You haven't borrowed any items currently.</p>
+                            <p>You have not borrowed any items currently.</p>
                             <Link href="/dashboard" className="text-primary hover:underline mt-2 inline-block">
                                 Browse items to borrow
                             </Link>
@@ -71,8 +71,8 @@ export default function BorrowedItemsPage() {
                                                     className="w-14 h-14 rounded-lg object-cover border"
                                                 />
                                             ) : (
-                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border text-xl">
-                                                    📦
+                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border">
+                                                    <Package className="h-6 w-6 text-muted-foreground" />
                                                 </div>
                                             )}
                                             <ItemContent>

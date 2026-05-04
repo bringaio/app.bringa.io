@@ -6,12 +6,13 @@ import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseclient"
 import { Loader2, Users, ShieldAlert, ShieldCheck } from "lucide-react"
+import { Admin, Profile } from "@/app/model/model"
 
 export default function AdminUsersPage() {
     const router = useRouter()
     const { isAdmin, loading: adminLoading } = useIsAdmin()
-    const [profiles, setProfiles] = useState<any[]>([])
-    const [admins, setAdmins] = useState<any[]>([])
+    const [profiles, setProfiles] = useState<Profile[]>([])
+    const [admins, setAdmins] = useState<Admin[]>([])
     const [loading, setLoading] = useState(true)
     const [processingId, setProcessingId] = useState<string | null>(null)
 
@@ -34,7 +35,7 @@ export default function AdminUsersPage() {
 
             setProfiles(profilesRes.data || [])
             setAdmins(adminsRes.data || [])
-        } catch (err) {
+        } catch {
             // Error handling removed to prevent leaking information
         } finally {
             setLoading(false)
@@ -43,6 +44,7 @@ export default function AdminUsersPage() {
 
     useEffect(() => {
         if (isAdmin) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- admin data loads asynchronously after role resolution.
             fetchData()
         }
     }, [isAdmin])
@@ -61,7 +63,7 @@ export default function AdminUsersPage() {
 
             // Refresh data
             await fetchData()
-        } catch (err) {
+        } catch {
             alert('Failed to make user admin.')
         } finally {
             setProcessingId(null)
@@ -80,7 +82,7 @@ export default function AdminUsersPage() {
 
             // Refresh data
             await fetchData()
-        } catch (err) {
+        } catch {
             alert('Failed to remove admin privileges.')
         } finally {
             setProcessingId(null)

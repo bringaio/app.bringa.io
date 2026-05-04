@@ -72,9 +72,9 @@ export default function CompleteProfilePage() {
 
             // Redirect to dashboard or where they were going
             router.push("/dashboard")
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error updating profile:", err)
-            setError(err.message || "Something went wrong")
+            setError(err instanceof Error ? err.message : "Something went wrong")
         } finally {
             setSaving(false)
         }

@@ -69,7 +69,7 @@ function ItemDetailsContent() {
                         }
                     }
                 }
-            } catch (err: any) {
+            } catch {
                 setError("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.")
             } finally {
                 setLoading(false)
@@ -109,7 +109,7 @@ function ItemDetailsContent() {
             // Refresh item data
             setItem({ ...item, status: 'borrowed', borrowed_by: user.id })
             router.refresh()
-        } catch (err: any) {
+        } catch {
             alert('Aktion fehlgeschlagen. Bitte versuche es erneut.')
         } finally {
             setActionLoading(false)
@@ -146,7 +146,7 @@ function ItemDetailsContent() {
             // Refresh item data
             setItem({ ...item, status: 'inStock', borrowed_by: null })
             router.refresh()
-        } catch (err: any) {
+        } catch {
             alert('Aktion fehlgeschlagen. Bitte versuche es erneut.')
         } finally {
             setActionLoading(false)
@@ -168,7 +168,7 @@ function ItemDetailsContent() {
 
             router.push('/dashboard')
             router.refresh()
-        } catch (err: any) {
+        } catch {
             alert("Fehler beim Löschen des Eintrags.")
             setActionLoading(false)
         }

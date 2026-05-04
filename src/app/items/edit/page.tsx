@@ -63,9 +63,9 @@ function EditItemContent() {
                 setName(item.name)
                 setDescription(item.description || "")
                 setCurrentImageUrl(item.image_url)
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error(err)
-                setError(err.message || "Failed to load item")
+                setError(err instanceof Error ? err.message : "Failed to load item")
             } finally {
                 setLoading(false)
             }
@@ -135,9 +135,9 @@ function EditItemContent() {
 
             router.push(`/items/details?id=${id}`)
             router.refresh()
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(err.message || "Something went wrong")
+            setError(err instanceof Error ? err.message : "Something went wrong")
         } finally {
             setSaving(false)
         }
