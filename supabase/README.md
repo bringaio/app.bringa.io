@@ -55,6 +55,9 @@ Borrow history reads are admin-only by default.
 - blocked direct item and borrow-history writes;
 - admin-only borrow-history reads;
 - item-image Storage bucket limits aligned with resolved deployment config;
+- item ownership, visibility, deletion, and handoff columns;
+- prepared `item_versions` and `item_images` tables;
+- blocked direct browser writes to item versions and item image metadata;
 - `borrow_history.item_id` and `item_sharing.item_id` foreign keys to `items.id`;
 - unique admin invite codes.
 

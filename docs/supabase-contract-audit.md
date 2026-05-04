@@ -92,17 +92,19 @@ Target:
 
 Current model:
 
-- `items` has `status`, `borrowed_by`, `created_by`, and one `image_url`.
-- There is no explicit owner, visibility state, soft deletion, version table, moderation state, or image table.
+- `items` keeps current `status`, `borrowed_by`, `created_by`, and legacy `image_url` fields for the existing UI.
+- `items` also prepares `owner_kind`, `owner_profile_id`, `owner_label`, `visibility_state`, deletion metadata, and `handoff_policy`.
+- `item_versions` exists as a queryable append-only target table, but restore-by-republish RPCs and automatic version creation still need a focused implementation.
+- `item_images` exists as prepared metadata for multiple item images, cover image selection, captions, alt text, and moderation state. The current UI still writes one legacy `image_url`.
 
 Risk:
 
-- User deletion, operator-owned items, user-hidden items, admin-hidden items, and deleted-item images cannot be represented clearly.
+- User deletion, operator-owned items, user-hidden items, admin-hidden items, and deleted-item images are representable in schema, but dependent RPCs, UI flows, Storage cleanup, and export semantics are not complete.
 
 Target:
 
-- Add explicit ownership, visibility, and versioning before building dependent workflows.
-- Prefer a separate version table over JSON-in-row if queryability and restore audit matter.
+- Route ownership, visibility, version creation, restore-by-republish, image metadata writes, and cleanup through RPCs or Edge Functions before exposing the flows in UI.
+- Keep `item_versions` as the versioning source of truth instead of JSON-in-row.
 
 ### Storage
 
@@ -114,6 +116,7 @@ Current UI:
 Current schema:
 
 - `supabase/schema.sql` defines the public `items` bucket with MIME and file-size limits.
+- `item_images` prepares metadata for multiple images, cover image selection, captions, alt text, and moderation state.
 - `storage.objects` allows validated authenticated users to upload into the `items` bucket.
 - Older migrations contain legacy Storage policy material that may not match the generic upstream.
 
@@ -127,6 +130,7 @@ Target:
 
 - Define bucket creation, MIME allowlist, size limits, ownership paths, public/private access, cleanup, and export behavior in one place.
 - Keep create/edit upload validation aligned with resolved deployment config.
+- Move browser metadata writes for multiple images behind a narrow RPC before enabling the table in UI.
 
 ### Edge Functions And Telegram
 

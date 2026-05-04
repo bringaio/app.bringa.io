@@ -106,11 +106,75 @@ async function main() {
       "item_sharing_item_id_fkey",
       "ALTER TABLE public.item_sharing ADD CONSTRAINT item_sharing_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
     ],
+    [
+      "items_owner_profile_id_fkey",
+      "ALTER TABLE public.items ADD CONSTRAINT items_owner_profile_id_fkey FOREIGN KEY (owner_profile_id) REFERENCES public.profiles(id) ON DELETE SET NULL;",
+    ],
+    [
+      "item_versions_item_id_fkey",
+      "ALTER TABLE public.item_versions ADD CONSTRAINT item_versions_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
+    [
+      "item_images_item_id_fkey",
+      "ALTER TABLE public.item_images ADD CONSTRAINT item_images_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;",
+    ],
     ["admins_invite_code_unique", "CONSTRAINT admins_invite_code_unique UNIQUE (invite_code)"],
   ];
 
   for (const [constraintName, expectedSql] of requiredConstraints) {
     requireConstraint(schema, constraintName, expectedSql);
+  }
+
+  const requiredProductModelSql = [
+    [
+      "items.owner_kind",
+      "owner_kind text NOT NULL DEFAULT 'operator'::text CHECK (owner_kind = ANY (ARRAY['operator'::text, 'profile'::text, 'free_text'::text]))",
+    ],
+    [
+      "items.visibility_state",
+      "visibility_state text NOT NULL DEFAULT 'visible'::text CHECK (visibility_state = ANY (ARRAY['visible'::text, 'user_hidden'::text, 'admin_hidden'::text, 'pending_visible'::text, 'deleted_user_hidden'::text, 'archived'::text]))",
+    ],
+    [
+      "items.handoff_policy",
+      "handoff_policy text NOT NULL DEFAULT 'return_to_owner'::text CHECK (handoff_policy = ANY (ARRAY['return_to_owner'::text, 'direct_handoff_allowed'::text]))",
+    ],
+    ["item_versions table", "CREATE TABLE IF NOT EXISTS public.item_versions ("],
+    [
+      "item_versions unique version",
+      "CONSTRAINT item_versions_item_id_version_number_unique UNIQUE (item_id, version_number)",
+    ],
+    ["item_images table", "CREATE TABLE IF NOT EXISTS public.item_images ("],
+    [
+      "item_images unique storage path",
+      "CONSTRAINT item_images_storage_bucket_path_unique UNIQUE (storage_bucket, storage_path)",
+    ],
+    [
+      "item_images moderation state",
+      "moderation_state text NOT NULL DEFAULT 'accepted'::text CHECK (moderation_state = ANY (ARRAY['pending'::text, 'accepted'::text, 'rejected'::text, 'flagged'::text, 'deleted'::text]))",
+    ],
+    [
+      "item_images one cover",
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_item_images_one_cover_per_item ON public.item_images(item_id) WHERE is_cover;",
+    ],
+  ];
+
+  for (const [label, expectedSql] of requiredProductModelSql) {
+    requireIncludes(schema, expectedSql, `Missing product model contract in supabase/schema.sql: ${label}`);
+  }
+
+  const requiredProductPolicies = [
+    "Admins can view item versions",
+    "No direct item version inserts",
+    "No direct item version updates",
+    "No direct item version deletes",
+    "Validated users can view accepted item images",
+    "No direct item image inserts",
+    "No direct item image updates",
+    "No direct item image deletes",
+  ];
+
+  for (const policyName of requiredProductPolicies) {
+    requirePolicyCreate(schema, policyName);
   }
 
   requireIncludes(schema, "INSERT INTO storage.buckets", "Missing Storage bucket setup in supabase/schema.sql.");
