@@ -47,6 +47,8 @@ Secret-free checks should run for ordinary pull requests:
 
 - `pnpm install --frozen-lockfile`
 - `pnpm check:config`
+- `pnpm test:copy`
+- `pnpm check:copy`
 - `pnpm lint`
 - `pnpm exec tsc --noEmit`
 - `pnpm build` with safe public dummy Supabase values when needed
@@ -72,6 +74,7 @@ Documentation should be compact, practical, and link to the source of truth.
 - Put agent-only operating details in `.agents/`.
 - Keep `AGENTS.md` short and navigational.
 - Develop docs in this repository so they can later publish cleanly to GitHub Pages.
+- Keep English documentation in English; `pnpm check:copy` blocks configured German organization terms in English docs/source-of-truth files.
 
 ## Hyperoptimum Practice
 

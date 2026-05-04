@@ -1,0 +1,62 @@
+import assert from "node:assert/strict";
+import { mkdtemp, rm, writeFile, mkdir } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import test from "node:test";
+
+import { findForbiddenEnglishCopyTerms } from "./check-copy.mjs";
+
+async function withFixture(files, callback) {
+  const root = await mkdtemp(path.join(os.tmpdir(), "bringa-copy-check-"));
+
+  try {
+    for (const [filePath, content] of Object.entries(files)) {
+      const absolutePath = path.join(root, filePath);
+      await mkdir(path.dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, content);
+    }
+
+    await callback(root);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+}
+
+test("finds forbidden German organization words in English docs", async () => {
+  await withFixture(
+    {
+      "docs/index.md": "A Verein should not appear in English docs.\n",
+      "docs/nested/page.md": "English copy for local Vereine.\n",
+      "docs/allowed.md": "Avereine and vereinbarung are not exact words.\n",
+    },
+    async (root) => {
+      const matches = await findForbiddenEnglishCopyTerms({ root, targets: ["docs"] });
+
+      assert.deepEqual(
+        matches.map(({ relativePath, lineNumber, term }) => ({ relativePath, lineNumber, term })),
+        [
+          { relativePath: "docs/index.md", lineNumber: 1, term: "Verein" },
+          { relativePath: "docs/nested/page.md", lineNumber: 1, term: "Vereine" },
+        ],
+      );
+    },
+  );
+});
+
+test("ignores configured documentation paths", async () => {
+  await withFixture(
+    {
+      "docs/index.md": "English copy is clean.\n",
+      "docs/prompts/legacy.md": "Legacy prompt with Verein is ignored.\n",
+    },
+    async (root) => {
+      const matches = await findForbiddenEnglishCopyTerms({
+        root,
+        targets: ["docs"],
+        ignoredPathPrefixes: ["docs/prompts/"],
+      });
+
+      assert.deepEqual(matches, []);
+    },
+  );
+});

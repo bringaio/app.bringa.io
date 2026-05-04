@@ -41,6 +41,12 @@ jobs:
       - name: Test config layering
         run: pnpm test:config
 
+      - name: Test copy checker
+        run: pnpm test:copy
+
+      - name: Check English documentation copy
+        run: pnpm check:copy
+
       - name: Check Supabase contract
         run: pnpm check:supabase-contract
 

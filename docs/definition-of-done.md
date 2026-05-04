@@ -21,6 +21,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 
 - `pnpm check:config`
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
+- `pnpm test:copy` and `pnpm check:copy` when docs, agent instructions, or public source-of-truth copy changes
 - `pnpm lint`
 - `pnpm exec tsc --noEmit`
 - `pnpm build` with safe public Supabase values when build behavior may be affected

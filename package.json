@@ -6,7 +6,9 @@
   "scripts": {
     "generate:config": "node scripts/generate-config.mjs",
     "test:config": "node --test scripts/generate-config.test.mjs",
+    "test:copy": "node --test scripts/check-copy.test.mjs",
     "check:config": "node scripts/generate-config.mjs --check",
+    "check:copy": "node scripts/check-copy.mjs",
     "check:supabase-contract": "node scripts/check-supabase-contract.mjs",
     "backup:supabase": "node scripts/backup-supabase.mjs",
     "predev": "node scripts/generate-config.mjs",
