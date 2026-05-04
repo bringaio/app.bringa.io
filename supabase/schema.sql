@@ -82,6 +82,21 @@ CREATE TABLE IF NOT EXISTS public.item_sharing (
     CONSTRAINT item_sharing_pkey PRIMARY KEY (id)
 );
 
+-- Storage bucket for item images.
+-- Keep limits aligned with config/bringa.config.jsonc media settings.
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'items',
+    'items',
+    true,
+    10485760,
+    ARRAY['image/jpeg', 'image/png', 'image/webp']
+)
+ON CONFLICT (id) DO UPDATE SET
+    public = EXCLUDED.public,
+    file_size_limit = EXCLUDED.file_size_limit,
+    allowed_mime_types = EXCLUDED.allowed_mime_types;
+
 
 -- 3. FOREIGN KEYS (Added after tables to ensure tables exist)
 ALTER TABLE public.profiles ADD CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE;
@@ -423,6 +438,15 @@ CREATE POLICY "Users can view shared items" ON public.item_sharing FOR SELECT US
 DROP POLICY IF EXISTS "Users can share own items" ON public.item_sharing;
 CREATE POLICY "Users can share own items" ON public.item_sharing FOR ALL USING (
     EXISTS (SELECT 1 FROM public.items WHERE items.id = item_sharing.item_id AND items.created_by = auth.uid()) OR public.is_admin()
+);
+
+-- storage.objects
+DROP POLICY IF EXISTS "Validated users can upload item images" ON storage.objects;
+CREATE POLICY "Validated users can upload item images" ON storage.objects
+FOR INSERT TO authenticated
+WITH CHECK (
+    bucket_id = 'items'
+    AND public.is_validated()
 );
 
 -- 7. TRIGGERS

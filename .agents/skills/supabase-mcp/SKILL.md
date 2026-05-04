@@ -25,6 +25,7 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 - Which Storage buckets exist, and what are their size/type/RLS limits?
 - How should deleted users, owner reassignment, item visibility, and image retention be enforced in SQL?
 - Which changes must be made through migrations, RPCs, or edge functions rather than direct client table access?
+- Are Storage object cleanup and backup flows using the Storage API rather than direct SQL metadata deletes?
 
 ## MCP Notes
 

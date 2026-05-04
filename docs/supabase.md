@@ -27,6 +27,18 @@ When Supabase MCP and service role access are available, inspect:
 
 Use the audit checklist to compare local UI behavior, schema, migrations, Storage, and Edge Functions before proposing migrations.
 
+## Storage Contract
+
+The upstream schema creates a public `items` bucket for item images and mirrors the default media settings from `config/bringa.config.jsonc`:
+
+- MIME types: `image/jpeg`, `image/png`, `image/webp`
+- File size limit: `10485760` bytes
+- Upload permission: validated authenticated users can insert into the `items` bucket
+
+Public buckets provide public download URLs. Upload, list, update, and delete operations still require Storage policies.
+
+Storage object deletion must go through the Storage API, not direct SQL, so that files are removed instead of orphaned.
+
 ## Privacy Default
 
 Do not query real user contents unless the user explicitly approves it for the task. Counts, schema, policies, and anonymized examples are preferred.

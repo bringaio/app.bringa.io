@@ -110,20 +110,20 @@ Current UI:
 
 Current schema:
 
-- `supabase/schema.sql` does not define Storage bucket creation or object policies.
+- `supabase/schema.sql` defines the public `items` bucket with MIME and file-size limits.
+- `storage.objects` allows validated authenticated users to upload into the `items` bucket.
 - Older migrations contain legacy Storage policy material that may not match the generic upstream.
 
 Risk:
 
-- Frontend validation can be bypassed.
-- Fresh setups may miss bucket policies.
-- Edit and create flows allow different input.
+- Live projects must include the Storage bucket migration before relying on server-side upload limits.
 - Deleting an item does not clean up or preserve images according to a documented policy.
+- SQL deletes must not be used to remove Storage objects because that can orphan files.
 
 Target:
 
 - Define bucket creation, MIME allowlist, size limits, ownership paths, public/private access, cleanup, and export behavior in one place.
-- Align create and edit upload validation with `config/bringa.config.jsonc`.
+- Keep create/edit upload validation aligned with `config/bringa.config.jsonc`.
 
 ### Edge Functions And Telegram
 
