@@ -12,8 +12,7 @@ import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { Package } from "lucide-react";
 import { AppImage } from "@/components/ui/app-image";
-
-type DashboardView = "borrowed" | "available" | "all";
+import { buildDashboardItemFilters, type DashboardView } from "@/lib/dashboard-item-query";
 
 export default function DashboardPage() {
     const [query, setQuery] = useState("")
@@ -32,18 +31,21 @@ export default function DashboardPage() {
         try {
             setLoading(true);
             let queryBuilder = supabase.from('items').select('*').order('name', { ascending: true });
+            const filterPlan = buildDashboardItemFilters({
+                userId: currentUser?.id ?? null,
+                query: searchQuery,
+                view: selectedView,
+            });
 
-            if (searchQuery) {
-                queryBuilder = queryBuilder.ilike('name', `%${searchQuery}%`);
-            } else if (selectedView === "borrowed") {
-                if (currentUser) {
-                    queryBuilder = queryBuilder.eq('borrowed_by', currentUser.id);
-                } else {
-                    setResults([]);
-                    return;
-                }
-            } else if (selectedView === "available") {
-                queryBuilder = queryBuilder.eq('status', 'inStock');
+            if (filterPlan.empty) {
+                setResults([]);
+                return;
+            }
+
+            for (const filter of filterPlan.filters) {
+                queryBuilder = filter.method === "eq"
+                    ? queryBuilder.eq(filter.column, filter.value)
+                    : queryBuilder.ilike(filter.column, filter.value);
             }
 
             const { data, error } = await queryBuilder;

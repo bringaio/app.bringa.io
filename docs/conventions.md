@@ -52,6 +52,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:config`
 - `pnpm test:copy`
 - `pnpm test:docs-index`
+- `pnpm test:dashboard-query`
 - `pnpm test:admin-notification-settings`
 - `pnpm test:admin-deletion-requests`
 - `pnpm test:admin-queue-counts`

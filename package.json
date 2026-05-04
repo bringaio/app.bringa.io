@@ -12,6 +12,7 @@
     "test:config": "node --test scripts/generate-config.test.mjs",
     "test:copy": "node --test scripts/check-copy.test.mjs",
     "test:docs-index": "node --test scripts/check-docs-index.test.mjs",
+    "test:dashboard-query": "node --test scripts/dashboard-item-query.test.mjs",
     "test:admin-notification-settings": "node --test scripts/admin-notification-settings.test.mjs",
     "test:admin-deletion-requests": "node --test scripts/admin-deletion-requests.test.mjs",
     "test:admin-queue-counts": "node --test scripts/admin-queue-counts.test.mjs",

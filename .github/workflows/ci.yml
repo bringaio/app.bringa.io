@@ -42,6 +42,9 @@ jobs:
       - name: Test docs index checker
         run: pnpm test:docs-index
 
+      - name: Test dashboard item query filters
+        run: pnpm test:dashboard-query
+
       - name: Test admin notification settings
         run: pnpm test:admin-notification-settings
 

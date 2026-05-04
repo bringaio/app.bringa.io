@@ -30,7 +30,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 ## Product Model
 
 - Item ownership: wire prepared `owner_kind`, `owner_profile_id`, and `owner_label` through RPCs and UI for operator-owned, profile-owned, and free-text owner cases. Impact: deletion, visibility, export, and legal meaning become explicit. Uncertainty/research: legal wording for "private gift to the portal" needs operator review.
-- Remaining item visibility lifecycle: build user-facing hide/request-visible controls on top of the admin `set_item_visibility` RPC, and keep list filters, counts, and empty states aligned with RLS visibility. Impact: users retain agency while admins keep moderation control.
+- Remaining item visibility lifecycle: build user-facing hide/request-visible controls on top of the admin `set_item_visibility` RPC, and keep empty states aligned as those flows land. Impact: users retain agency while admins keep moderation control.
 - User deletion behavior: preserve operator-owned items, hide user-owned or free-owner items, keep admin recovery/edit paths, and define Storage retention. Impact: privacy and continuity. Uncertainty/research: Auth deletion hooks and data export requirements need Supabase verification.
 - Profile scope: profiles are not versioned, but may later support avatars, links, contact info, public pages, and profile moderation. Impact: community trust and accountability. Uncertainty/research: decide what profile data is public by default.
 - Public-domain intent: users should feel that item entries and images are a private gift to the portal and intended for the commons. Impact: clear contribution culture. Uncertainty/research: CC0/public-domain fallback wording must stay deployment-specific and non-legal-advice.

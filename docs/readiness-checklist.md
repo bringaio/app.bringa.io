@@ -37,6 +37,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 ## User Experience
 
 - [x] Dashboard defaults to borrowed items only when the user has current borrowed items.
+- [x] Dashboard public item lists and search filter to visible items while borrowed view stays user-scoped.
 - [x] Create/edit image flow has config-driven validation and immediate preview.
 - [x] Settings exposes repo links, issue prompt copy, JSON data export, and account deletion request.
 - [x] Item details let users suggest changes or flag issues for admin review.
@@ -69,6 +70,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
+- [ ] `pnpm test:dashboard-query`
 - [ ] `pnpm test:copy`
 - [ ] `pnpm test:docs-index`
 - [ ] `pnpm test:admin-notification-settings`
