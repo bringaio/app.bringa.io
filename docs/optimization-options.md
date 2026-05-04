@@ -4,6 +4,8 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 ## Active Near-Term
 
+- Quality loop: keep `docs/definition-of-done.md`, `.agents/workflows/quality-loop.md`, and CI aligned as the repository matures.
+- CI foundation: add required secret-free GitHub Actions checks, then protect `main` once the workflow is stable.
 - Supabase hardening: verify schema, RLS, triggers, Storage policies, Auth redirects, invite RPC, deletion behavior, admin edits, and Telegram throttling after MCP/service-role setup.
 - Item ownership: model operator-owned, profile-owned, and free-text owner cases; enforce visibility after user deletion.
 - Images: multiple images, immediate previews, size/type limits, Storage cleanup, title image, newest-first ordering, per-image flags, and download/export behavior.
@@ -18,6 +20,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 - Federated/decentralized peer-to-peer architecture.
 - GitHub Template mode as primary distribution model; current default is upstream-plus-forks.
 - Dev-mode auth bypass and impersonation. This needs a security design before implementation.
+- Merge queue. Consider only after the repository has enough PR volume to justify it.
 
 ## Questions Waiting For User
 
