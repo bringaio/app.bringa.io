@@ -1,41 +1,39 @@
-# Create Telegram Bot to notify about database changes
+# Telegram Notifications
 
-## Create Bot
+Telegram is currently implemented through Supabase Edge Functions and database webhooks.
 
-1. Open BotFather chat
-2. Start a chat with the BotFather
-3. Type /newbot
-4. Follow the instructions to create a new bot
-5. Save the Token.
+## Environment Variables
 
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+- `TELEGRAM_BOT_TOKEN_USER`
+- `TELEGRAM_CHAT_ID_USER`
+- `APP_URL`
 
-## Add Bot to Group
+Set these as Supabase function secrets, not in public config.
 
-1. Crate a new Group
-2. Add the Bot to the Group
-3. Give the bot admin permissions to receive and send messages
-4. Write 'test' into the chat.
-5. visit: https://api.telegram.org/bot<BotToken>/getUpdates
-6. Copy the chatId from the response
+## Current Function Names
 
-## Configure Supabase
+The current functions are named:
 
-1. Download Supabase cli
-2. Login to Supabase
-3. Create a new function: `npx supabase functions create notify-telegram`
-4. Add credentials to the function: `npx supabase functions secrets set notify-telegram BOT_TOKEN=<BotToken> CHAT_ID=<ChatId>`
+- `notifiy-telegram`
+- `notifiy-telegram-user`
 
-## Deploy Function
+The typo is part of the current deployed surface and should only be renamed with a migration plan for triggers/webhooks.
 
-1. Deploy the function: `npx supabase functions deploy notify-telegram`
-2. Save the url you get from deploying
+## Setup
 
-## Enable function via WebHook
+1. Create a bot with BotFather.
+2. Add the bot to the target admin group.
+3. Send a test message in the group.
+4. Read updates from `https://api.telegram.org/bot<BOT_TOKEN>/getUpdates` and copy the chat id.
+5. Store secrets with the Supabase CLI or dashboard.
+6. Deploy the Edge Function.
+7. Configure the database webhook or trigger.
 
-1. In Supbase -> Database > WebHooks -> create new webhook
-2. Enter webhhook name
-3. Select trigger type
-4. Webhook Configuration: supabase Edge Function
-5. Edge Function type: POST
-6. Webhook URL: <url you saved from deploying>
-7. Create Webhook
+## Planned Improvements
+
+- Send only the first notification for a user's pending queue until an admin views the latest request.
+- Allow admins to mute a user permanently, for one day, or for one week.
+- Move hardcoded URLs to `APP_URL` and deployment config.
+- Rename functions only when triggers and docs can be migrated safely.

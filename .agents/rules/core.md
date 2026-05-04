@@ -1,0 +1,11 @@
+# Core Agent Rules
+
+- Treat `config/bringa.config.jsonc` as the public deployment source of truth; regenerate with `pnpm generate:config`.
+- Ask whether GitHub/GitLab issues should be processed at the start of a new session.
+- Ask whether a Supabase backup should be run when a service role key is available; if the user has previously answered "always", run `pnpm backup:supabase` first.
+- Keep `AGENTS.md` short. Put durable rules, skills, and workflows in `.agents/`.
+- Keep texts compact, kind, and precise. Prefer one clear source of truth over repeated explanations.
+- Record useful but out-of-scope ideas in `docs/optimization-options.md`; do not implement them without user intent unless they are necessary for the current task.
+- Use Conventional Commits for meaningful checkpoints.
+- Before adding packages or tools, check current best practice from official docs or trusted current sources when network access is available.
+- The guiding ideal is the hyperoptimum: coherent, privacy-preserving, maintainable progress that improves the whole system without overbuilding the present step.

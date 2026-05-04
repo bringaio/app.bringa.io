@@ -1,110 +1,80 @@
-<div align="center">
+# bringa.io
 
-  # Bringa
+Open source sharing and borrowing software for communities, clubs, and associations.
 
-  _Open Source Inventory Sharing and Borrowing Management for Associations (Vereine)_
+[Configuration](docs/configuration.md) | [Supabase](docs/supabase.md) | [Maintenance](docs/maintenance.md) | [Roadmap](docs/roadmap.md) | [Security](SECURITY.md)
 
-  ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+## Status
 
-  [Getting Started](#getting-started) · [Features](#features) · [Setup](#setup) · [Security](SECURITY.md)
+This repository is the upstream app for `app.bringa.io`. Organization-specific deployments, such as a CONTEKT fork, should keep branding, legal text, repository links, and operator defaults in configuration or fork-owned docs instead of hardcoding them across the app.
 
-</div>
+## Stack
 
----
+- Next.js static export
+- React
+- Supabase Auth, Postgres, Storage, RLS, and Edge Functions
+- pnpm
 
-## About Bringa
-
-**Bringa** is a modern, collaborative inventory management and borrowing system, tailored specifically for the needs of communities, clubs, and associations (Vereine). It makes it simple to track what items you have, who has borrowed what, and when items are due back.
-
-This project is fully open-source and maintained by our association to help other communities manage their shared resources efficiently.
-
-## Key Features
-
-- **📦 Inventory Management:** Organize and manage items with detailed descriptions, images, and metadata.
-- **🤝 Borrowing System:** Track borrowed items with a full borrowing history and borrower information.
-- **🔐 Admin Dashboard:** Comprehensive admin views with system-wide item tracking and borrowing analytics.
-- **👤 User Authentication:** Secure OAuth integration (Google/GitHub).
-- **🎨 Modern UI:** Beautiful, responsive interface with dark/light theme support.
-- **⚡ Real-Time Sync:** Instant updates powered by Supabase.
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and pnpm (or npm/yarn)
-- Supabase project (free tier available)
-- Git
-
-### Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/<your-org>/bringa.git
-   cd bringa
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-   Configure your Supabase credentials and OAuth providers in `.env.local`.
-
-4. **Run the development server**
-   ```bash
-   pnpm dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Setup & Configuration
-
-### Database Setup
-
-Bringa uses Supabase for its backend. To set up the database schema, run the latest SQL migration in the `supabase/migrations/` directory using the Supabase SQL Editor in your dashboard, or via the Supabase CLI:
+## Quick Start
 
 ```bash
-npx supabase migration up
+pnpm install
+cp .env.example .env.local
+pnpm generate:config
+pnpm dev
 ```
 
-Key tables include:
-- `profiles` - User profiles and metadata
-- `items` - Inventory items
-- `borrow_history` - Borrowing transaction logs
-- `admins` - Admin user roles
-- `invite_codes` - Invitation system management
+Open `http://localhost:3000`.
 
-### Authentication
+## Configuration
 
-Configure OAuth providers in your Supabase project dashboard:
-- **Google OAuth:** Get credentials from [Google Cloud Console](https://console.cloud.google.com)
-- **GitHub OAuth:** Create application in [GitHub Settings](https://github.com/settings/developers)
+Public deployment settings live in `config/bringa.config.jsonc`.
 
-## Security
+```bash
+pnpm generate:config
+pnpm check:config
+```
 
-We take security seriously. Please ensure that you **never commit your `.env` files** to version control. If you discover a vulnerability, please reach out to the maintainers privately rather than opening a public issue.
+Secrets stay in `.env.local` or the deployment provider. Never put service role keys in public config.
 
-See [SECURITY.md](SECURITY.md) for more details.
+## Supabase
+
+Read `docs/supabase.md` before changing schema, RLS, Auth, Storage, or Edge Functions.
+
+When a service role key is available, table backups can be created with:
+
+```bash
+pnpm backup:supabase
+```
+
+Backups are written to `backups/`, which is ignored by Git. Storage objects and Auth users need separate export steps.
+
+## Agents
+
+Agents should start with `AGENTS.md`, then read relevant rules, skills, and workflows in `.agents/`.
+
+Important sources of truth:
+
+- `.agents/rules/core.md`
+- `.agents/rules/privacy-and-supabase.md`
+- `docs/optimization-options.md`
+- `docs/issue-prompt-template.md`
+
+## Verification
+
+```bash
+pnpm check:config
+pnpm exec tsc --noEmit
+pnpm lint
+pnpm build
+```
+
+`pnpm lint` currently reports known legacy issues. Keep new work scoped and document unrelated failures until the lint cleanup is complete.
 
 ## Contributing
 
-We welcome contributions from the community! Whether you are a member of our association or an external developer, feel free to contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Use Conventional Commits and small pull requests. Preserve fork-specific config and legal/branding text when syncing from upstream.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-Made with ❤️ for communities and Vereine.
-</div>
+MIT. See `LICENSE`.
