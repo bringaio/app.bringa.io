@@ -6,6 +6,8 @@ title: Forking
 
 Forks should be able to customize identity, legal text, deployment settings, and operations without making upstream pull requests painful.
 
+For the content layering model, see [Fork Content Strategy](fork-content-strategy.md).
+
 ## Recommended Model
 
 Use deployment profiles instead of editing the same root files in every fork.

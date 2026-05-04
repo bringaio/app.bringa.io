@@ -9,7 +9,7 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 
 ## Before Connecting
 
-- Read `docs/supabase.md`, `docs/maintenance.md`, and the Supabase entries in `docs/optimization-options.md`.
+- Read `docs/supabase.md`, `docs/supabase-contract-audit.md`, `docs/maintenance.md`, and the Supabase entries in `docs/optimization-options.md`.
 - Confirm the target: production, staging, or development.
 - Confirm whether real user data may be inspected. Default: no.
 - Run or offer `pnpm backup:supabase` when `SUPABASE_SERVICE_ROLE_KEY` is available.

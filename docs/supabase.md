@@ -6,6 +6,8 @@ title: Supabase
 
 Supabase is the current backend for Auth, Postgres, Storage, RLS, and Edge Functions.
 
+Before changing schema or policies, read [Supabase Contract Audit](supabase-contract-audit.md).
+
 ## Before MCP Access
 
 - Configure `.env.local` from `.env.example`.
@@ -22,6 +24,8 @@ When Supabase MCP and service role access are available, inspect:
 - Whether invite validation, admin promotion, borrow/return, visibility, deletion, and moderation should move behind RPC functions.
 - Edge Function names, secrets, app URL defaults, retry behavior, and Telegram notification throttling.
 - Storage limits for image MIME types, file size, animated formats, cleanup, title images, and export/download.
+
+Use the audit checklist to compare local UI behavior, schema, migrations, Storage, and Edge Functions before proposing migrations.
 
 ## Privacy Default
 

@@ -10,7 +10,9 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 
 - [Configuration](configuration.md): public app identity, branding, links, media limits, and feature switches.
 - [Forking](forking.md): keep upstream collaboration smooth while customizing legal, brand, and operator details.
+- [Fork Content Strategy](fork-content-strategy.md): layer config, legal text, brand assets, secrets, and CI for rebaseable forks.
 - [Supabase](supabase.md): prepare schema, RLS, Storage, Auth, Edge Functions, backups, and privacy-aware MCP work.
+- [Supabase Contract Audit](supabase-contract-audit.md): local app/schema mismatch checklist before live MCP review.
 - [Maintenance](maintenance.md): recurring operations and safety checks.
 
 ## Contributor Flow

@@ -11,6 +11,7 @@ Keep upstream changes easy to adopt by forks. Do not solve fork customization by
 
 - `docs/conventions.md`
 - `docs/forking.md`
+- `docs/fork-content-strategy.md`
 - `.agents/rules/source-of-truth.md`
 
 ## Rules
