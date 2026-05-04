@@ -31,7 +31,7 @@ export function useIsAdmin() {
                 } else {
                     setIsAdmin(!!data)
                 }
-            } catch (err) {
+            } catch {
                 // Ignore error to prevent leak
                 setIsAdmin(false)
             } finally {

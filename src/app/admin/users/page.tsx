@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseclient"
 import { Loader2, Users, ShieldAlert, ShieldCheck } from "lucide-react"
 import { Admin, Profile } from "@/app/model/model"
+import { AppImage } from "@/components/ui/app-image"
 
 export default function AdminUsersPage() {
     const router = useRouter()
@@ -120,7 +121,14 @@ export default function AdminUsersPage() {
                             <div key={profile.id} className="border rounded-lg p-4 bg-card shadow-sm flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     {profile.avatar_url ? (
-                                        <img src={profile.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover border" />
+                                        <AppImage
+                                            src={profile.avatar_url}
+                                            alt=""
+                                            width={48}
+                                            height={48}
+                                            sizes="48px"
+                                            className="w-12 h-12 rounded-full object-cover border"
+                                        />
                                     ) : (
                                         <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border text-muted-foreground">
                                             <Users className="w-5 h-5" />

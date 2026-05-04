@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload, Loader2 } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
+import { AppImage } from "@/components/ui/app-image"
 
 function EditItemContent() {
     const router = useRouter()
@@ -210,7 +211,14 @@ function EditItemContent() {
                                     <div className="flex flex-col items-center">
                                         {currentImageUrl ? (
                                             <div className="mb-2 relative w-20 h-20 rounded overflow-hidden">
-                                                <img src={currentImageUrl} alt="Current" className="w-full h-full object-cover" />
+                                                <AppImage
+                                                    src={currentImageUrl}
+                                                    alt="Current"
+                                                    width={80}
+                                                    height={80}
+                                                    sizes="80px"
+                                                    className="w-full h-full object-cover"
+                                                />
                                             </div>
                                         ) : (
                                             <Upload className="w-8 h-8 mb-2 text-muted-foreground" />

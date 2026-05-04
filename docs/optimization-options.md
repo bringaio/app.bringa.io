@@ -5,7 +5,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 ## Active Near-Term
 
 - Quality loop: keep `docs/definition-of-done.md`, `.agents/workflows/quality-loop.md`, and CI aligned as the repository matures.
-- CI foundation: secret-free GitHub Actions checks are present and include full lint; next steps are branch protection, docs build, and lint-warning cleanup.
+- CI foundation: secret-free GitHub Actions checks are present and include quiet full lint; next steps are branch protection and docs build.
 - Supabase hardening: verify schema, RLS, triggers, Storage policies, Auth redirects, invite RPC, deletion behavior, admin edits, and Telegram throttling after MCP/service-role setup.
 - Item ownership: model operator-owned, profile-owned, and free-text owner cases; enforce visibility after user deletion.
 - Images: multiple images, immediate previews, size/type limits, Storage cleanup, title image, newest-first ordering, per-image flags, and download/export behavior.

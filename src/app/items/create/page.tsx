@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Upload, Loader2 } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
+import { AppImage } from "@/components/ui/app-image"
 
 export default function CreateItemPage() {
     const router = useRouter()
@@ -175,9 +176,12 @@ export default function CreateItemPage() {
                                 {file ? (
                                     <div className="flex w-full flex-col items-center gap-3 text-center">
                                         {previewUrl && (
-                                            <img
+                                            <AppImage
                                                 src={previewUrl}
                                                 alt="Selected item image preview"
+                                                width={640}
+                                                height={360}
+                                                sizes="(max-width: 768px) 100vw, 640px"
                                                 className="h-36 w-full rounded-md border object-cover"
                                             />
                                         )}

@@ -47,7 +47,7 @@ Secret-free checks should run for ordinary pull requests:
 - `pnpm build` with safe public dummy Supabase values when needed
 - docs build once GitHub Pages docs are added
 
-Lint warnings may remain temporarily while compatibility and image-handling decisions are refined, but CI must reject new lint errors. Keep warning cleanup tracked in `docs/optimization-options.md` until it becomes boring.
+Lint should be quiet. Treat new warnings as work to resolve or as explicit technical debt that belongs in `docs/optimization-options.md`.
 
 Secret-required work belongs only on trusted branches and environments:
 

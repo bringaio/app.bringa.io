@@ -1,14 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import TopBar from "@/components/layout/topbar";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseclient";
 import { ItemDb } from "@/app/model/model";
-import { Loader2 } from "lucide-react";
+import { Loader2, Package } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useRouter } from "next/navigation";
+import { AppImage } from "@/components/ui/app-image";
 
 export default function AdminDashboardPage() {
     const router = useRouter();
@@ -149,14 +149,17 @@ export default function AdminDashboardPage() {
                             <div className="w-full border rounded-lg p-4 bg-card shadow-sm hover:shadow-md transition-shadow flex justify-between items-center">
                                 <div className="flex items-center gap-4">
                                     {item.image_url ? (
-                                        <img
+                                        <AppImage
                                             src={item.image_url}
                                             alt={item.name}
+                                            width={56}
+                                            height={56}
+                                            sizes="56px"
                                             className="w-14 h-14 rounded-lg object-cover border"
                                         />
                                     ) : (
-                                        <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border text-xl">
-                                            📦
+                                        <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border">
+                                            <Package className="h-6 w-6 text-muted-foreground" />
                                         </div>
                                     )}
                                     <div>

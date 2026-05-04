@@ -38,6 +38,6 @@ This is the current definition of done for upstream work. It is intentionally pr
 
 ## Current Known Exceptions
 
-- Full `pnpm lint` passes, but warnings remain for image optimization, unused imports, and hook dependency cleanup. Treat those warnings as active maintenance work rather than new-error tolerance.
+- Full `pnpm lint` is expected to pass without warnings.
 - Supabase MCP/service-role verification is pending. Do not claim production database hardening until schema, RLS, Storage, functions, and migrations have been reviewed with approved access.
 - The initial CI workflow is secret-free and does not deploy. Deployment, Supabase backups, and remote migrations require separate trusted workflows.

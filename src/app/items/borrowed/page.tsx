@@ -7,6 +7,7 @@ import { ItemDb } from "@/app/model/model";
 import { Loader2, Package } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item-card";
+import { AppImage } from "@/components/ui/app-image";
 
 export default function BorrowedItemsPage() {
     const [items, setItems] = useState<ItemDb[]>([]);
@@ -65,9 +66,12 @@ export default function BorrowedItemsPage() {
                                     <div className="w-full border rounded-lg p-4 bg-card shadow-sm hover:shadow-md transition-shadow flex justify-between items-center">
                                         <div className="flex items-center gap-4">
                                             {item.image_url ? (
-                                                <img
+                                                <AppImage
                                                     src={item.image_url}
                                                     alt={item.name}
+                                                    width={56}
+                                                    height={56}
+                                                    sizes="56px"
                                                     className="w-14 h-14 rounded-lg object-cover border"
                                                 />
                                             ) : (

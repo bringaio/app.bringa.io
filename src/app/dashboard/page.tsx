@@ -11,6 +11,7 @@ import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item
 import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { Package } from "lucide-react";
+import { AppImage } from "@/components/ui/app-image";
 
 type DashboardView = "borrowed" | "available" | "all";
 
@@ -149,11 +150,13 @@ export default function DashboardPage() {
                                     <div className="w-full border rounded-lg p-4 bg-card shadow-sm hover:shadow-md transition-shadow flex justify-between items-center">
                                         <div className="flex items-center gap-4">
                                             {item.image_url ? (
-                                                <img
+                                                <AppImage
                                                     src={item.image_url}
                                                     alt={item.name}
+                                                    width={56}
+                                                    height={56}
+                                                    sizes="56px"
                                                     loading="lazy"
-                                                    decoding="async"
                                                     className="w-14 h-14 rounded-lg object-cover border"
                                                 />
                                             ) : (

@@ -10,6 +10,7 @@ import Link from "next/link"
 import { User } from "@supabase/supabase-js"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
+import { AppImage } from "@/components/ui/app-image"
 
 function ItemDetailsContent() {
     const router = useRouter()
@@ -202,11 +203,13 @@ function ItemDetailsContent() {
                 <div className="max-w-2xl mx-auto px-4 pt-20 relative z-10">
                     <div className="bg-card rounded-xl shadow-sm border p-6 space-y-4">
                         {item.image_url ? (
-                            <img
+                            <AppImage
                                 src={item.image_url}
                                 alt={item.name}
+                                width={1200}
+                                height={800}
+                                sizes="(max-width: 768px) 100vw, 672px"
                                 loading="lazy"
-                                decoding="async"
                                 className="w-full h-full object-cover rounded-xl rounded-b-none"
                             />
                         ) : (

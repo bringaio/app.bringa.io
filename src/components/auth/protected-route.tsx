@@ -52,7 +52,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
                 setAuthenticated(true)
                 setProfileValid(true)
-            } catch (error) {
+            } catch {
                 if (mounted) router.replace("/login")
             } finally {
                 if (mounted) setLoading(false)
