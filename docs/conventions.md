@@ -49,6 +49,7 @@ Secret-free checks should run for ordinary pull requests:
 - `pnpm install --frozen-lockfile`
 - `pnpm check:config`
 - `pnpm test:copy`
+- `pnpm test:admin-deletion-requests`
 - `pnpm test:admin-user-items`
 - `pnpm check:copy`
 - `pnpm test:static-export`

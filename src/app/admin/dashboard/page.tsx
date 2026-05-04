@@ -16,6 +16,7 @@ import {
     PackageCheck,
     ShieldCheck,
     Sparkles,
+    Trash2,
     Users,
 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
@@ -33,9 +34,14 @@ export default function AdminDashboardPage() {
     }
 
     const [items, setItems] = useState<AdminItem[]>([]);
-    const [queueCounts, setQueueCounts] = useState<{ pendingSuggestions: number | null; pendingFlags: number | null }>({
+    const [queueCounts, setQueueCounts] = useState<{
+        pendingSuggestions: number | null;
+        pendingFlags: number | null;
+        openDeletionRequests: number | null;
+    }>({
         pendingSuggestions: null,
         pendingFlags: null,
+        openDeletionRequests: null,
     });
     const [loading, setLoading] = useState(true);
     const { isAdmin, loading: adminLoading } = useIsAdmin();
@@ -67,6 +73,7 @@ export default function AdminDashboardPage() {
         { label: "With images", value: stats.withImages, icon: ImageIcon },
         { label: "Suggestions", value: queueCounts.pendingSuggestions ?? "—", icon: Sparkles },
         { label: "Flags", value: queueCounts.pendingFlags ?? "—", icon: Flag },
+        { label: "Deletion requests", value: queueCounts.openDeletionRequests ?? "—", icon: Trash2 },
     ];
 
     const healthItems = [
@@ -89,6 +96,11 @@ export default function AdminDashboardPage() {
             label: "Flags",
             value: queueCounts.pendingFlags === null ? "Queue prepared" : `${queueCounts.pendingFlags} pending`,
             icon: Flag,
+        },
+        {
+            label: "Deletion requests",
+            value: queueCounts.openDeletionRequests === null ? "Queue prepared" : `${queueCounts.openDeletionRequests} open`,
+            icon: Trash2,
         },
     ];
 
@@ -176,22 +188,25 @@ export default function AdminDashboardPage() {
     useEffect(() => {
         const fetchQueueCounts = async () => {
             try {
-                const [suggestionsRes, flagsRes] = await Promise.all([
+                const [suggestionsRes, flagsRes, deletionRequestsRes] = await Promise.all([
                     supabase.from("item_suggestions").select("id,status"),
                     supabase.from("item_flags").select("id,status"),
+                    supabase.from("account_deletion_requests").select("id,status"),
                 ]);
 
-                if (suggestionsRes.error || flagsRes.error) {
-                    setQueueCounts({ pendingSuggestions: null, pendingFlags: null });
-                    return;
-                }
-
                 setQueueCounts({
-                    pendingSuggestions: (suggestionsRes.data || []).filter((row) => row.status === "pending").length,
-                    pendingFlags: (flagsRes.data || []).filter((row) => row.status === "pending").length,
+                    pendingSuggestions: suggestionsRes.error
+                        ? null
+                        : (suggestionsRes.data || []).filter((row) => row.status === "pending").length,
+                    pendingFlags: flagsRes.error
+                        ? null
+                        : (flagsRes.data || []).filter((row) => row.status === "pending").length,
+                    openDeletionRequests: deletionRequestsRes.error
+                        ? null
+                        : (deletionRequestsRes.data || []).filter((row) => row.status === "pending" || row.status === "reviewing").length,
                 });
             } catch {
-                setQueueCounts({ pendingSuggestions: null, pendingFlags: null });
+                setQueueCounts({ pendingSuggestions: null, pendingFlags: null, openDeletionRequests: null });
             }
         };
 
@@ -228,6 +243,12 @@ export default function AdminDashboardPage() {
                                     Moderation Queue
                                 </button>
                             </Link>
+                            <Link href="/admin/deletion-requests">
+                                <button className="inline-flex items-center gap-2 rounded-md border bg-card px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-accent">
+                                    <Trash2 className="h-4 w-4" />
+                                    Deletion Requests
+                                </button>
+                            </Link>
                             <Link href="/admin/users">
                                 <button className="px-4 py-2 rounded-md bg-orange-600 text-white shadow hover:bg-orange-700 transition-colors text-sm font-medium">
                                     Manage Users
@@ -253,7 +274,7 @@ export default function AdminDashboardPage() {
                         ))}
                     </section>
 
-                    <section className="grid gap-3 md:grid-cols-4">
+                    <section className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
                         {healthItems.map(({ label, value, icon: Icon }) => (
                             <div key={label} className="rounded-lg border bg-card p-3">
                                 <div className="flex items-center gap-2">

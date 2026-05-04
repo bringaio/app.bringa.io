@@ -11,6 +11,7 @@
     "generate:config": "node scripts/generate-config.mjs",
     "test:config": "node --test scripts/generate-config.test.mjs",
     "test:copy": "node --test scripts/check-copy.test.mjs",
+    "test:admin-deletion-requests": "node --test scripts/admin-deletion-requests.test.mjs",
     "test:admin-user-items": "node --test scripts/admin-user-items.test.mjs",
     "test:static-export": "node --test scripts/check-static-export.test.mjs",
     "check:config": "node scripts/generate-config.mjs --check",

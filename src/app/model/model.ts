@@ -11,6 +11,7 @@ export type ItemSuggestionType = "content" | "image" | "visibility" | "owner" | 
 export type ItemSuggestionStatus = "pending" | "reviewing" | "accepted" | "rejected" | "closed";
 export type ItemFlagReason = "incorrect" | "unavailable" | "unsafe" | "image" | "spam" | "other";
 export type ItemFlagStatus = "pending" | "reviewing" | "resolved" | "dismissed";
+export type AccountDeletionRequestStatus = "pending" | "reviewing" | "completed" | "cancelled";
 
 export interface ItemDb {
   id: string; // UUID
@@ -113,4 +114,17 @@ export interface ItemFlag {
   reviewed_at: string | null;
   reviewed_by: string | null;
   created_at: string;
+}
+
+export interface AccountDeletionRequest {
+  id: string;
+  user_id: string;
+  status: AccountDeletionRequestStatus;
+  user_note: string | null;
+  admin_note: string | null;
+  requested_at: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  completed_at: string | null;
+  created_at: string | null;
 }

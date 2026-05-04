@@ -44,6 +44,9 @@ jobs:
       - name: Test copy checker
         run: pnpm test:copy
 
+      - name: Test admin deletion request summary
+        run: pnpm test:admin-deletion-requests
+
       - name: Test admin user item grouping
         run: pnpm test:admin-user-items
 

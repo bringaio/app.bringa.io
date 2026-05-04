@@ -46,7 +46,9 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Admin dashboard shows item counts, visibility states, media stats, and system-readiness placeholders.
 - [x] Admin users route supports admin promotion and demotion with self-demotion protection.
 - [x] Admin moderation route lists suggestions and flags and reviews status through RPCs.
-- [ ] Admin user item views, accepted-suggestion application, version restore, deletion processing, and notification settings are complete.
+- [x] Admin user item views group current borrower, owner, and creator relationships for one profile.
+- [x] Admin deletion request queue lists operator-reviewed account deletion requests without destructive action.
+- [ ] Accepted-suggestion application, version restore, approved deletion execution, and notification settings are complete.
 
 ## Operations
 
@@ -61,6 +63,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
 - [ ] `pnpm test:copy`
+- [ ] `pnpm test:admin-deletion-requests`
 - [ ] `pnpm test:admin-user-items`
 - [ ] `pnpm check:copy`
 - [ ] `pnpm test:static-export`

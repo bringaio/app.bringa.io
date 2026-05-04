@@ -11,6 +11,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 - `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, and system-readiness placeholders.
 - `/admin/users`: profile list, admin promotion, admin demotion, and self-demotion protection.
 - `/admin/user-items?id=<profile-id>`: admin-only item view grouped by current borrower, owner, and creator relationship for one profile.
+- `/admin/deletion-requests`: read-only operator queue for account deletion requests, linked to per-user item review.
 - `/admin/invite-code`: current admin invite code display and update flow.
 - `/admin/moderation`: item suggestions and flags, with admin review actions routed through RPCs.
 
@@ -20,10 +21,13 @@ Moderation queue records live in Supabase:
 
 - `item_suggestions`: user suggestions for content, images, visibility, owner, or other item changes.
 - `item_flags`: user issue reports with a bounded reason set.
+- `account_deletion_requests`: user account deletion requests for operator triage before any approved destructive workflow.
 
 Users create these records through `create_item_suggestion` and `create_item_flag`. Admins transition state through `review_item_suggestion` and `review_item_flag`. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
 Status transitions currently record reviewer and reviewed time. They do not yet apply accepted suggestions to item records, create item versions, notify users, or update Telegram seen-state.
+
+The deletion request route is read-only. It does not delete Supabase Auth users, Storage objects, item images, item records, or profile rows.
 
 ## Privacy Defaults
 
@@ -32,6 +36,7 @@ Status transitions currently record reviewer and reviewed time. They do not yet 
 - Do not inspect real user rows through Supabase tools unless the maintainer explicitly approves that access for the current task.
 - Run or offer `pnpm backup:supabase` before production database work when a service role key is available.
 - Use `/admin/user-items` for item review instead of copying user item lists into chat or external systems.
+- Use `/admin/deletion-requests` for account deletion triage instead of exporting deletion request rows into chat or issue comments.
 
 ## Before Production Changes
 
@@ -51,4 +56,4 @@ Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 - hide/unhide reason flows from user item review;
 - Telegram dedupe, mute windows, and seen-state;
 - backup freshness and Supabase health visibility;
-- account deletion processing, Auth deletion, and Storage cleanup.
+- approved account deletion execution, Auth deletion, and Storage cleanup.

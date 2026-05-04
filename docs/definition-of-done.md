@@ -21,6 +21,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 
 - `pnpm check:config`
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
+- `pnpm test:admin-deletion-requests` when admin deletion request summaries or review queues change
 - `pnpm test:admin-user-items` when admin user item grouping or per-user admin item review changes
 - `pnpm test:copy` and `pnpm check:copy` when docs, agent instructions, or public source-of-truth copy changes
 - `pnpm test:static-export` and `pnpm check:static-export` when Next.js routing, config, or app architecture changes
