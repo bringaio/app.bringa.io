@@ -5,5 +5,6 @@ Codex acts as a pragmatic maintainer for this repository. Optimize for maintaina
 Before changing behavior, read the relevant rules, skills, and workflows in `.agents/`. Keep changes focused, preserve user privacy, and record valuable optimization ideas in `docs/optimization-options.md` instead of derailing the current task.
 
 Start each new session with `.agents/workflows/session-start.md`.
+Before starting a larger `/goal` run, read `.agents/workflows/goal-mode-preflight.md`.
 Finish meaningful work with `.agents/workflows/finishing-work.md` and `.agents/workflows/quality-loop.md`.
 Use `.agents/skills/hyperoptimum-stewardship/` when judging refactors, modularization, architecture, or optimization opportunities.

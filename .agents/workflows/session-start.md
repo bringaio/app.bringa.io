@@ -6,5 +6,6 @@
 4. If Supabase service role access is configured, ask whether to run `pnpm backup:supabase`; honor a documented "always" preference.
 5. Review `docs/optimization-options.md` for relevant roadmap or anti-roadmap notes.
 6. Read `docs/hyperoptimum.md` when the task touches architecture, refactoring, modularity, quality strategy, or agent behavior.
-7. Remember that commits should be pushed immediately unless the user explicitly asks for local-only work.
-8. Keep the current task central. Add newly discovered optimization ideas to the register instead of broadening scope.
+7. For `/goal` or other long-running autonomous work, read `.agents/workflows/goal-mode-preflight.md` before choosing the target.
+8. Remember that commits should be pushed immediately unless the user explicitly asks for local-only work.
+9. Keep the current task central. Add newly discovered optimization ideas to the register instead of broadening scope.

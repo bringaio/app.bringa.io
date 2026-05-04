@@ -4,43 +4,100 @@ title: Optimization Options
 
 # Optimization Options
 
-This file is the living roadmap and anti-roadmap for ideas discovered by users and agents. Keep it compact. Remove completed items once the implementation or docs become the source of truth.
+This file is the living roadmap and anti-roadmap for ideas discovered by users and agents. Keep it compact. Remove completed items once implementation, tests, docs, or git history become the source of truth.
 
 ## How To Record Ideas
 
 - Add modularization, refactoring, documentation, test, accessibility, performance, reliability, security, observability, and developer-experience opportunities here when they are useful but outside the current task.
 - Include likely impact, affected area, uncertainty, possible side effects, and research needs when those are not obvious.
+- Record feedback even when a user declines or defers an idea. This keeps the anti-roadmap visible in future sessions.
 - Keep the current task central. Do not expand scope just because an optimization was noticed.
 - Remove entries when implementation, tests, docs, or agent rules become the durable source of truth.
 
-## Active Near-Term
+## Active Goal Candidates
 
-- Quality loop: keep `docs/definition-of-done.md`, `.agents/workflows/quality-loop.md`, and CI aligned as the repository matures.
-- Hyperoptimum stewardship: keep `docs/hyperoptimum.md`, `.agents/rules/core.md`, and `.agents/skills/hyperoptimum-stewardship/` aligned as the repository learns from future work.
-- CI foundation: secret-free GitHub Actions checks are present, include quiet full lint, and publish docs from `main`; next step is applying branch protection and repository settings in GitHub.
-- Supabase hardening: verify schema, RLS, triggers, Storage policies, Auth redirects, invite RPC, deletion behavior, admin edits, and Telegram throttling after MCP/service-role setup.
-- Item ownership: model operator-owned, profile-owned, and free-text owner cases; enforce visibility after user deletion.
-- Images: multiple images, immediate previews, size/type limits, Storage cleanup, title image, newest-first ordering, per-image flags, and download/export behavior.
-- Dashboard default: show borrowed items only when the user actually has borrowed items; otherwise show available items.
-- Agent docs: keep `.agents/` concise and improve skills whenever repeated friction appears.
-- Documentation in app: expose docs, repo links, issue prompt template, roadmap, and "Born and hosted by bringa.io" without cluttering core workflows.
+- Goal-mode production readiness: define one larger `/goal` target around repository coherence before adding broad product features. Impact: makes the next autonomous work session safer and measurable. Uncertainty/research: `/goal` behavior is still a local Codex feature and may require a fresh session after config activation.
+- Supabase contract alignment: reconcile `supabase/schema.sql`, migrations, client code, Storage buckets, edge functions, and generated docs into one enforceable contract. Impact: security, reliability, and maintainability. Uncertainty/research: requires Supabase MCP or service-role access, but real row contents must not be inspected without explicit user approval.
+- RLS-safe mutations: move invite application, borrow/return, admin promotion, admin edits, moderation, deletion, and visibility changes behind RPCs where direct client table updates create weak or contradictory policies. Impact: protects data invariants and makes UI behavior testable. Side effect: migrations and UI calls must land in a careful sequence.
+- Storage and upload hardening: align create/edit upload validation, server-side bucket limits, MIME allowlists, max size, compression behavior, image cleanup, and image export. Impact: security, performance, and user trust. Uncertainty/research: verify current Supabase Storage controls from official docs before implementation.
+- Generic upstream identity: keep this repository centered on `app.bringa.io`; deployment-specific names, logos, legal text, invite copy, and operator labels must be fork configuration or fork content. Impact: forks can rebase without fighting upstream. Side effect: content needs a clear override model.
+- Fork content strategy: design legal text, branding, icons, docs links, and app copy as overrideable content without excluding files from PRs. Impact: easier collaboration between upstream and forks. Uncertainty/research: choose between config-only JSONC, structured content files, or a layered `config/default` plus `config/local` model after reviewing CI/CD needs.
+- Legacy `.agent` migration: audit old `.agent/skills/*`, migrate still-useful guidance into `.agents/`, and mark or remove stale CONTEKT-era material. Impact: agents get one clear source of truth. Uncertainty/research: confirm which IDEs still expect `.agent/`.
+- Repository template readiness: document GitHub Template, fork, and upstream remote workflows, including rebase-first sync, branch cleanup after merge, branch protection, and docs publishing. Impact: improves developer experience for open-source maintainers. Uncertainty/research: confirm GitHub's current fork/template metadata behavior before automating fork research.
+- CI/CD forkability: keep upstream workflows secret-free by default, preserve GitHub Pages docs, and document how forks add deployment secrets without editing shared workflow logic. Impact: forks stay close to upstream. Side effect: deployment-specific workflows may need optional examples instead of mandatory jobs.
+
+## Product Model
+
+- Item ownership: model operator-owned, profile-owned, and free-text owner cases. Impact: deletion, visibility, export, and legal meaning become explicit. Uncertainty/research: legal wording for "private gift to the portal" needs operator review.
+- Item visibility lifecycle: distinguish user-hidden, admin-hidden, pending-visible, deleted-user-hidden, and public states. Impact: users retain agency while admins keep moderation control. Side effect: lists, counts, filters, and RLS need consistent semantics.
+- User deletion behavior: preserve operator-owned items, hide user-owned or free-owner items, keep admin recovery/edit paths, and define Storage retention. Impact: privacy and continuity. Uncertainty/research: Auth deletion hooks and data export requirements need Supabase verification.
+- Item versioning: keep immutable item versions with admin restore-by-republish behavior. Impact: auditability and safe moderation. Uncertainty/research: the proposed JSON-in-row version list is simple, but a separate `item_versions` table may be more scalable and queryable.
+- Profile scope: profiles are not versioned, but may later support avatars, links, contact info, public pages, and profile moderation. Impact: community trust and accountability. Uncertainty/research: decide what profile data is public by default.
+- Public-domain intent: users should feel that item entries and images are a private gift to the portal and intended for the commons. Impact: clear contribution culture. Uncertainty/research: CC0/public-domain fallback wording must stay deployment-specific and non-legal-advice.
+
+## Media
+
+- Multiple item images: support multiple uploads, immediate previews, chronological ordering with newest first, cover image selection, captions, alt text, and per-image deletion. Impact: better item quality and accessibility. Side effect: the current single `image_url` model will need migration.
+- User-contributed images: allow users to propose images for items they did not create, with admin or owner review. Impact: community improvement without losing moderation. Uncertainty/research: decide whether accepted images inherit the item's public-domain intent.
+- Image flagging: support flags for individual item images and possibly profile images. Impact: safer public galleries. Side effect: requires admin queue and notification policy.
+- Deleted item images: define whether images remain in a user's export/gallery after an item is deleted or hidden. Impact: privacy, storage cost, and user expectations. Uncertainty/research: needs legal and operator policy.
+- File type policy: keep JPEG, PNG, and WebP as the default; explicitly decide whether animated GIFs are rejected, flattened, or supported. Impact: security and performance. Uncertainty/research: animated media processing needs current tooling and abuse review.
+- Oversized upload bypass: enforce server-side limits in addition to frontend compression. Impact: prevents browser-bug or intentional bypass. Uncertainty/research: requires Supabase Storage policy and possibly edge-function processing review.
+
+## User And Admin Workflows
+
+- Dashboard default: show borrowed items first only when the user currently has borrowed items; otherwise show available items. Impact: first screen matches real user need. Status: implemented in the current UI, but keep covered by browser-test skill scenarios.
+- Search actions: revisit buttons above the search field as compact icon/segmented controls with accessible labels and stable responsive dimensions. Impact: mobile scanning and repeated use. Uncertainty/research: needs browser testing across viewport sizes.
+- Admin item control: allow admins to edit non-created items, view all items for one user, hide/unhide with reason, and restore visibility through moderation state. Impact: operator efficiency. Side effect: must avoid bypassing ownership/version rules.
+- User suggestions and flags: let users propose changes or flag non-owned items/images; admins need a focused review queue with status, history, and Telegram policy. Impact: community quality. Uncertainty/research: data model and notification dedupe need design.
+- Invite and onboarding: decide whether display name comes before invite code, and how admins approve users who lack an invite. Impact: smoother onboarding and moderation. Side effect: auth/profile routes and RPCs need alignment.
+- User data export: provide profile, item, borrow history, suggestion/flag, and image export where appropriate. Impact: trust and portability. Uncertainty/research: scope depends on legal and Supabase Auth/Storage access.
+- Settings and feedback: include repo links, issue links, and an AI-friendly issue prompt template in user settings. Impact: better open-source feedback. Side effect: link labels and issue copy should come from config/content.
+
+## App Experience
+
+- Responsive and browser QA: test mobile, tablet, desktop, touch, keyboard, Safari, Firefox, Chromium, installed PWA, slow network, empty states, long names, long words, and image-heavy lists. Impact: accessibility and reliability. Uncertainty/research: use agentic browser skills first; add packages only after explicit decision.
+- PWA polish: verify manifest, maskable icons, Apple touch icons, offline behavior, update behavior, installed auth persistence, and logout. Impact: mobile trust. Uncertainty/research: current browser/platform behavior must be tested.
+- Typography and FOUT/FOUC: document system-font choice or self-hosted font policy; verify first paint and theme flash. Impact: perceived quality and performance. Uncertainty/research: needs visual QA.
+- Routes and navigation: evaluate breadcrumbs for deep item/admin/profile routes, and keep primary mobile navigation predictable. Impact: wayfinding without clutter. Side effect: avoid adding navigation chrome that competes with core borrowing flow.
+- Markdown or rich descriptions: decide between plain text, safe Markdown, or constrained formatting for item descriptions. Impact: usefulness and XSS risk. Uncertainty/research: package/tool choice requires current best-practice check.
+- Internationalization: centralize user-facing copy, keep English primary with German available, and maintain a glossary for ambiguous domain terms. Impact: fork readiness. Side effect: avoid large i18n framework unless it earns its complexity.
+
+## Operations
+
+- Telegram anti-spam: send only the first unseen notification for a user's new request until an admin has viewed the latest request; support per-user mute durations. Impact: admin attention and abuse resistance. Uncertainty/research: requires event queue or notification state, plus privacy review for message contents.
+- Telegram privacy: avoid sending personal emails or sensitive details to Telegram by default. Impact: protects users. Side effect: admins may need to click into the app for details.
+- Backups: table backup script exists; extend documentation for Storage object backup, Auth export limits, restore drills, and encrypted storage of backups. Impact: recovery confidence. Uncertainty/research: service role and Supabase tooling details to verify after setup.
+- Observability: add privacy-preserving error reporting, edge-function logs guidance, admin health checks, and backup/notification status visibility. Impact: diagnose failures without exposing user data. Uncertainty/research: choose minimal tools and avoid unnecessary tracking.
+- Maintenance tasks: keep reminders for Supabase free-tier activity, dependency updates, config schema checks, docs review, browser-test skill updates, and fork sync research. Impact: operations stay humane.
+
+## Developer Experience
+
+- Naming conventions audit: review component, hook, route, database, migration, branch, and commit naming for consistency. Impact: easier contribution. Uncertainty/research: do after schema direction is clear to avoid churn.
+- Test strategy: add focused tests for config generation, app-config fallbacks, Supabase RPC contracts, upload validation, and critical UI state. Impact: safer refactors. Side effect: respect the user's preference for agentic browser skills before adding browser-test packages.
+- Source-of-truth comments: where duplication is unavoidable, add a nearby note naming the canonical file. Impact: prevents future drift.
+- Agent skill growth: when repeated friction appears, update `.agents/` and this register rather than relying on memory. Impact: future sessions start stronger.
+- Docs as GitHub Pages: keep docs minimal, elegant, searchable, and directly publishable from `docs/`. Impact: developers can understand setup, operations, and contribution paths quickly.
+- Share-worthy improvements: when a change would benefit other open-source app maintainers, consider adding it to release notes, social posts, or mailing-list material. Impact: community growth. Side effect: avoid marketing noise inside the product UI.
 
 ## Deferred Until Explicit Decision
 
-- Full item versioning and admin restore flow.
-- Profile pages, profile images, public contact links, and profile moderation.
-- Federated/decentralized peer-to-peer architecture.
-- GitHub Template mode as primary distribution model; current default is upstream-plus-forks.
+- Full federated/decentralized peer-to-peer architecture.
+- Separate Astro repository for the public `bringa.io` home page.
 - Dev-mode auth bypass and impersonation. This needs a security design before implementation.
 - Merge queue. Consider only after the repository has enough PR volume to justify it.
+- Installing Playwright or other browser-test packages. Prefer agentic browser skills unless the user explicitly chooses package-based automation.
 
 ## Questions Waiting For User
 
-- What is the default operator label for the first CONTEKT fork: `CONTEKT`, `CONTEKT Technikerverein`, or another legal name?
-- Should GIF uploads be allowed as animated images, flattened to a still WebP, or rejected?
+- What default operator label should generic upstream use: `bringa.io`, `the operator`, or a configurable placeholder?
+- Should legal/contribution text live in JSONC config, Markdown content files, or a layered content directory?
+- Should GIF uploads be rejected, flattened to still WebP, or supported as animated media?
 - Which SSO providers beyond GitHub and Google should be supported first?
-- Should item contributions use CC0 wording, a public-domain dedication plus fallback license, or a deployment-specific legal text per fork?
+- Should item contributions use CC0 wording, a public-domain dedication plus fallback license, or only deployment-specific legal text?
 - Which admin actions require Telegram notifications, and when should notification muting reset?
+- Should user profiles be public by default, private by default, or fork-configurable?
+- Should item location ever be visible to borrowers, or remain private to owner/admin only?
 
 ## Hyperoptimum Reminder
 

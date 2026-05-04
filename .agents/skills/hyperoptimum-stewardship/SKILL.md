@@ -17,8 +17,10 @@ Use this skill to keep improvement ideas visible without derailing the current t
 
 - Keep the current task central.
 - Prefer small, reversible, verified improvements over broad speculative refactors.
+- Treat the repository as a generic upstream unless the current task explicitly targets a fork.
 - When you notice a useful but out-of-scope idea, add it to `docs/optimization-options.md`.
 - Include likely impact, affected area, uncertainty, possible side effects, and research needs when those are not obvious.
+- Preserve both roadmap and anti-roadmap context: user-deferred ideas should remain visible when they may matter in a future session.
 - Ask before implementing unrelated refactors, legal changes, production data access, new packages, or irreversible operations.
 - Remove optimization entries once implementation or durable docs become the source of truth.
 
