@@ -31,19 +31,12 @@ export default function AdminInviteCodePage() {
     useEffect(() => {
         const fetchInviteCode = async () => {
             try {
-                const { data: { user } } = await supabase.auth.getUser()
-                if (!user) return
-
-                const { data, error } = await supabase
-                    .from('admins')
-                    .select('invite_code')
-                    .eq('profile_id', user.id)
-                    .single()
+                const { data, error } = await supabase.rpc('get_my_invite_code')
 
                 if (error) throw error
                 if (data) {
-                    setInviteCode(data.invite_code)
-                    setNewCode(data.invite_code)
+                    setInviteCode(data)
+                    setNewCode(data)
                 }
             } catch {
                 setError('Fehler beim Laden des Codes')
@@ -63,17 +56,15 @@ export default function AdminInviteCodePage() {
         setSuccess(null)
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            const { error } = await supabase
-                .from('admins')
-                .update({ invite_code: newCode.trim().toUpperCase() })
-                .eq('profile_id', user.id)
+            const nextCode = newCode.trim().toUpperCase()
+            const { data: updated, error } = await supabase.rpc('set_my_invite_code', {
+                invite_code_input: nextCode,
+            })
 
             if (error) throw error
+            if (!updated) throw new Error('Invite code update rejected')
 
-            setInviteCode(newCode.trim().toUpperCase())
+            setInviteCode(nextCode)
             setSuccess('Invite code updated successfully!')
 
             setTimeout(() => setSuccess(null), 3000)
