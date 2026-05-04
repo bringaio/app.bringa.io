@@ -7,6 +7,7 @@ title: Supabase
 Supabase is the current backend for Auth, Postgres, Storage, RLS, and Edge Functions.
 
 Before changing schema or policies, read [Supabase Contract Audit](supabase-contract-audit.md).
+The repository-level Supabase source-of-truth notes live in `supabase/README.md`.
 
 ## Before MCP Access
 
