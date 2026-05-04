@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import imageCompression from 'browser-image-compression'
 import { supabase } from "@/lib/supabaseclient"
-import { appConfig } from "@/lib/app-config"
+import { formatBytes, getImageCompressionOptions, imageUploadAccept, validateImageFile } from "@/lib/media"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,7 +20,6 @@ export default function CreateItemPage() {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const acceptedImageTypes = appConfig.media.acceptedImageMimeTypes
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0] || null
@@ -30,17 +29,11 @@ export default function CreateItemPage() {
             return
         }
 
-        if (!acceptedImageTypes.includes(selectedFile.type)) {
+        const validationError = validateImageFile(selectedFile)
+        if (validationError) {
             setFile(null)
             setPreviewUrl(null)
-            setError(`Please upload one of these image types: ${acceptedImageTypes.join(", ")}`)
-            return
-        }
-
-        if (selectedFile.size > appConfig.media.maxUploadBytes) {
-            setFile(null)
-            setPreviewUrl(null)
-            setError(`Image is too large. Maximum size is ${formatBytes(appConfig.media.maxUploadBytes)}.`)
+            setError(validationError)
             return
         }
 
@@ -56,18 +49,9 @@ export default function CreateItemPage() {
     }, [previewUrl])
 
     const uploadImage = async (file: File) => {
-        // Compression options
-        const options = {
-            maxSizeMB: appConfig.media.compressionMaxSizeMb,
-            maxWidthOrHeight: appConfig.media.compressionMaxWidthOrHeight,
-            useWebWorker: true,
-            fileType: 'image/webp' as const,
-            initialQuality: 0.85
-        }
-
         try {
             // Compress and convert to WebP
-            const compressedFile = await imageCompression(file, options)
+            const compressedFile = await imageCompression(file, getImageCompressionOptions())
             const fileName = `${crypto.randomUUID()}.webp`
             const filePath = `${fileName}`
 
@@ -169,7 +153,7 @@ export default function CreateItemPage() {
                                 <input
                                     type="file"
                                     id="image"
-                                    accept={acceptedImageTypes.join(",")}
+                                    accept={imageUploadAccept}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                     onChange={handleFileChange}
                                 />
@@ -216,10 +200,4 @@ export default function CreateItemPage() {
             </div>
         </ProtectedRoute>
     )
-}
-
-function formatBytes(bytes: number) {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }

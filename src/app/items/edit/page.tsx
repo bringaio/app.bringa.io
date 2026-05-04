@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import imageCompression from 'browser-image-compression'
 import { supabase } from "@/lib/supabaseclient"
+import { formatBytes, getImageCompressionOptions, imageUploadAccept, validateImageFile } from "@/lib/media"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,9 +21,11 @@ function EditItemContent() {
     const [description, setDescription] = useState("")
     const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null)
     const [file, setFile] = useState<File | null>(null)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [formError, setFormError] = useState<string | null>(null)
 
     useEffect(() => {
         const loadItem = async () => {
@@ -75,21 +78,35 @@ function EditItemContent() {
     }, [id, router])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0])
+        const selectedFile = e.target.files?.[0] || null
+        if (!selectedFile) {
+            setFile(null)
+            setPreviewUrl(null)
+            return
         }
+
+        const validationError = validateImageFile(selectedFile)
+        if (validationError) {
+            setFile(null)
+            setPreviewUrl(null)
+            setFormError(validationError)
+            return
+        }
+
+        setFormError(null)
+        setFile(selectedFile)
+        setPreviewUrl(URL.createObjectURL(selectedFile))
     }
 
-    const uploadImage = async (file: File) => {
-        const options = {
-            maxWidthOrHeight: 800, // Doubled for better quality
-            useWebWorker: true,
-            fileType: 'image/webp' as const,
-            initialQuality: 0.85
+    useEffect(() => {
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl)
         }
+    }, [previewUrl])
 
+    const uploadImage = async (file: File) => {
         try {
-            const compressedFile = await imageCompression(file, options)
+            const compressedFile = await imageCompression(file, getImageCompressionOptions())
             const fileName = `${crypto.randomUUID()}.webp`
             const filePath = `${fileName}`
 
@@ -113,7 +130,7 @@ function EditItemContent() {
         e.preventDefault()
         if (!id) return;
         setSaving(true)
-        setError(null)
+        setFormError(null)
 
         try {
             if (!name) throw new Error("Name is required")
@@ -138,7 +155,7 @@ function EditItemContent() {
             router.refresh()
         } catch (err: unknown) {
             console.error(err)
-            setError(err instanceof Error ? err.message : "Something went wrong")
+            setFormError(err instanceof Error ? err.message : "Something went wrong")
         } finally {
             setSaving(false)
         }
@@ -169,6 +186,12 @@ function EditItemContent() {
                         <h1 className="text-xl font-bold">Edit Item</h1>
                     </div>
 
+                    {formError && (
+                        <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 text-sm">
+                            {formError}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
                             <Label htmlFor="name">Item Name</Label>
@@ -198,14 +221,28 @@ function EditItemContent() {
                                 <input
                                     type="file"
                                     id="image"
-                                    accept="image/*"
+                                    accept={imageUploadAccept}
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                     onChange={handleFileChange}
                                 />
                                 {file ? (
-                                    <div className="text-center">
-                                        <p className="text-sm font-medium">{file.name}</p>
-                                        <p className="text-xs text-muted-foreground">Click to change</p>
+                                    <div className="flex w-full flex-col items-center gap-3 text-center">
+                                        {previewUrl && (
+                                            <AppImage
+                                                src={previewUrl}
+                                                alt="Selected replacement image preview"
+                                                width={640}
+                                                height={360}
+                                                sizes="(max-width: 768px) 100vw, 640px"
+                                                className="h-36 w-full rounded-md border object-cover"
+                                            />
+                                        )}
+                                        <div>
+                                            <p className="text-sm font-medium">{file.name}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {formatBytes(file.size)} | Click to change
+                                            </p>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center">
