@@ -113,16 +113,16 @@ Current model:
 - `item_suggestions` records validated-user suggestions for content, image, visibility, owner, or other item improvements.
 - `item_flags` records validated-user item issue reports with a bounded reason set.
 - Users create both through `create_item_suggestion` and `create_item_flag`; direct browser inserts, updates, and deletes are blocked by RLS.
-- Admins can inspect the prepared queue in `/admin/moderation`.
+- Admins inspect and transition queue status in `/admin/moderation` through `review_item_suggestion` and `review_item_flag`.
 
 Risk:
 
-- Admin processing is intentionally read-only for now; accepting, rejecting, resolving, marking seen, and notification dedupe still need focused RPCs.
+- Admin processing records status, reviewer, reviewed time, and optional admin note, but it does not yet create item versions, apply accepted suggestions, send notifications, or dedupe Telegram messages.
 - Live projects must apply the moderation migration before enabling the user-facing queue controls.
 
 Target:
 
-- Add narrow admin review RPCs for status transitions, reason/admin notes, and Telegram seen-state before allowing browser-side queue processing.
+- Add focused application RPCs for applying accepted suggestions, item/image-specific review actions, and Telegram seen-state.
 - Keep moderation rows in user export and table backups so users and operators can audit feedback history.
 
 ### Storage
@@ -229,6 +229,8 @@ Target:
 - `set_my_invite_code(invite_code_input text)`
 - `create_item_suggestion(...)`
 - `create_item_flag(...)`
+- `review_item_suggestion(...)`
+- `review_item_flag(...)`
 - `mark_moderation_seen(...)`
 - `set_telegram_mute(...)`
 

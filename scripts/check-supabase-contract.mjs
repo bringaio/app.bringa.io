@@ -64,6 +64,8 @@ async function main() {
     "request_account_deletion",
     "create_item_suggestion",
     "create_item_flag",
+    "review_item_suggestion",
+    "review_item_flag",
   ];
 
   for (const functionName of requiredFunctions) {

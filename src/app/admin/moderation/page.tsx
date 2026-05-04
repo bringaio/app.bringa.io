@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Flag, Inbox, Lightbulb, Loader2, Package } from "lucide-react"
+import { CheckCircle2, Eye, Flag, Inbox, Lightbulb, Loader2, Package, XCircle } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { supabase } from "@/lib/supabaseclient"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
-import { ItemDb, ItemFlag, ItemSuggestion, Profile } from "@/app/model/model"
+import { ItemDb, ItemFlag, ItemFlagStatus, ItemSuggestion, ItemSuggestionStatus, Profile } from "@/app/model/model"
 
 type ModerationItem = Pick<ItemDb, "id" | "name" | "status" | "visibility_state" | "image_url">
 type ProfileSummary = Pick<Profile, "id" | "email" | "display_name" | "display_surname">
@@ -57,6 +57,8 @@ export default function AdminModerationPage() {
     const [flags, setFlags] = useState<FlagQueueRow[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [actionError, setActionError] = useState<string | null>(null)
+    const [processingAction, setProcessingAction] = useState<string | null>(null)
 
     const stats = useMemo(() => ({
         pendingSuggestions: suggestions.filter((row) => row.status === "pending").length,
@@ -112,6 +114,56 @@ export default function AdminModerationPage() {
             fetchModeration()
         }
     }, [isAdmin])
+
+    const reviewSuggestion = async (suggestionId: string, status: Exclude<ItemSuggestionStatus, "pending">) => {
+        const actionId = `suggestion-${suggestionId}-${status}`
+        setProcessingAction(actionId)
+        setActionError(null)
+        try {
+            const { data, error } = await supabase.rpc("review_item_suggestion", {
+                suggestion_id_input: suggestionId,
+                status_input: status,
+                admin_note_input: null,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Review rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setSuggestions((rows) => rows.map((row) => (
+                row.id === suggestionId ? { ...row, status, reviewed_at: reviewedAt } : row
+            )))
+        } catch {
+            setActionError("Could not update the suggestion status.")
+        } finally {
+            setProcessingAction(null)
+        }
+    }
+
+    const reviewFlag = async (flagId: string, status: Exclude<ItemFlagStatus, "pending">) => {
+        const actionId = `flag-${flagId}-${status}`
+        setProcessingAction(actionId)
+        setActionError(null)
+        try {
+            const { data, error } = await supabase.rpc("review_item_flag", {
+                flag_id_input: flagId,
+                status_input: status,
+                admin_note_input: null,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Review rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setFlags((rows) => rows.map((row) => (
+                row.id === flagId ? { ...row, status, reviewed_at: reviewedAt } : row
+            )))
+        } catch {
+            setActionError("Could not update the flag status.")
+        } finally {
+            setProcessingAction(null)
+        }
+    }
 
     if (adminLoading || loading) {
         return (
@@ -169,6 +221,12 @@ export default function AdminModerationPage() {
                         </div>
                     )}
 
+                    {actionError && (
+                        <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+                            {actionError}
+                        </div>
+                    )}
+
                     <section className="flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                             <h2 className="text-sm font-semibold">Suggestions</h2>
@@ -215,11 +273,43 @@ export default function AdminModerationPage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            {item && (
-                                                <Button asChild variant="outline" size="sm" className="sm:shrink-0">
-                                                    <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                            <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
+                                                {item && (
+                                                    <Button asChild variant="outline" size="sm" className="sm:shrink-0">
+                                                        <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => reviewSuggestion(suggestion.id, "reviewing")}
+                                                    disabled={processingAction !== null || suggestion.status === "reviewing"}
+                                                >
+                                                    {processingAction === `suggestion-${suggestion.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+                                                    Reviewing
                                                 </Button>
-                                            )}
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => reviewSuggestion(suggestion.id, "accepted")}
+                                                    disabled={processingAction !== null || suggestion.status === "accepted"}
+                                                >
+                                                    {processingAction === `suggestion-${suggestion.id}-accepted` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => reviewSuggestion(suggestion.id, "rejected")}
+                                                    disabled={processingAction !== null || suggestion.status === "rejected"}
+                                                >
+                                                    {processingAction === `suggestion-${suggestion.id}-rejected` ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
+                                                    Reject
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 )
@@ -273,11 +363,43 @@ export default function AdminModerationPage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            {item && (
-                                                <Button asChild variant="outline" size="sm" className="sm:shrink-0">
-                                                    <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                            <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
+                                                {item && (
+                                                    <Button asChild variant="outline" size="sm" className="sm:shrink-0">
+                                                        <Link href={`/items/details?id=${item.id}`}>Open item</Link>
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => reviewFlag(flag.id, "reviewing")}
+                                                    disabled={processingAction !== null || flag.status === "reviewing"}
+                                                >
+                                                    {processingAction === `flag-${flag.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+                                                    Reviewing
                                                 </Button>
-                                            )}
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => reviewFlag(flag.id, "resolved")}
+                                                    disabled={processingAction !== null || flag.status === "resolved"}
+                                                >
+                                                    {processingAction === `flag-${flag.id}-resolved` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                    Resolve
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => reviewFlag(flag.id, "dismissed")}
+                                                    disabled={processingAction !== null || flag.status === "dismissed"}
+                                                >
+                                                    {processingAction === `flag-${flag.id}-dismissed` ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
+                                                    Dismiss
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 )

@@ -46,6 +46,8 @@ The browser should call RPCs for these writes:
 - `request_account_deletion`
 - `create_item_suggestion`
 - `create_item_flag`
+- `review_item_suggestion`
+- `review_item_flag`
 
 Direct browser reads still use RLS policies where appropriate. Direct browser writes to core item state should be avoided.
 Direct browser writes to `borrow_history` are also blocked; borrow history is maintained by `borrow_item` and `return_item`.
@@ -77,7 +79,7 @@ Borrow history reads are admin-only by default.
 
 ## Moderation Queue
 
-`create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. Admins can inspect `item_suggestions` and `item_flags`; direct browser inserts, updates, and deletes are blocked so review actions can later move behind focused RPCs.
+`create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. `review_item_suggestion` and `review_item_flag` let admins transition moderation state through RPCs. Direct browser inserts, updates, and deletes remain blocked.
 
 ## Before Live Review
 
