@@ -8,7 +8,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 
 ## Current Surfaces
 
-- `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, pending queue counts, and system-readiness links for config, Supabase, Storage, backups, docs, and Telegram.
+- `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, pending queue counts, recent activity, recent uploads, and system-readiness links for config, Supabase, Storage, backups, docs, and Telegram.
 - `/admin/users`: profile list, admin promotion, admin demotion, and self-demotion protection.
 - `/admin/user-items?id=<profile-id>`: admin-only item view grouped by current borrower, owner, and creator relationship for one profile.
 - `/admin/deletion-requests`: read-only operator queue for account deletion requests, linked to per-user item review.

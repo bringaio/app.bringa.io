@@ -45,6 +45,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 
 - [x] Admin dashboard shows item counts, visibility states, media stats, and system-readiness placeholders.
 - [x] Admin dashboard shows pending suggestions, flags, account deletion requests, and unvalidated users.
+- [x] Admin dashboard shows recent borrow/return activity and recent image uploads.
 - [x] Admin dashboard links config, Supabase contract, Storage contract, backups, docs, and Telegram health to source-of-truth docs.
 - [x] Admin users route supports admin promotion and demotion with self-demotion protection.
 - [x] Admin moderation route lists suggestions and flags and reviews status through RPCs.
@@ -67,6 +68,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [ ] `pnpm test:copy`
 - [ ] `pnpm test:admin-deletion-requests`
 - [ ] `pnpm test:admin-queue-counts`
+- [ ] `pnpm test:admin-recent-activity`
 - [ ] `pnpm test:admin-system-health`
 - [ ] `pnpm test:admin-user-items`
 - [ ] `pnpm check:copy`

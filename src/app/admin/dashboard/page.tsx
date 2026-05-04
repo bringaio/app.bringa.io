@@ -8,6 +8,7 @@ import {
     Archive,
     Bell,
     BookOpen,
+    Boxes,
     Clock3,
     Database,
     EyeOff,
@@ -26,6 +27,7 @@ import ProtectedRoute from "@/components/auth/protected-route";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useRouter } from "next/navigation";
 import { AppImage } from "@/components/ui/app-image";
+import { buildAdminRecentActivity, type AdminRecentActivity } from "@/lib/admin-recent-activity";
 import { buildAdminQueueCounts } from "@/lib/admin-queue-counts";
 import { buildAdminSystemHealthItems, type AdminSystemHealthItemKey } from "@/lib/admin-system-health";
 import { appConfig } from "@/lib/app-config";
@@ -39,6 +41,7 @@ export default function AdminDashboardPage() {
     }
 
     const [items, setItems] = useState<AdminItem[]>([]);
+    const [recentActivity, setRecentActivity] = useState<AdminRecentActivity | null>(null);
     const [queueCounts, setQueueCounts] = useState<{
         pendingSuggestions: number | null;
         pendingFlags: number | null;
@@ -99,6 +102,8 @@ export default function AdminDashboardPage() {
         docs: BookOpen,
         telegram: Bell,
     };
+
+    const formatDate = (value: string) => new Date(value).toISOString().split("T")[0];
 
     useEffect(() => {
         // Redirect non-admins
@@ -168,7 +173,18 @@ export default function AdminDashboardPage() {
                     return 0; // Maintain existing sort (created_at desc) within groups
                 });
 
+                const { data: recentHistory } = await supabase
+                    .from('borrow_history')
+                    .select('item_id, borrowed_at, returned_at')
+                    .order('borrowed_at', { ascending: false })
+                    .limit(20);
+
                 setItems(enrichedItems);
+                setRecentActivity(buildAdminRecentActivity({
+                    items: enrichedItems,
+                    borrowHistory: recentHistory || [],
+                    limit: 5,
+                }));
             } catch (err) {
                 console.error('Error fetching items:', err);
             } finally {
@@ -294,6 +310,62 @@ export default function AdminDashboardPage() {
                                 </div>
                             );
                         })}
+                    </section>
+
+                    <section className="grid gap-3 lg:grid-cols-2">
+                        <div className="rounded-lg border bg-card p-3">
+                            <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                    <Clock3 className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                    <h2 className="text-sm font-semibold">Recent borrow activity</h2>
+                                </div>
+                                <span className="text-xs text-muted-foreground">{recentActivity?.borrowReturns.length ?? 0} records</span>
+                            </div>
+                            {recentActivity?.borrowReturns.length ? (
+                                <div className="mt-3 flex flex-col gap-2">
+                                    {recentActivity.borrowReturns.map((event) => (
+                                        <Link
+                                            key={`${event.kind}-${event.itemId}-${event.occurredAt}`}
+                                            href={`/items/details?id=${event.itemId}`}
+                                            className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent"
+                                        >
+                                            <span className="min-w-0 truncate font-medium">{event.itemName}</span>
+                                            <span className="shrink-0 text-xs text-muted-foreground">
+                                                {event.kind === "borrowed" ? "Borrowed" : "Returned"} {formatDate(event.occurredAt)}
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="mt-3 text-sm text-muted-foreground">No recent borrow activity.</p>
+                            )}
+                        </div>
+
+                        <div className="rounded-lg border bg-card p-3">
+                            <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                    <Boxes className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                    <h2 className="text-sm font-semibold">Recent uploads</h2>
+                                </div>
+                                <span className="text-xs text-muted-foreground">{recentActivity?.uploads.length ?? 0} records</span>
+                            </div>
+                            {recentActivity?.uploads.length ? (
+                                <div className="mt-3 flex flex-col gap-2">
+                                    {recentActivity.uploads.map((event) => (
+                                        <Link
+                                            key={`${event.itemId}-${event.occurredAt}`}
+                                            href={`/items/details?id=${event.itemId}`}
+                                            className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent"
+                                        >
+                                            <span className="min-w-0 truncate font-medium">{event.itemName}</span>
+                                            <span className="shrink-0 text-xs text-muted-foreground">Image {formatDate(event.occurredAt)}</span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="mt-3 text-sm text-muted-foreground">No recent uploads.</p>
+                            )}
+                        </div>
                     </section>
 
                     <section className="flex flex-col gap-2">

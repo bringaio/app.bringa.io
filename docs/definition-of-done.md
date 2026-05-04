@@ -23,6 +23,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
 - `pnpm test:admin-deletion-requests` when admin deletion request summaries or review queues change
 - `pnpm test:admin-queue-counts` when admin dashboard queue-count logic changes
+- `pnpm test:admin-recent-activity` when admin dashboard recent activity signals change
 - `pnpm test:admin-system-health` when admin dashboard system-health signals change
 - `pnpm test:admin-user-items` when admin user item grouping or per-user admin item review changes
 - `pnpm test:copy` and `pnpm check:copy` when docs, agent instructions, or public source-of-truth copy changes
