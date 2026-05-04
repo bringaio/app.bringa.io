@@ -33,15 +33,20 @@ yarn-error.log*
 # environment variables
 .env
 .env.*
+!.env.example
 
 # supabase binaries
 supabase.tar.gz
 supabase_binary_backup
+supabase/.temp/
 
 # process output / local scratch
 stderr.txt
 stdout.txt
 tasks.yaml
+/temp/
+/.worktrees/
+/backups/
 
 # vercel
 .vercel
