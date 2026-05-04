@@ -28,30 +28,20 @@ export default function InviteCodePage() {
                 return
             }
 
-            // Check if code exists in admins table
-            const { data: adminData, error: adminError } = await supabase
-                .from('admins')
-                .select('invite_code, profile_id')
-                .eq('invite_code', code.trim())
-                .single()
+            const inviteCode = code.trim()
+            const { data: inviteAccepted, error: inviteError } = await supabase
+                .rpc('verify_and_apply_invite', {
+                    invite_code_input: inviteCode,
+                })
 
-            if (adminError || !adminData) {
+            if (inviteError) {
+                throw inviteError
+            }
+
+            if (!inviteAccepted) {
                 setError('Invalid invite code. Please try again.')
                 setLoading(false)
                 return
-            }
-
-            // Update user's profile
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({
-                    profile_valid: true,
-                    invited_by_code: code.trim()
-                })
-                .eq('id', user.id)
-
-            if (updateError) {
-                throw updateError
             }
 
             // Redirect to dashboard

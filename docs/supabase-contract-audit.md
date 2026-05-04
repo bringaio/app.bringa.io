@@ -27,8 +27,8 @@ The target contract:
 
 Current UI:
 
-- `src/app/invite/page.tsx` reads `admins.invite_code` directly.
-- The same page updates `profiles.profile_valid` and `profiles.invited_by_code` directly.
+- `src/app/invite/page.tsx` calls `verify_and_apply_invite`.
+- The client does not need to read `admins.invite_code` or write validation fields directly.
 
 Current schema:
 
@@ -38,7 +38,7 @@ Current schema:
 
 Risk:
 
-- The UI and schema describe different security models. A strict schema should make the current UI fail.
+- Live projects must include the RPC migration before deploying the UI change.
 
 Target:
 
