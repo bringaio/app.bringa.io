@@ -12,6 +12,7 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 - [Forking](forking.md): keep upstream collaboration smooth while customizing legal, brand, and operator details.
 - [Fork Content Strategy](fork-content-strategy.md): layer config, legal text, brand assets, secrets, and CI for rebaseable forks.
 - [Supabase](supabase.md): prepare schema, RLS, Storage, Auth, Edge Functions, backups, and privacy-aware MCP work.
+- [Supabase Branching](supabase-branching.md): future task list for moving development onto a Supabase branch from production.
 - [Supabase Contract Audit](supabase-contract-audit.md): local app/schema mismatch checklist before live MCP review.
 - [Admin Operations](admin-operations.md): current admin surfaces, moderation queues, privacy defaults, and production-change steps.
 - [Maintenance](maintenance.md): recurring operations and safety checks.
@@ -23,6 +24,7 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 - [Repository Settings](repository-settings.md): branch protection, merge methods, branch cleanup, and Pages settings.
 - [Definition of Done](definition-of-done.md): required verification and merge expectations.
 - [First Big Version Readiness Checklist](readiness-checklist.md): release-readiness status across repo, forkability, Supabase, UX, admin, and operations.
+- [Dependency Audit](dependency-audit.md): current package metadata checks and upgrade policy.
 - [Issue Prompt Template](issue-prompt-template.md): help users and AI assistants write useful issues.
 - [Optimization Options](optimization-options.md): living roadmap and anti-roadmap.
 

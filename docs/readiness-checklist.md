@@ -29,7 +29,9 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [x] Browser mutations for invite, item CRUD, borrow/return, admin roles, deletion request, and moderation use RPC boundaries.
 - [x] Direct writes to core item state, borrow history, item versions, item images, deletion requests, and moderation queues are blocked by RLS.
 - [x] Storage bucket MIME and size limits are checked against deployment config.
+- [x] Supabase development-branch transition tasks are documented.
 - [ ] Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions have been reviewed with approved access.
+- [ ] Local app development is linked to a Supabase development branch from production.
 
 ## User Experience
 
@@ -59,6 +61,7 @@ Use this checklist before calling the generic upstream ready for a first large o
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
 - [ ] `pnpm check:supabase-contract`
+- [ ] `pnpm outdated`
 - [ ] `pnpm lint`
 - [ ] `pnpm exec tsc --noEmit`
 - [ ] `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dummy-anon-key pnpm build`

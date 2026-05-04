@@ -10,6 +10,7 @@ title: Maintenance
 - Keep Supabase free-tier projects active, or document the paid/self-hosted plan for deployments that must not pause.
 - Run `pnpm check:config`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
 - Review dependencies and security advisories regularly.
+- Run `pnpm outdated` before dependency upgrade work and record major-version deferrals in `docs/dependency-audit.md`.
 - Verify Auth providers, redirect URLs, Edge Function secrets, Telegram chat IDs, and Storage bucket policies after deployment changes.
 - Update `.agents/` and `docs/optimization-options.md` when repeated maintenance friction appears.
 
