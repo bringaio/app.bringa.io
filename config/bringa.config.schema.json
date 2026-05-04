@@ -1,0 +1,306 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://app.bringa.io/schemas/bringa.config.schema.json",
+  "title": "Bringa public application configuration",
+  "type": "object",
+  "required": [
+    "app",
+    "branding",
+    "operator",
+    "repository",
+    "legal",
+    "supabase",
+    "invites",
+    "media",
+    "features"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "app": {
+      "$ref": "#/$defs/app"
+    },
+    "branding": {
+      "$ref": "#/$defs/branding"
+    },
+    "operator": {
+      "$ref": "#/$defs/operator"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "legal": {
+      "$ref": "#/$defs/legal"
+    },
+    "supabase": {
+      "$ref": "#/$defs/supabase"
+    },
+    "invites": {
+      "$ref": "#/$defs/invites"
+    },
+    "media": {
+      "$ref": "#/$defs/media"
+    },
+    "features": {
+      "$ref": "#/$defs/features"
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "optionalString": {
+      "type": "string"
+    },
+    "app": {
+      "type": "object",
+      "required": [
+        "name",
+        "shortName",
+        "description",
+        "defaultLocale",
+        "locales",
+        "titleTemplate",
+        "canonicalUrl",
+        "homeHref"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "shortName": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "description": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "defaultLocale": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "locales": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "titleTemplate": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "canonicalUrl": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "homeHref": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "required": [
+        "logoText",
+        "bornAndHostedBy"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "logoText": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "bornAndHostedBy": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "required": [
+        "organizationName",
+        "defaultOwnerLabel",
+        "contactEmail",
+        "privacyEmail",
+        "jurisdiction"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "organizationName": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "defaultOwnerLabel": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "contactEmail": {
+          "$ref": "#/$defs/optionalString"
+        },
+        "privacyEmail": {
+          "$ref": "#/$defs/optionalString"
+        },
+        "jurisdiction": {
+          "$ref": "#/$defs/optionalString"
+        }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "required": [
+        "provider",
+        "owner",
+        "name",
+        "url",
+        "issuesUrl",
+        "discussionsUrl",
+        "templateMode"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "url": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "issuesUrl": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "discussionsUrl": {
+          "$ref": "#/$defs/optionalString"
+        },
+        "templateMode": {
+          "enum": [
+            "upstream",
+            "fork",
+            "template"
+          ]
+        }
+      }
+    },
+    "legal": {
+      "type": "object",
+      "required": [
+        "termsPath",
+        "contentContributionLabel",
+        "itemGiftLabel",
+        "publicDomainIntent"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "termsPath": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "contentContributionLabel": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "itemGiftLabel": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "publicDomainIntent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "supabase": {
+      "type": "object",
+      "required": [
+        "url",
+        "publishableKey",
+        "authRedirectPath"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/optionalString"
+        },
+        "publishableKey": {
+          "$ref": "#/$defs/optionalString"
+        },
+        "authRedirectPath": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "invites": {
+      "type": "object",
+      "required": [
+        "allowSignupWithoutInvite",
+        "collectDisplayNameBeforeInvite"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "allowSignupWithoutInvite": {
+          "type": "boolean"
+        },
+        "collectDisplayNameBeforeInvite": {
+          "type": "boolean"
+        }
+      }
+    },
+    "media": {
+      "type": "object",
+      "required": [
+        "acceptedImageMimeTypes",
+        "maxUploadBytes",
+        "compressionMaxSizeMb",
+        "compressionMaxWidthOrHeight"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "acceptedImageMimeTypes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "maxUploadBytes": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "compressionMaxSizeMb": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "compressionMaxWidthOrHeight": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "required": [
+        "githubLinkInTopbar",
+        "showBorrowedFirstOnlyWhenActive",
+        "telegramAdminNotifications",
+        "itemVersioning",
+        "profilePages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "githubLinkInTopbar": {
+          "type": "boolean"
+        },
+        "showBorrowedFirstOnlyWhenActive": {
+          "type": "boolean"
+        },
+        "telegramAdminNotifications": {
+          "type": "boolean"
+        },
+        "itemVersioning": {
+          "type": "boolean"
+        },
+        "profilePages": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

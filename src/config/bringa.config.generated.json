@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "bringa.io",
+    "shortName": "bringa",
+    "description": "Open source sharing and borrowing portal for communities.",
+    "defaultLocale": "en",
+    "locales": [
+      "en",
+      "de"
+    ],
+    "titleTemplate": "%s | bringa.io",
+    "canonicalUrl": "https://app.bringa.io",
+    "homeHref": "/dashboard"
+  },
+  "branding": {
+    "logoText": "bringa.io",
+    "bornAndHostedBy": "Born and hosted by bringa.io"
+  },
+  "operator": {
+    "organizationName": "bringa.io",
+    "defaultOwnerLabel": "bringa.io",
+    "contactEmail": "",
+    "privacyEmail": "",
+    "jurisdiction": ""
+  },
+  "repository": {
+    "provider": "github",
+    "owner": "bringaio",
+    "name": "app.bringa.io",
+    "url": "https://github.com/bringaio/app.bringa.io",
+    "issuesUrl": "https://github.com/bringaio/app.bringa.io/issues",
+    "discussionsUrl": "",
+    "templateMode": "upstream"
+  },
+  "legal": {
+    "termsPath": "/terms",
+    "contentContributionLabel": "Public-domain dedication where legally possible, fallback operator license.",
+    "itemGiftLabel": "Private gift to the portal operator.",
+    "publicDomainIntent": true
+  },
+  "supabase": {
+    "url": "",
+    "publishableKey": "",
+    "authRedirectPath": "/dashboard"
+  },
+  "invites": {
+    "allowSignupWithoutInvite": false,
+    "collectDisplayNameBeforeInvite": true
+  },
+  "media": {
+    "acceptedImageMimeTypes": [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif"
+    ],
+    "maxUploadBytes": 10485760,
+    "compressionMaxSizeMb": 1,
+    "compressionMaxWidthOrHeight": 1920
+  },
+  "features": {
+    "githubLinkInTopbar": true,
+    "showBorrowedFirstOnlyWhenActive": true,
+    "telegramAdminNotifications": true,
+    "itemVersioning": false,
+    "profilePages": false
+  }
+}

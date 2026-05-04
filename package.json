@@ -4,7 +4,11 @@
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "scripts": {
+    "generate:config": "node scripts/generate-config.mjs",
+    "check:config": "node scripts/generate-config.mjs --check",
+    "predev": "node scripts/generate-config.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/generate-config.mjs",
     "build": "next build",
     "start": "npx serve@latest out",
     "preview": "npx serve@latest out",
