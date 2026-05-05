@@ -7,19 +7,29 @@ These conventions keep the upstream repository easy to review, fork, sync, and m
 - Use Conventional Commits.
 - Prefer small, coherent commits.
 - Push after every commit unless the user explicitly asks for local-only work.
+- Work from a branch. Do not commit directly to `main` for normal development.
 - Use rebase merging for pull requests.
 - Keep `main` linear and protected once CI is in place.
 - Enable GitHub's automatic deletion of head branches after pull requests are merged.
 - Merged branches are not an archive. Git history and pull requests are the archive.
 - Keep the manual GitHub settings checklist in `docs/repository-settings.md` aligned with these rules.
 
-Recommended branch names:
+Branch naming standard:
 
-- `codex/<topic>` for Codex-created branches.
-- `feat/<topic>` for human feature work.
-- `fix/<topic>` for bug fixes.
-- `docs/<topic>` for docs-only work.
-- `chore/<topic>` for maintenance.
+- `main` is the protected upstream integration and release branch.
+- `codex/<type>-<topic>` for agent-created upstream work, for example `codex/docs-branch-conventions` or `codex/fix-auth-redirect`.
+- `<type>/<topic>` for human community pull requests, using the same intent words as Conventional Commits: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, or `ci`.
+- `deploy/<deployment-slug>` for optional long-lived fork deployment branches, for example `deploy/share.example.org`.
+- Branch names use lowercase ASCII, kebab-case topics, and only `/` as a namespace separator.
+
+Branch handling:
+
+- Create short-lived PR branches from the freshest target branch, usually `main` or the fork's synced upstream branch.
+- Keep one behavioral purpose per branch. Do not mix generic upstream work with fork-specific legal text, branding, deployment profiles, or generated deployment artifacts.
+- Rebase or otherwise sync a PR branch before review when the target branch has moved.
+- Do not open upstream pull requests from `deploy/*`; open a clean short-lived branch based on upstream `main` instead.
+- Delete merged or closed short-lived branches. Keep only durable branches such as `main` and intentional `deploy/*` branches.
+- Avoid force-pushing after review starts unless history cleanup is necessary; if it is necessary, mention it in the pull request.
 
 ## Source Of Truth
 

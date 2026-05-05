@@ -9,6 +9,7 @@
 - Record useful but out-of-scope modularization, refactoring, documentation, test, security, performance, accessibility, observability, and developer-experience ideas in `docs/optimization-options.md`; do not implement them without user intent unless they are necessary for the current task.
 - If an optimization idea has uncertain impact, possible side effects, or needs current research, say that directly in the optimization entry.
 - Use Conventional Commits for meaningful checkpoints.
+- Create agent branches as short-lived `codex/<type>-<topic>` branches for upstream work. Do not use `deploy/*` branches for upstream pull requests.
 - Push after every commit unless the user explicitly asks for local-only work or the remote is unavailable.
 - Document conventions that affect other developers in `docs/`, then add matching `.agents/` rules or skills when agents should enforce or remember them.
 - Before adding packages or tools, check current best practice from official docs or trusted current sources when network access is available.

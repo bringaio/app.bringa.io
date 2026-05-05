@@ -36,8 +36,8 @@ Recommended rules:
 - Set GitHub Pages source to GitHub Actions.
 - Use the `github-pages` environment.
 - Protect the `github-pages` environment if deployments should require approval.
-- Keep app deployment secret-free and run it manually from `main` when deployment is needed.
-- Use `.github/workflows/pages.yml` to build `out/` and deploy the artifact with GitHub Pages Actions.
+- Keep app deployment secret-free and run it manually from `main` or an intentional `deploy/<slug>` branch when deployment is needed.
+- Use `.github/workflows/pages.yml` to build `out/` and deploy the artifact with GitHub Pages Actions from `main` or `deploy/*`.
 
 ## Custom App Domain
 
@@ -50,7 +50,7 @@ For `app.bringa.io` or a fork-owned subdomain:
 5. In GitHub repository settings, set Pages source to GitHub Actions and set the custom domain.
 6. In DNS, create a `CNAME` record from the subdomain to `<github-owner>.github.io`. For subdomains, do not include the repository name in the CNAME target.
 7. After DNS verifies, enable HTTPS in GitHub Pages.
-8. Run the manual **Pages** workflow from `main`.
+8. Run the manual **Pages** workflow from `main` or `deploy/<slug>`.
 
 ## Supabase Auth URLs
 
@@ -65,4 +65,4 @@ OAuth providers still need their provider-side callback URL configured to the Su
 
 ## Forks
 
-Fork operators can keep these workflows without upstream secrets. Deployment-specific app hosting, Supabase secrets, custom domains, and legal text belong in fork-owned repository settings, environment variables, and config files.
+Fork operators can keep these workflows without upstream secrets. Deployment-specific app hosting, Supabase secrets, custom domains, and legal text belong in fork-owned repository settings, environment variables, and config files. Use a long-lived `deploy/<slug>` branch when a fork wants generated deployment artifacts and local operator changes to stay separate from clean upstream pull request branches.

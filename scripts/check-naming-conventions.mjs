@@ -12,6 +12,11 @@ const requiredSections = [
 ];
 
 const requiredPhrases = [
+  "Use Conventional Commits.",
+  "Work from a branch. Do not commit directly to `main` for normal development.",
+  "`codex/<type>-<topic>` for agent-created upstream work",
+  "`<type>/<topic>` for human community pull requests",
+  "`deploy/<deployment-slug>` for optional long-lived fork deployment branches",
   "React component exports use PascalCase.",
   "Component filenames under `src/components/` use kebab-case.",
   "Hooks use `useX` names and may keep camelCase filenames such as `src/hooks/useAuth.tsx`.",
@@ -74,7 +79,11 @@ export function checkNamingConventionsContent(content) {
   }
 
   const namingSection = sections.get("Naming Conventions") || "";
-  for (const phrase of requiredPhrases) {
+  const gitSection = sections.get("Git And Pull Requests") || "";
+  for (const phrase of requiredPhrases.slice(0, 5)) {
+    requireIncludes(gitSection, phrase, "docs/conventions.md");
+  }
+  for (const phrase of requiredPhrases.slice(5)) {
     requireIncludes(namingSection, phrase, "docs/conventions.md");
   }
 }

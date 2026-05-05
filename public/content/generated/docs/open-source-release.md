@@ -12,7 +12,11 @@ The first public version should be useful in three modes:
 
 ## Fork Setup
 
-Create a profile instead of copying the upstream deployment file by hand:
+Fast path: fork it, configure it, use it.
+
+1. Fork the repository.
+2. Create a Supabase project.
+3. Create a deployment profile instead of copying the upstream profile by hand:
 
 ```bash
 pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
@@ -33,6 +37,8 @@ BRINGA_DEPLOYMENT=share.example.org pnpm check:config
 
 Public Supabase URL and publishable key belong in the deployment profile. Secrets belong in ignored env files, GitHub secrets, OAuth provider dashboards, or Supabase function secrets.
 
+For Supabase, start with the committed schema and migrations, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; service role keys never belong in Git.
+
 ## GitHub Pages
 
 The app is a static Next.js export. GitHub Pages publishing uses the manual Pages workflow and the `out/` artifact.
@@ -45,9 +51,11 @@ For a custom subdomain:
 4. Point the subdomain CNAME to `<github-owner>.github.io`.
 5. Enable HTTPS after DNS verifies.
 6. In Supabase Auth settings, set the Site URL and exact production redirect URL for the app domain.
-7. Run the manual **Pages** workflow from `main` with the deployment slug.
+7. Run the manual **Pages** workflow from `main` or `deploy/<slug>` with the deployment slug.
 
 Keep production redirect URLs exact. Use localhost or documented wildcard redirects only for local development and preview environments.
+
+The default documented deployment path is GitHub Pages plus hosted Supabase because it keeps first use simple and low-maintenance. The app is still a static Next.js export backed by Supabase, so other hosts such as Cloudflare Pages and self-hosted Supabase are technically possible. They are intentionally mentioned here without detailed runbooks until real operators need them.
 
 ## Pull Requests From Forks
 
@@ -58,6 +66,8 @@ Keep these concerns separate:
 - Supabase secrets, service role keys, OAuth secrets, and Telegram tokens never belong in Git.
 
 When syncing from upstream, preserve fork-owned config and content deliberately. Do not hide legal or deployment conflicts with ignored files or merge drivers.
+
+Use short-lived PR branches for generic upstream work. Keep optional long-lived `deploy/<deployment-slug>` branches for fork-owned app publication, not for upstream contribution PRs.
 
 ## Before Public Announcement
 

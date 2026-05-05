@@ -17,6 +17,9 @@ Keep upstream changes easy to adopt by forks. Do not solve fork customization by
 ## Rules
 
 - Push after every commit unless the user explicitly asks for local-only work or the remote is unavailable.
+- Agent-created upstream branches use `codex/<type>-<topic>`.
+- Human upstream contribution branches use `<type>/<topic>`.
+- Fork-owned publishing branches may use `deploy/<deployment-slug>` and should not be used for upstream pull requests.
 - Rebase is the preferred PR merge style.
 - Merged head branches should be deleted automatically where GitHub settings allow it.
 - CI should split secret-free checks from secret-required deployment work.

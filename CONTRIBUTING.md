@@ -22,6 +22,8 @@ Read:
 
 - Use Conventional Commits.
 - Prefer one coherent change per pull request.
+- Use short-lived branches. Agents use `codex/<type>-<topic>`; human contributors use `<type>/<topic>` such as `feat/item-images`, `fix/auth-redirect`, or `docs/fork-setup`.
+- Keep `deploy/<deployment-slug>` branches for fork-owned publication work, not upstream pull requests.
 - Keep generic upstream code changes separate from fork-specific deployment profiles, legal text, and brand assets.
 - Do not commit secrets, service credentials, real user data, private exports, or production logs.
 - Update docs when behavior, setup, config, CI/CD, operations, security, or fork workflows change.

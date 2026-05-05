@@ -9,6 +9,23 @@ Restore rehearsal and encrypted retention evidence live in [Restore Drills](rest
 Privacy-preserving diagnostics and live log boundaries live in [Observability](observability.md).
 Run `pnpm check:supabase-contract` after changing RPCs, item write policies, or Storage bucket limits.
 
+## Quick Operator Setup
+
+For a fork that wants to run the app:
+
+1. Create a Supabase project.
+2. Apply the committed schema and migrations from `supabase/`.
+3. Create or confirm the `items` Storage bucket and policies through the schema/migration flow.
+4. Configure Auth providers such as GitHub or Google in Supabase.
+5. Set the Supabase Site URL to the final app URL, for example `https://share.example.org`.
+6. Add the exact app redirect URL used by `supabase.authRedirectPath`, for example `https://share.example.org/dashboard`.
+7. Copy the public project URL and publishable key into `config/deployments/<slug>.jsonc`.
+8. Keep service role keys, OAuth secrets, and provider secrets outside Git.
+
+The public project URL and publishable key are expected to reach the browser. They are safe only when Row Level Security, Storage policies, and RPC boundaries are correct. Run `pnpm check:supabase-contract` after schema or policy changes.
+
+Hosted Supabase is the default documented path. Self-hosted Supabase is possible, but currently needs operator-owned documentation for backups, upgrades, SMTP/Auth provider configuration, Storage, Edge Functions, and observability.
+
 ## Before MCP Access
 
 - Configure `.env.local` from `.env.example`.

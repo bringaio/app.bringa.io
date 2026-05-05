@@ -42,18 +42,18 @@ jobs:
         run: pnpm build
 
       - name: Setup Pages
-        if: github.ref == 'refs/heads/main'
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy/') }}
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: github.ref == 'refs/heads/main'
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy/') }}
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
 
   deploy:
     name: Deploy GitHub Pages app
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy/') }}
     needs: build
     runs-on: ubuntu-latest
     permissions:

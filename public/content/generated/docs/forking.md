@@ -42,10 +42,13 @@ To publish a fork on GitHub Pages:
 
 1. Choose a deployment slug, usually the app domain such as `share.example.org`.
 2. Scaffold the profile with `pnpm create:deployment -- <slug>`, then set `app.canonicalUrl`, repository links, public Supabase values, legal content, and brand assets in that deployment profile.
-3. Configure the repository's Pages source as GitHub Actions.
-4. Point a subdomain CNAME to `<github-owner>.github.io`.
-5. Add the matching Site URL and redirect URLs in Supabase Auth settings.
-6. Run the manual **Pages** workflow from the fork's deployment branch.
+3. Decide where the fork deploys from:
+   - use the fork's `main` when local deployment config is meant to live there;
+   - use `deploy/<slug>` when the fork wants a long-lived operator branch and cleaner upstream-sync branches.
+4. Configure the repository's Pages source as GitHub Actions.
+5. Point a subdomain CNAME to `<github-owner>.github.io`.
+6. Add the matching Site URL and redirect URLs in Supabase Auth settings.
+7. Run the manual **Pages** workflow from `main` or `deploy/<slug>`.
 
 ## What Forks Commonly Customize
 
@@ -74,6 +77,8 @@ Forks should keep their own legal documents in deployment-specific content paths
 4. Preserve fork-specific deployment config, legal text, and brand assets.
 5. Regenerate config with the fork's `BRINGA_DEPLOYMENT` and run the manual CI workflow when remote verification is needed.
 6. Resolve conflicts explicitly; do not hide legal/config conflicts with custom merge drivers.
+
+For upstream pull requests from a fork, start a short-lived branch from upstream `main` and leave fork deployment branches out of the PR. Use `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`, `refactor/<topic>`, `test/<topic>`, or `ci/<topic>` for human branches. Agents should use `codex/<type>-<topic>`.
 
 ## CI/CD For Forks
 

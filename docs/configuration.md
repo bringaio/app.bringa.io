@@ -31,6 +31,15 @@ To create a new fork profile before generating config:
 pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
 ```
 
+For first deployment, the normal operator flow is:
+
+1. create a Supabase project;
+2. scaffold a deployment profile;
+3. set `app.canonicalUrl`, repository links, `supabase.url`, and `supabase.publishableKey`;
+4. generate config;
+5. configure Supabase Auth redirect URLs for the final app domain;
+6. run the manual Pages workflow from `main` or `deploy/<slug>`.
+
 This writes:
 
 - `public/bringa.config.json` for runtime/public inspection.

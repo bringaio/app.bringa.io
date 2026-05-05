@@ -4,6 +4,26 @@ Open source sharing and borrowing software for communities, clubs, associations,
 
 [Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Repository settings](docs/repository-settings.md) | [Roadmap](docs/roadmap.md) | [Contributing](CONTRIBUTING.md) | [Security](SECURITY.md)
 
+## Fork It, Configure It, Use It
+
+Bringa is meant to be easy to operate for your own community:
+
+1. Fork this repository.
+2. Create a Supabase project.
+3. Create a deployment profile and add your public app/Supabase values.
+4. Deploy the static app through GitHub Pages.
+
+```bash
+pnpm install
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
+BRINGA_DEPLOYMENT=share.example.org pnpm generate:config
+BRINGA_DEPLOYMENT=share.example.org pnpm check:config
+```
+
+Then set up Supabase from the committed schema and migrations, configure Auth redirect URLs for your app domain, and run the manual **Pages** workflow from `main` or `deploy/<slug>`. Start with [Open Source Release](docs/open-source-release.md), then use [Configuration](docs/configuration.md), [Supabase](docs/supabase.md), [Forking](docs/forking.md), and [Repository Settings](docs/repository-settings.md) as the detailed setup path.
+
+GitHub Pages plus hosted Supabase is the default documented path because it keeps the first deployment simple. The app is a static Next.js export backed by Supabase, so other hosts such as Cloudflare Pages and self-hosted Supabase are possible too; detailed runbooks can be added when an operator actually needs them.
+
 ## Status
 
 This repository is the upstream app for `app.bringa.io`. Organization-specific deployments should keep branding, legal text, repository links, and operator defaults in configuration or fork-owned docs instead of hardcoding them across the app.
@@ -96,7 +116,7 @@ pnpm build
 
 ## GitHub Pages
 
-The app is built as a static Next.js export and can be deployed through the manual **Pages** workflow. The upstream deployment is `app.bringa.io`; forks should add their own deployment profile, set Pages source to GitHub Actions, configure a custom subdomain, and point Supabase Auth redirect URLs at that domain. See `docs/repository-settings.md`.
+The app is built as a static Next.js export and can be deployed through the manual **Pages** workflow. The upstream deployment is `app.bringa.io`; forks should add their own deployment profile, set Pages source to GitHub Actions, configure a custom subdomain, and point Supabase Auth redirect URLs at that domain. Forks can deploy from `main` or a long-lived `deploy/<slug>` branch. See `docs/repository-settings.md`.
 
 ## Contributing
 
