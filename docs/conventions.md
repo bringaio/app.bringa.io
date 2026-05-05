@@ -92,6 +92,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:item-visibility-request`
 - `pnpm test:issue-prompt`
 - `pnpm test:settings-data-actions`
+- `pnpm test:login-terms`
 - `pnpm test:invite-flow`
 - `pnpm test:profile-completion`
 - `pnpm test:admin-notification-settings`

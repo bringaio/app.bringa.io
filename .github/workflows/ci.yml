@@ -105,6 +105,9 @@ jobs:
       - name: Test settings data actions
         run: pnpm test:settings-data-actions
 
+      - name: Test login terms gate
+        run: pnpm test:login-terms
+
       - name: Test invite flow helpers
         run: pnpm test:invite-flow
 

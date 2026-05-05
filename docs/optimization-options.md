@@ -67,7 +67,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 ## Developer Experience
 
-- Test strategy: extend focused tests beyond config generation, OAuth redirect helpers, app-config helpers, admin route gates, media policy helpers, protected-route decisions, invite flow helpers, profile completion helpers, settings data actions, and Supabase contract checker behavior to more critical UI states. Impact: safer refactors. Side effect: respect the user's preference for agentic browser skills before adding browser-test packages.
+- Test strategy: extend focused tests beyond config generation, OAuth redirect helpers, login terms gating, app-config helpers, admin route gates, media policy helpers, protected-route decisions, invite flow helpers, profile completion helpers, settings data actions, and Supabase contract checker behavior to more critical UI states. Impact: safer refactors. Side effect: respect the user's preference for agentic browser skills before adding browser-test packages.
 - Static export verifier growth: expand `pnpm check:static-export` if the app adds generated route handlers, custom export paths, or deployment-specific hosting rules. Impact: preserves the static-export architecture while Next.js evolves. Uncertainty/research: use current Next.js docs before broadening the checker.
 - Major dependency upgrades: review Node 25 runtime/types, ESLint, and TypeScript major updates with current official docs before upgrading. Impact: keeps tooling current without avoidable breakage. Uncertainty/research: confirm runtime Node policy, lint migration path, and compiler changes.
 - Source-of-truth comments: where duplication is unavoidable, add a nearby note naming the canonical file. Impact: prevents future drift.

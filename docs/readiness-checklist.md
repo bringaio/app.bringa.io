@@ -101,6 +101,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm test:item-visibility-request`
 - [ ] `pnpm test:issue-prompt`
 - [ ] `pnpm test:settings-data-actions`
+- [ ] `pnpm test:login-terms`
 - [ ] `pnpm test:invite-flow`
 - [ ] `pnpm test:profile-completion`
 - [ ] `pnpm test:github-workflows`

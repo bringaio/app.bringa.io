@@ -31,6 +31,7 @@
     "test:item-visibility-request": "node --test scripts/item-visibility-request.test.mjs",
     "test:issue-prompt": "node --test scripts/issue-prompt.test.mjs",
     "test:settings-data-actions": "node --test scripts/settings-data-actions.test.mjs",
+    "test:login-terms": "node --test scripts/login-terms.test.mjs",
     "test:invite-flow": "node --test scripts/invite-flow.test.mjs",
     "test:profile-completion": "node --test scripts/profile-completion.test.mjs",
     "test:github-workflows": "node --test scripts/check-github-workflows.test.mjs",
