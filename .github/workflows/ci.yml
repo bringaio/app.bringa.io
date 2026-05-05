@@ -101,6 +101,9 @@ jobs:
       - name: Test observability runbook checker
         run: pnpm test:observability
 
+      - name: Test security maintenance contract checker
+        run: pnpm test:security-maintenance
+
       - name: Test production readiness audit checker
         run: pnpm test:production-readiness-audit
 
@@ -220,6 +223,9 @@ jobs:
 
       - name: Check observability runbook
         run: pnpm check:observability
+
+      - name: Check security maintenance contract
+        run: pnpm check:security-maintenance
 
       - name: Check production readiness audit
         run: pnpm check:production-readiness-audit

@@ -36,6 +36,7 @@ pnpm check:config
 pnpm check:supabase-contract
 pnpm check:supabase-cli
 pnpm check:edge-functions
+pnpm check:security-maintenance
 pnpm lint
 pnpm exec tsc --noEmit
 pnpm build

@@ -28,6 +28,7 @@ pnpm check:config
 pnpm check:supabase-contract
 pnpm check:supabase-cli
 pnpm check:edge-functions
+pnpm check:security-maintenance
 pnpm lint
 pnpm exec tsc --noEmit
 pnpm build
@@ -51,6 +52,11 @@ pnpm test:github-workflows
 - Run Supabase security and performance advisors after schema/policy/function changes when MCP or dashboard access is available.
 - Treat anon/PUBLIC `SECURITY DEFINER` execution warnings as blockers.
 - Document intentional signed-in RPC exposure when the function enforces authorization internally.
+
+## Workflow Guardrails
+
+- Run `pnpm check:security-maintenance` after changing security docs, maintenance skills, release evidence, or workflow guardrails.
+- Passing local checks is not enough for production readiness; collect live advisor, backup, restore-drill, browser, and log evidence when the claim depends on those surfaces.
 
 ## Post-Update Evidence
 
