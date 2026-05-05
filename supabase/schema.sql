@@ -134,7 +134,8 @@ CREATE TABLE IF NOT EXISTS public.item_images (
 -- Table: account_deletion_requests
 CREATE TABLE IF NOT EXISTS public.account_deletion_requests (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
-    user_id uuid NOT NULL,
+    user_id uuid,
+    subject_user_id uuid NOT NULL,
     status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'completed'::text, 'cancelled'::text])),
     user_note text,
     admin_note text,
@@ -264,7 +265,7 @@ ALTER TABLE public.item_versions ADD CONSTRAINT item_versions_owner_profile_id_f
 ALTER TABLE public.item_versions ADD CONSTRAINT item_versions_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.profiles(id) ON DELETE SET NULL;
 ALTER TABLE public.item_images ADD CONSTRAINT item_images_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 ALTER TABLE public.item_images ADD CONSTRAINT item_images_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
-ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
+ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE SET NULL;
 ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_reviewed_by_fkey FOREIGN KEY (reviewed_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
 ALTER TABLE public.item_suggestions ADD CONSTRAINT item_suggestions_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id) ON DELETE CASCADE;
 ALTER TABLE public.item_suggestions ADD CONSTRAINT item_suggestions_suggested_by_fkey FOREIGN KEY (suggested_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
@@ -1039,7 +1040,7 @@ BEGIN
     SELECT id
     INTO existing_request_id
     FROM public.account_deletion_requests
-    WHERE user_id = auth.uid()
+    WHERE subject_user_id = auth.uid()
       AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])
     ORDER BY requested_at DESC
     LIMIT 1;
@@ -1048,8 +1049,8 @@ BEGIN
         RETURN existing_request_id;
     END IF;
 
-    INSERT INTO public.account_deletion_requests (user_id, user_note)
-    VALUES (auth.uid(), normalized_note)
+    INSERT INTO public.account_deletion_requests (user_id, subject_user_id, user_note)
+    VALUES (auth.uid(), auth.uid(), normalized_note)
     RETURNING id INTO new_request_id;
 
     RETURN new_request_id;
@@ -1098,6 +1099,169 @@ $$;
 
 REVOKE EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.execute_account_deletion_request(
+    request_id_input uuid,
+    admin_note_input text
+)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+DECLARE
+    target_user_id uuid;
+    normalized_note text;
+    affected_item_id uuid;
+    hidden_item_count integer := 0;
+    returned_item_count integer := 0;
+    anonymized_created_item_count integer := 0;
+    anonymized_image_count integer := 0;
+    anonymized_suggestion_count integer := 0;
+    anonymized_flag_count integer := 0;
+    notification_event_count integer := 0;
+    deleted_admin_count integer := 0;
+    deleted_sharing_count integer := 0;
+    deleted_mute_count integer := 0;
+    anonymized_profile_count integer := 0;
+    completed_count integer := 0;
+BEGIN
+    IF auth.uid() IS NULL OR NOT public.is_admin() THEN
+        RETURN jsonb_build_object('ok', false, 'reason', 'unauthorized');
+    END IF;
+
+    normalized_note := NULLIF(btrim(coalesce(admin_note_input, '')), '');
+    IF normalized_note IS NULL OR length(normalized_note) < 8 THEN
+        RETURN jsonb_build_object('ok', false, 'reason', 'admin_note_required');
+    END IF;
+
+    SELECT subject_user_id
+    INTO target_user_id
+    FROM public.account_deletion_requests
+    WHERE id = request_id_input
+      AND status = 'reviewing'
+    FOR UPDATE;
+
+    IF target_user_id IS NULL THEN
+        RETURN jsonb_build_object('ok', false, 'reason', 'request_not_reviewing');
+    END IF;
+
+    IF target_user_id = auth.uid() THEN
+        RETURN jsonb_build_object('ok', false, 'reason', 'self_execution_blocked');
+    END IF;
+
+    UPDATE public.items
+    SET borrowed_by = NULL,
+        status = 'inStock'
+    WHERE borrowed_by = target_user_id;
+    GET DIAGNOSTICS returned_item_count = ROW_COUNT;
+
+    FOR affected_item_id IN
+        SELECT id
+        FROM public.items
+        WHERE owner_profile_id = target_user_id
+           OR (created_by = target_user_id AND owner_kind <> 'operator')
+    LOOP
+        UPDATE public.items
+        SET
+            created_by = CASE WHEN created_by = target_user_id THEN NULL ELSE created_by END,
+            owner_profile_id = CASE WHEN owner_profile_id = target_user_id THEN NULL ELSE owner_profile_id END,
+            owner_label = CASE WHEN owner_kind <> 'operator' THEN 'Deleted user' ELSE owner_label END,
+            visibility_state = 'deleted_user_hidden',
+            visibility_reason = 'Account deletion completed: ' || normalized_note,
+            hidden_at = now(),
+            hidden_by = auth.uid(),
+            deleted_at = coalesce(deleted_at, now()),
+            deleted_by = auth.uid()
+        WHERE id = affected_item_id;
+
+        hidden_item_count := hidden_item_count + 1;
+        PERFORM public.record_item_version(affected_item_id, 'account deletion completed');
+    END LOOP;
+
+    UPDATE public.items
+    SET created_by = NULL
+    WHERE created_by = target_user_id;
+    GET DIAGNOSTICS anonymized_created_item_count = ROW_COUNT;
+
+    UPDATE public.item_images
+    SET uploaded_by = NULL
+    WHERE uploaded_by = target_user_id;
+    GET DIAGNOSTICS anonymized_image_count = ROW_COUNT;
+
+    UPDATE public.item_suggestions
+    SET suggested_by = NULL
+    WHERE suggested_by = target_user_id;
+    GET DIAGNOSTICS anonymized_suggestion_count = ROW_COUNT;
+
+    UPDATE public.item_flags
+    SET flagged_by = NULL
+    WHERE flagged_by = target_user_id;
+    GET DIAGNOSTICS anonymized_flag_count = ROW_COUNT;
+
+    UPDATE public.notification_events
+    SET actor_id = NULL
+    WHERE actor_id = target_user_id;
+    GET DIAGNOSTICS notification_event_count = ROW_COUNT;
+
+    DELETE FROM public.admins
+    WHERE profile_id = target_user_id;
+    GET DIAGNOSTICS deleted_admin_count = ROW_COUNT;
+
+    DELETE FROM public.item_sharing
+    WHERE shared_with_user_id = target_user_id;
+    GET DIAGNOSTICS deleted_sharing_count = ROW_COUNT;
+
+    DELETE FROM public.notification_mutes
+    WHERE subject_profile_id = target_user_id;
+    GET DIAGNOSTICS deleted_mute_count = ROW_COUNT;
+
+    UPDATE public.profiles
+    SET
+        email = NULL,
+        display_name = 'Deleted',
+        display_surname = 'user',
+        avatar_url = NULL,
+        description = NULL,
+        profile_valid = false,
+        invited_by_code = NULL,
+        updated_at = now()
+    WHERE id = target_user_id;
+    GET DIAGNOSTICS anonymized_profile_count = ROW_COUNT;
+
+    UPDATE public.account_deletion_requests
+    SET
+        status = 'completed',
+        admin_note = normalized_note,
+        reviewed_at = now(),
+        reviewed_by = auth.uid(),
+        completed_at = now()
+    WHERE id = request_id_input
+      AND status = 'reviewing';
+    GET DIAGNOSTICS completed_count = ROW_COUNT;
+
+    IF completed_count <> 1 THEN
+        RETURN jsonb_build_object('ok', false, 'reason', 'request_not_completed');
+    END IF;
+
+    RETURN jsonb_build_object(
+        'ok', true,
+        'subjectUserId', target_user_id,
+        'hiddenItemCount', hidden_item_count,
+        'returnedItemCount', returned_item_count,
+        'anonymizedCreatedItemCount', anonymized_created_item_count,
+        'anonymizedImageCount', anonymized_image_count,
+        'anonymizedSuggestionCount', anonymized_suggestion_count,
+        'anonymizedFlagCount', anonymized_flag_count,
+        'notificationEventCount', notification_event_count,
+        'deletedAdminCount', deleted_admin_count,
+        'deletedSharingCount', deleted_sharing_count,
+        'deletedMuteCount', deleted_mute_count,
+        'anonymizedProfileCount', anonymized_profile_count,
+        'requiresAuthDeletion', true,
+        'requiresStorageCleanup', true
+    );
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.execute_account_deletion_request(uuid, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.execute_account_deletion_request(uuid, text) TO authenticated;
 
 CREATE OR REPLACE FUNCTION public.create_item_suggestion(
     item_id_input uuid,
@@ -1952,7 +2116,8 @@ CREATE INDEX IF NOT EXISTS idx_item_versions_item_id ON public.item_versions(ite
 CREATE INDEX IF NOT EXISTS idx_item_images_item_id ON public.item_images(item_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_item_images_one_cover_per_item ON public.item_images(item_id) WHERE is_cover;
 CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_user_id ON public.account_deletion_requests(user_id);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_user ON public.account_deletion_requests(user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);
+CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_subject_user_id ON public.account_deletion_requests(subject_user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_subject ON public.account_deletion_requests(subject_user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_item_id ON public.item_suggestions(item_id);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_status_created_at ON public.item_suggestions(status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_item_suggestions_suggested_by ON public.item_suggestions(suggested_by);
@@ -2047,7 +2212,7 @@ CREATE POLICY "No direct item image deletes" ON public.item_images FOR DELETE US
 -- account_deletion_requests
 ALTER TABLE public.account_deletion_requests ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can view own deletion requests" ON public.account_deletion_requests;
-CREATE POLICY "Users can view own deletion requests" ON public.account_deletion_requests FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY "Users can view own deletion requests" ON public.account_deletion_requests FOR SELECT USING (user_id = auth.uid() OR subject_user_id = auth.uid());
 DROP POLICY IF EXISTS "Admins can view deletion requests" ON public.account_deletion_requests;
 CREATE POLICY "Admins can view deletion requests" ON public.account_deletion_requests FOR SELECT USING (public.is_admin());
 DROP POLICY IF EXISTS "No direct deletion request inserts" ON public.account_deletion_requests;

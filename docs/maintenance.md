@@ -26,7 +26,7 @@ Run `pnpm verify:backup <backup-directory>` after a local backup and before any 
 
 Supabase database backups do not restore Storage object bytes, and Auth exports are not complete account restore packages. Treat table JSON, Storage object downloads, optional Auth metadata, and Supabase platform backups as separate recovery surfaces that need their own restore drill.
 
-User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed and do not remove Auth users or Storage objects by themselves.
+User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed. The approved database-side completion stage anonymizes app data and hides user-owned contributions, but Supabase Auth deletion and Storage object cleanup still require a trusted service-role workflow.
 
 ## Local Verification Notes
 

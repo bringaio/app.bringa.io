@@ -3,6 +3,8 @@ import test from "node:test";
 
 import {
   buildDeletionRequestReview,
+  buildDeletionRequestExecution,
+  canExecuteDeletionRequestStatus,
   canReviewDeletionRequestStatus,
   summarizeDeletionRequests,
 } from "../src/lib/admin-deletion-requests.ts";
@@ -73,4 +75,26 @@ test("allows review actions only for active deletion request states", () => {
   assert.equal(canReviewDeletionRequestStatus("reviewing"), true);
   assert.equal(canReviewDeletionRequestStatus("completed"), false);
   assert.equal(canReviewDeletionRequestStatus("cancelled"), false);
+});
+
+test("builds approved deletion execution notes only for reviewing requests", () => {
+  assert.deepEqual(buildDeletionRequestExecution({ status: "reviewing", note: "  Verified export and retention policy. " }), {
+    ok: true,
+    adminNote: "Verified export and retention policy.",
+  });
+  assert.deepEqual(buildDeletionRequestExecution({ status: "pending", note: "Verified export and retention policy." }), {
+    ok: false,
+    adminNote: null,
+  });
+  assert.deepEqual(buildDeletionRequestExecution({ status: "reviewing", note: "short" }), {
+    ok: false,
+    adminNote: null,
+  });
+});
+
+test("allows execution only after a request is in review", () => {
+  assert.equal(canExecuteDeletionRequestStatus("pending"), false);
+  assert.equal(canExecuteDeletionRequestStatus("reviewing"), true);
+  assert.equal(canExecuteDeletionRequestStatus("completed"), false);
+  assert.equal(canExecuteDeletionRequestStatus("cancelled"), false);
 });

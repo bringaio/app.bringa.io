@@ -59,8 +59,9 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin user item views group current borrower, owner, and creator relationships for one profile, with reasoned visibility actions through RPCs.
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
 - [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
+- [x] Approved database-side deletion execution stage is complete for anonymizing profiles and hiding user-owned contributions.
 - [x] Admin notification settings route shows Telegram status, mute-window state, dedupe state, and admin seen-state without exposing user data.
-- [ ] Approved deletion execution is complete.
+- [ ] Trusted Auth deletion and Storage cleanup execution are complete.
 
 ## Operations
 

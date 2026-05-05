@@ -21,6 +21,11 @@ export type AccountDeletionReview = {
   adminNote: string | null;
 };
 
+export type AccountDeletionExecution = {
+  ok: boolean;
+  adminNote: string | null;
+};
+
 const statusRank: Record<AccountDeletionRequestStatus, number> = {
   pending: 0,
   reviewing: 1,
@@ -75,6 +80,26 @@ export function buildDeletionRequestReview({
   return { ok: true, adminNote };
 }
 
+export function buildDeletionRequestExecution({
+  status,
+  note,
+}: {
+  status: AccountDeletionRequestStatus;
+  note: string;
+}): AccountDeletionExecution {
+  const adminNote = note.trim() || null;
+
+  if (status !== "reviewing" || !adminNote || adminNote.length < 8) {
+    return { ok: false, adminNote: null };
+  }
+
+  return { ok: true, adminNote };
+}
+
 export function canReviewDeletionRequestStatus(status: AccountDeletionRequestStatus): boolean {
   return status === "pending" || status === "reviewing";
+}
+
+export function canExecuteDeletionRequestStatus(status: AccountDeletionRequestStatus): boolean {
+  return status === "reviewing";
 }

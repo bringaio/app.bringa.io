@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, CheckCircle2, Clock3, Loader2, ShieldAlert, UserRound, XCircle } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Clock3, Loader2, ShieldAlert, Trash2, UserRound, XCircle } from "lucide-react"
 import ProtectedRoute from "@/components/auth/protected-route"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,8 @@ import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { supabase } from "@/lib/supabaseclient"
 import {
     buildDeletionRequestReview,
+    buildDeletionRequestExecution,
+    canExecuteDeletionRequestStatus,
     canReviewDeletionRequestStatus,
     summarizeDeletionRequests,
     type AccountDeletionRequestSummary,
@@ -87,6 +89,7 @@ export default function AdminDeletionRequestsPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [actionError, setActionError] = useState<string | null>(null)
+    const [actionMessage, setActionMessage] = useState<string | null>(null)
     const [reviewNote, setReviewNote] = useState("")
     const [processingId, setProcessingId] = useState<string | null>(null)
 
@@ -105,7 +108,7 @@ export default function AdminDeletionRequestsPage() {
                 const { data, error } = await supabase
                     .from("account_deletion_requests")
                     .select(`
-                        id,user_id,status,user_note,admin_note,requested_at,reviewed_at,reviewed_by,completed_at,created_at,
+                        id,user_id,subject_user_id,status,user_note,admin_note,requested_at,reviewed_at,reviewed_by,completed_at,created_at,
                         user:profiles!account_deletion_requests_user_id_fkey(id,email,display_name,display_surname,avatar_url)
                     `)
                     .order("requested_at", { ascending: false })
@@ -134,6 +137,7 @@ export default function AdminDeletionRequestsPage() {
 
         setProcessingId(`${request.id}-${status}`)
         setActionError(null)
+        setActionMessage(null)
 
         try {
             const { data, error: reviewError } = await supabase.rpc("review_account_deletion_request", {
@@ -156,6 +160,48 @@ export default function AdminDeletionRequestsPage() {
             if (review.adminNote) setReviewNote("")
         } catch {
             setActionError("Could not update the deletion request.")
+        } finally {
+            setProcessingId(null)
+        }
+    }
+
+    const executeDeletionRequest = async (request: DeletionRequestRow) => {
+        const execution = buildDeletionRequestExecution({ status: request.status, note: reviewNote })
+        if (!execution.ok) {
+            setActionError("Put the request in review and add an admin note before completing the database stage.")
+            return
+        }
+
+        const confirmed = confirm("Complete the database deletion stage for this request? This anonymizes the profile, hides user-owned items, and still requires trusted Auth and Storage cleanup.")
+        if (!confirmed) return
+
+        setProcessingId(`${request.id}-execute`)
+        setActionError(null)
+        setActionMessage(null)
+
+        try {
+            const { data, error: executeError } = await supabase.rpc("execute_account_deletion_request", {
+                request_id_input: request.id,
+                admin_note_input: execution.adminNote,
+            })
+
+            if (executeError) throw executeError
+            if (!data || typeof data !== "object" || !("ok" in data) || data.ok !== true) {
+                throw new Error("Execution rejected")
+            }
+
+            const completedAt = new Date().toISOString()
+            setSummary((current) => current
+                ? summarizeDeletionRequests(current.sorted.map((row) => (
+                    row.id === request.id
+                        ? { ...row, status: "completed", admin_note: execution.adminNote, reviewed_at: completedAt, completed_at: completedAt }
+                        : row
+                )))
+                : current)
+            setReviewNote("")
+            setActionMessage("Database deletion stage completed. Run the trusted Auth deletion and Storage cleanup workflow before closing the operator task.")
+        } catch {
+            setActionError("Could not complete the database deletion stage.")
         } finally {
             setProcessingId(null)
         }
@@ -193,10 +239,10 @@ export default function AdminDeletionRequestsPage() {
                     <div className="rounded-lg border bg-card p-4">
                         <div className="flex items-center gap-2 text-sm font-medium">
                             <ShieldAlert className="h-4 w-4 text-muted-foreground" />
-                            No destructive action here
+                            Approved deletion has multiple stages
                         </div>
                         <p className="mt-2 text-sm text-muted-foreground">
-                            This queue does not delete Supabase Auth users, Storage objects, or item records. Use it to triage requests before an approved operator workflow.
+                            Completing the database stage anonymizes the profile and hides user-owned items. Supabase Auth deletion and Storage object cleanup still require a trusted service-role workflow.
                         </p>
                     </div>
 
@@ -209,6 +255,12 @@ export default function AdminDeletionRequestsPage() {
                     {actionError && (
                         <div role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
                             {actionError}
+                        </div>
+                    )}
+
+                    {actionMessage && (
+                        <div role="status" className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4 text-sm text-emerald-800 dark:text-emerald-200">
+                            {actionMessage}
                         </div>
                     )}
 
@@ -240,6 +292,7 @@ export default function AdminDeletionRequestsPage() {
                             {summary.sorted.map((request) => {
                                 const profile = relationOne(request.user)
                                 const canReview = canReviewDeletionRequestStatus(request.status)
+                                const canExecute = canExecuteDeletionRequestStatus(request.status)
                                 const reviewDates = [
                                     request.reviewed_at ? `Reviewed ${formatDate(request.reviewed_at)}` : null,
                                     request.completed_at ? `Completed ${formatDate(request.completed_at)}` : null,
@@ -311,6 +364,18 @@ export default function AdminDeletionRequestsPage() {
                                                             Cancel
                                                         </Button>
                                                     </>
+                                                )}
+                                                {canExecute && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => executeDeletionRequest(request)}
+                                                        disabled={processingId !== null || reviewNote.trim().length < 8}
+                                                    >
+                                                        {processingId === `${request.id}-execute` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                                        Complete DB stage
+                                                    </Button>
                                                 )}
                                             </div>
                                         </div>

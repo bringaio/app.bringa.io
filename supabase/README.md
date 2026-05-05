@@ -46,6 +46,7 @@ The browser should call RPCs for these writes:
 - `export_my_data`
 - `request_account_deletion`
 - `review_account_deletion_request`
+- `execute_account_deletion_request`
 - `create_item_suggestion`
 - `create_item_flag`
 - `review_item_suggestion`
@@ -78,7 +79,7 @@ Borrow history reads are admin-only by default.
 - user-facing item hide and request-visible changes with required reasons;
 - admin-only profile validation changes with self-invalidation protection;
 - admin-only content, image metadata, and owner suggestion application with item version capture;
-- prepared account deletion request table and non-destructive admin review RPC;
+- prepared account deletion request table, non-destructive admin review RPC, and database-side completion RPC;
 - prepared item suggestion and item flag tables;
 - admin-visible `backup_runs` metadata for backup freshness;
 - admin-visible `notification_events` and `notification_mutes` for Telegram dedupe, mute windows, seen-state, and retry planning;
@@ -95,7 +96,8 @@ Borrow history reads are admin-only by default.
 `export_my_data` returns the authenticated user's profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags as JSON.
 
 `request_account_deletion` records one active operator-reviewed deletion request per user while a request is `pending` or `reviewing`.
-`review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata. It does not delete Supabase Auth users, Storage objects, item records, image metadata, or profile rows.
+`review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata.
+`execute_account_deletion_request` is the approved database-side completion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears direct profile references from prepared moderation, notification, media, and sharing surfaces, records item versions for hidden items, and marks the request completed. It returns counters plus `requiresAuthDeletion` and `requiresStorageCleanup` because Supabase Auth deletion and Storage object cleanup must run from a trusted service-role workflow.
 
 ## Moderation Queue
 

@@ -74,7 +74,7 @@ export interface Organization {
 
 export interface Profile {
   id: string; // UUID
-  email: string;
+  email: string | null;
   display_name: string | null;
   display_surname: string | null;
   avatar_url: string | null;
@@ -134,7 +134,8 @@ export interface ItemFlag {
 
 export interface AccountDeletionRequest {
   id: string;
-  user_id: string;
+  user_id: string | null;
+  subject_user_id: string;
   status: AccountDeletionRequestStatus;
   user_note: string | null;
   admin_note: string | null;

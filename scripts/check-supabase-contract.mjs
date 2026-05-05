@@ -140,7 +140,7 @@ async function main() {
     ],
     [
       "account_deletion_requests_user_id_fkey",
-      "ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;",
+      "ALTER TABLE public.account_deletion_requests ADD CONSTRAINT account_deletion_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE SET NULL;",
     ],
     [
       "item_suggestions_item_id_fkey",
@@ -189,13 +189,19 @@ async function main() {
       "CREATE UNIQUE INDEX IF NOT EXISTS idx_item_images_one_cover_per_item ON public.item_images(item_id) WHERE is_cover;",
     ],
     ["account_deletion_requests table", "CREATE TABLE IF NOT EXISTS public.account_deletion_requests ("],
+    ["account_deletion_requests nullable live user fk", "user_id uuid,"],
+    ["account_deletion_requests durable subject id", "subject_user_id uuid NOT NULL"],
     [
       "account_deletion_requests status",
       "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'completed'::text, 'cancelled'::text]))",
     ],
     [
-      "one active deletion request per user",
-      "CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_user ON public.account_deletion_requests(user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);",
+      "account deletion subject lookup",
+      "CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_subject_user_id ON public.account_deletion_requests(subject_user_id);",
+    ],
+    [
+      "one active deletion request per subject user",
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_account_deletion_requests_one_active_per_subject ON public.account_deletion_requests(subject_user_id) WHERE status = ANY (ARRAY['pending'::text, 'reviewing'::text]);",
     ],
     ["item_suggestions table", "CREATE TABLE IF NOT EXISTS public.item_suggestions ("],
     [
@@ -342,6 +348,21 @@ async function main() {
     ["deletion request creation treats reviewing as active", "AND status = ANY (ARRAY['pending'::text, 'reviewing'::text])"],
     ["deletion review RPC blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) FROM PUBLIC;"],
     ["deletion review RPC allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.review_account_deletion_request(uuid, text, text) TO authenticated;"],
+    ["deletion execution admin RPC", "CREATE OR REPLACE FUNCTION public.execute_account_deletion_request("],
+    ["deletion execution uses hardened search path", "RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$"],
+    ["deletion execution requires reviewing status", "AND status = 'reviewing'"],
+    ["deletion execution blocks self execution", "'self_execution_blocked'"],
+    ["deletion execution requires admin note", "length(normalized_note) < 8"],
+    ["deletion execution hides user-owned items", "visibility_state = 'deleted_user_hidden'"],
+    ["deletion execution records item versions", "PERFORM public.record_item_version(affected_item_id, 'account deletion completed');"],
+    ["deletion execution anonymizes profile", "email = NULL,\n        display_name = 'Deleted',\n        display_surname = 'user'"],
+    ["deletion execution marks request completed", "status = 'completed',\n        admin_note = normalized_note"],
+    ["deletion execution reports remaining trusted steps", "'requiresAuthDeletion', true,\n        'requiresStorageCleanup', true"],
+    ["deletion execution RPC blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.execute_account_deletion_request(uuid, text) FROM PUBLIC;"],
+    ["deletion execution RPC allows authenticated execute", "GRANT EXECUTE ON FUNCTION public.execute_account_deletion_request(uuid, text) TO authenticated;"],
+    ["deletion request creation writes durable subject id", "INSERT INTO public.account_deletion_requests (user_id, subject_user_id, user_note)"],
+    ["deletion request lookup uses durable subject id", "WHERE subject_user_id = auth.uid()"],
+    ["deletion request owner read handles retained audit rows", "CREATE POLICY \"Users can view own deletion requests\" ON public.account_deletion_requests FOR SELECT USING (user_id = auth.uid() OR subject_user_id = auth.uid());"],
   ];
 
   for (const [label, expectedSql] of requiredDeletionReviewSql) {

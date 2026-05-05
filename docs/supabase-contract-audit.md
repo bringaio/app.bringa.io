@@ -206,7 +206,8 @@ Current script:
 - After the `backup_runs` migration is present, the backup script records compact run metadata by default. The admin dashboard reads the latest admin-visible row for backup freshness.
 - User-facing `export_my_data` returns profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags for the authenticated user.
 - `request_account_deletion` records one active operator-reviewed request while a request is `pending` or `reviewing`.
-- `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` and record review metadata, but does not delete Auth users, Storage objects, item rows, image metadata, or profile rows.
+- `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` and record review metadata.
+- `execute_account_deletion_request` lets admins complete the database-side deletion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears prepared profile references, records item versions for hidden items, and returns counters plus Auth/Storage follow-up flags.
 
 Risk:
 
@@ -216,7 +217,7 @@ Risk:
 Target:
 
 - Add restore drills and encrypted backup handling before claiming operational readiness.
-- Add approved destructive execution for account deletion requests, including item visibility/owner reassignment, Auth deletion, and Storage cleanup policy.
+- Add trusted Auth deletion and Storage cleanup execution after the database-side account deletion completion stage.
 
 ## Required RPC Candidates
 
