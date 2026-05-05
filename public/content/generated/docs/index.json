@@ -139,6 +139,12 @@
       "sourcePath": "docs/supabase-contract-audit.md"
     },
     {
+      "slug": "supabase-mcp",
+      "title": "Supabase MCP Agent Setup",
+      "path": "/content/generated/docs/supabase-mcp.md",
+      "sourcePath": "docs/supabase-mcp.md"
+    },
+    {
       "slug": "supabase",
       "title": "Supabase",
       "path": "/content/generated/docs/supabase.md",

@@ -78,6 +78,9 @@ jobs:
       - name: Test browser testing checker
         run: pnpm test:browser-testing
 
+      - name: Test Supabase MCP runbook checker
+        run: pnpm test:supabase-mcp
+
       - name: Test Supabase branching runbook checker
         run: pnpm test:supabase-branching
 
@@ -188,6 +191,9 @@ jobs:
 
       - name: Check browser testing scenarios
         run: pnpm check:browser-testing
+
+      - name: Check Supabase MCP runbook
+        run: pnpm check:supabase-mcp
 
       - name: Check Supabase branching runbook
         run: pnpm check:supabase-branching

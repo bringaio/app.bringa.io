@@ -8,6 +8,7 @@ Supabase is the current backend for Auth, Postgres, Storage, RLS, and Edge Funct
 
 Before changing schema or policies, read [Supabase Contract Audit](supabase-contract-audit.md).
 The repository-level Supabase source-of-truth notes live in `supabase/README.md`.
+Agent and maintainer setup for Supabase MCP lives in [Supabase MCP Agent Setup](supabase-mcp.md).
 Future development-branch setup tasks live in [Supabase Branching](supabase-branching.md).
 Restore rehearsal and encrypted retention evidence live in [Restore Drills](restore-drills.md).
 Privacy-preserving diagnostics and live log boundaries live in [Observability](observability.md).
@@ -36,8 +37,9 @@ Hosted Supabase is the default documented path. Self-hosted Supabase is possible
 - Do not add real service role keys to docs or commits.
 - Use `pnpm backup:supabase` only after confirming the target project.
 - Prefer schema and policy review before reading real rows.
+- Use [Supabase MCP Agent Setup](supabase-mcp.md) for project-scoped MCP, read-only audit mode, `app-bringa-io` creation, and service-role or secret-key handoff.
 
-## Tomorrow's MCP Review
+## Live MCP Review
 
 When Supabase MCP and service role access are available, inspect:
 

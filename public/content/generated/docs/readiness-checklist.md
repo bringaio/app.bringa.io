@@ -117,6 +117,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:copy`
 - [ ] `pnpm test:docs-index`
 - [ ] `pnpm test:browser-testing`
+- [ ] `pnpm test:supabase-mcp`
 - [ ] `pnpm test:supabase-branching`
 - [ ] `pnpm test:restore-drills`
 - [ ] `pnpm test:observability`
@@ -140,6 +141,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm check:copy`
 - [ ] `pnpm check:docs-index`
 - [ ] `pnpm check:browser-testing`
+- [ ] `pnpm check:supabase-mcp`
 - [ ] `pnpm check:supabase-branching`
 - [ ] `pnpm check:restore-drills`
 - [ ] `pnpm check:observability`

@@ -91,6 +91,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:docs-view`
 - `pnpm test:docs-index`
 - `pnpm test:browser-testing`
+- `pnpm test:supabase-mcp`
 - `pnpm test:supabase-branching`
 - `pnpm test:restore-drills`
 - `pnpm test:observability`
@@ -128,6 +129,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:optimization-options`
 - `pnpm check:docs-index`
 - `pnpm check:browser-testing`
+- `pnpm check:supabase-mcp`
 - `pnpm check:supabase-branching`
 - `pnpm check:restore-drills`
 - `pnpm check:observability`

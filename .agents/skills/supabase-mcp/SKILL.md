@@ -9,6 +9,7 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 
 ## Before Connecting
 
+- Read `docs/supabase-mcp.md` before project setup or live review.
 - Read `supabase/README.md`, `docs/supabase.md`, `docs/supabase-contract-audit.md`, `docs/maintenance.md`, and the Supabase entries in `docs/optimization-options.md`.
 - Confirm the target: production, staging, or development.
 - Confirm whether real user data may be inspected. Default: no.
@@ -33,6 +34,9 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 ## MCP Notes
 
 - Keep project-specific MCP credentials scoped to this repository. Prefer repo-local MCP configuration when available.
+- Prefer project-scoped mode with `project_ref=<project-ref>` and `read_only=true` for production audits.
+- Use `app-bringa-io` as the target project name until the user changes it.
+- Do not delete or pause contekt projects without separate explicit confirmation.
 - Use official Supabase docs or Context7 for current MCP, custom domain, self-hosting, and Auth provider setup details.
-- Never paste secrets into docs. Document variable names only.
-- Do not read or summarize real user rows unless the user explicitly approves that exact access.
+- Never reveal, paste, or commit `SUPABASE_SERVICE_ROLE_KEY` or `sb_secret_` values. Document variable names only.
+- Never read real user rows without explicit approval.

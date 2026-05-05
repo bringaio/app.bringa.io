@@ -113,7 +113,7 @@ The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id`
 
 ## Before Live Review
 
-When Supabase MCP or service-role access is available, inspect schema and metadata first:
+When Supabase MCP or service-role access is available, read `docs/supabase-mcp.md`, then inspect schema and metadata first:
 
 - table definitions;
 - RLS policies;
