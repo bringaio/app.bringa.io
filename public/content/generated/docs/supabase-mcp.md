@@ -38,7 +38,9 @@ If capacity or plan limits block a new project, first report the exact blocker a
 
 The `app.bringa.io` project exists in `eu-central-1` and was `ACTIVE_HEALTHY` when first discovered through Supabase MCP on 2026-05-05. Keep project refs and public browser values in local operator notes or deployment config after review, rather than hardcoding them into shared fork docs.
 
-Initial safe metadata checks found no applied repository migrations, no deployed Edge Functions, no public app tables, no Storage buckets, no performance advisor lints, and one security advisor warning for public execution of `public.rls_auto_enable()` as a SECURITY DEFINER helper. Resolve advisor findings and rerun security advisors before treating the live backend as ready.
+Initial safe metadata checks found no applied repository migrations, no deployed Edge Functions, no public app tables, no Storage buckets, no performance advisor lints, and one security advisor warning for public execution of `public.rls_auto_enable()` as a SECURITY DEFINER helper.
+
+As of 2026-05-05, the repository baseline has been applied to the live project, the `items` Storage bucket exists, both Telegram Edge Functions are deployed with `verify_jwt=true`, and a verified empty baseline backup has been written. The modern `SUPABASE_SECRET_KEY` was enough for Storage Admin and Auth Admin checks; the legacy service-role key remains fallback-only. Security advisors no longer report anon/PUBLIC SECURITY DEFINER execution. Signed-in SECURITY DEFINER warnings remain for intentionally exposed RPCs that enforce authorization internally, and performance advisors currently report only unused indexes on the empty project.
 
 ## Agent Workflow
 
@@ -65,7 +67,7 @@ The preferred agent access path is Supabase MCP OAuth. Service-role or secret ke
 - Prefer a Supabase secret key for server-side maintenance when supported by the script or tool.
 - Existing repository maintenance scripts prefer `SUPABASE_SECRET_KEY` and fall back to the legacy `SUPABASE_SERVICE_ROLE_KEY`.
 - Use `pnpm check:supabase-maintenance-key` after `.env.local` or `.env` is configured. Set `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when a one-row Auth Admin metadata probe is acceptable.
-- If the live project uses legacy keys, copy the `service_role` key from Settings > API Keys > Legacy API Keys.
+- If the live project uses legacy keys, copy the `service_role` key from Settings > API Keys > Legacy API Keys only as a fallback. New work should prefer `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS`.
 - If using the Management API, retrieve legacy keys with `GET /v1/projects/{ref}/api-keys` only in a trusted local environment.
 - For new secret keys, create them in Settings > API Keys or the Management API and reveal them only once in a trusted local environment.
 - Store local maintenance keys only in .env.local or an approved local secret store.
@@ -89,6 +91,6 @@ Use supabase.url and supabase.publishableKey in deployment config for browser-vi
 
 - After `app.bringa.io` exists, record only `SUPABASE_PROJECT_REF` and public browser values in local operator notes.
 - Put `supabase.url` and `supabase.publishableKey` in `config/deployments/app.bringa.io.jsonc` after RLS review.
-- Run `pnpm backup:supabase` only after `SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_ROLE_KEY` is configured and the target is confirmed.
+- Run `pnpm backup:supabase` only after `SUPABASE_SECRET_KEY`, `SUPABASE_SECRET_KEYS`, or fallback `SUPABASE_SERVICE_ROLE_KEY` is configured and the target is confirmed. The helper accepts `SUPABASE_URL` or `SUPABASE_PROJECT_REF`.
 - Run `pnpm check:supabase-contract` after schema, RLS, Storage, function, or trigger review.
 - Keep the `contekt-bringa-io` fork path in mind, but do not mix fork setup into the upstream `app.bringa.io` project.

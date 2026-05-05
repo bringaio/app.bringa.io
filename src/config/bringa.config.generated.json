@@ -61,12 +61,12 @@
     "publicDomainIntent": true
   },
   "supabase": {
-    "url": "http://127.0.0.1:54321",
-    "publishableKey": "local-development-publishable-key",
+    "url": "https://bqotcfejqljfcfjhavwh.supabase.co",
+    "publishableKey": "sb_publishable_LqFtV-ymPHEN3xpwO76TvA_9A9kkTbi",
     "authRedirectPath": "/dashboard"
   },
   "development": {
-    "localDemoMode": true
+    "localDemoMode": false
   },
   "invites": {
     "allowSignupWithoutInvite": false,

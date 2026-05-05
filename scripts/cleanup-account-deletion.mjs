@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { loadEnvFile, requiredEnv, resolveSupabaseMaintenanceKey } from "./backup-supabase.mjs";
+import { loadEnvFile, resolveSupabaseMaintenanceKey, resolveSupabaseMaintenanceUrl } from "./backup-supabase.mjs";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const storageBatchSize = 1000;
@@ -214,7 +214,7 @@ export async function main(argv = process.argv.slice(2)) {
 
   const args = parseAccountDeletionCleanupArgs(argv);
   const storageObjects = parseStorageObjectSpecs(args.storageSpecs);
-  const supabaseUrl = requiredEnv("SUPABASE_URL");
+  const supabaseUrl = resolveSupabaseMaintenanceUrl();
   const maintenanceKey = resolveSupabaseMaintenanceKey();
   const supabase = createClient(supabaseUrl, maintenanceKey, {
     auth: {

@@ -14,6 +14,7 @@ import {
   parseCsvList,
   recordBackupRun,
   resolveSupabaseMaintenanceKey,
+  resolveSupabaseMaintenanceUrl,
   safeBackupPath,
 } from "./backup-supabase.mjs";
 
@@ -35,13 +36,30 @@ test("prefers Supabase secret keys for trusted server-side maintenance", () => {
   }), "sb_secret_preferred");
 
   assert.equal(resolveSupabaseMaintenanceKey({
+    SUPABASE_SECRET_KEYS: JSON.stringify({ default: "sb_secret_from_map" }),
+    SUPABASE_SERVICE_ROLE_KEY: "legacy-service-role",
+  }), "sb_secret_from_map");
+
+  assert.equal(resolveSupabaseMaintenanceKey({
     SUPABASE_SERVICE_ROLE_KEY: "legacy-service-role",
   }), "legacy-service-role");
 
   assert.throws(
     () => resolveSupabaseMaintenanceKey({}),
-    /SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY/,
+    /SUPABASE_SECRET_KEY, SUPABASE_SECRET_KEYS, or SUPABASE_SERVICE_ROLE_KEY/,
   );
+});
+
+test("derives hosted Supabase maintenance URL from project ref", () => {
+  assert.equal(resolveSupabaseMaintenanceUrl({
+    SUPABASE_URL: "https://example.supabase.co/",
+  }), "https://example.supabase.co");
+
+  assert.equal(resolveSupabaseMaintenanceUrl({
+    SUPABASE_PROJECT_REF: "abc123",
+  }), "https://abc123.supabase.co");
+
+  assert.throws(() => resolveSupabaseMaintenanceUrl({}), /SUPABASE_URL or SUPABASE_PROJECT_REF/);
 });
 
 test("includes operational notification metadata in the default table backup scope", () => {

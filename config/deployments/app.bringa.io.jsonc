@@ -21,5 +21,13 @@
     "url": "https://github.com/bringaio/app.bringa.io",
     "issuesUrl": "https://github.com/bringaio/app.bringa.io/issues",
     "templateMode": "upstream"
+  },
+  "supabase": {
+    "url": "https://bqotcfejqljfcfjhavwh.supabase.co",
+    "publishableKey": "sb_publishable_LqFtV-ymPHEN3xpwO76TvA_9A9kkTbi",
+    "authRedirectPath": "/dashboard"
+  },
+  "development": {
+    "localDemoMode": false
   }
 }

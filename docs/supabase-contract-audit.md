@@ -4,7 +4,7 @@ title: Supabase Contract Audit
 
 # Supabase Contract Audit
 
-This audit is based on local source files only. It does not inspect live Supabase rows or real user data.
+This audit is based on local source files plus schema-only live metadata. It does not inspect live Supabase rows or real user data.
 
 Use it as the first checklist when Supabase MCP or server-side maintenance access is available.
 
@@ -39,6 +39,7 @@ Current schema:
 Risk:
 
 - Live projects must include the RPC migration before deploying the UI change.
+- The 2026-05-05 `app.bringa.io` live baseline includes the RPC and revoked anon/PUBLIC function execution.
 
 Target:
 
@@ -170,7 +171,7 @@ Current functions:
 Risk:
 
 - Fresh forks must configure webhook URL settings before expecting Telegram delivery.
-- A deployment still needs its webhook URLs, function secrets, and service role status write tested with approved live access.
+- The upstream deployment still needs its webhook URLs and Edge Function secrets configured. Both functions are deployed with `verify_jwt=true`, but live Telegram delivery has not been exercised.
 
 Target:
 

@@ -41,7 +41,7 @@ BRINGA_DEPLOYMENT=share.example.org pnpm check:config
 ```
 
 Public Supabase URL and publishable key belong in the deployment profile. Secrets belong in ignored env files, GitHub secrets, OAuth provider dashboards, or Supabase function secrets.
-For trusted local maintenance such as backups or account cleanup, copy `.env.example` to `.env.local` after confirming the target project and set `SUPABASE_SECRET_KEY` there.
+For trusted local maintenance such as backups or account cleanup, copy `.env.example` to `.env.local` after confirming the target project, set `SUPABASE_PROJECT_REF` or `SUPABASE_URL`, and set `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS` there. Legacy service-role keys remain fallback-only.
 
 For Supabase, start fresh projects from `supabase/schema.sql` and use `supabase/migrations/` for existing deployments that need an incremental upgrade path, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; secret keys and service role keys never belong in Git.
 
@@ -81,4 +81,4 @@ Use short-lived PR branches for generic upstream work. Keep optional long-lived 
 - `docs/readiness-checklist.md` names unresolved external blockers instead of implying they are solved.
 - Manual CI and Pages workflows stay secret-free and `workflow_dispatch` only.
 - Browser evidence covers local demo, connected Supabase auth, long-content states, admin routes, mobile, desktop, and PWA install where supported.
-- Live Supabase schema, RLS, Storage, Edge Functions, backups, restore drills, and observability are reviewed with approved access before any production-readiness claim.
+- Live Supabase schema, RLS, Storage, Edge Functions, and an empty-baseline backup have been reviewed with approved access; Auth redirects, Edge Function secrets, Telegram webhook settings, restore drills, and observability evidence remain before any production-readiness claim.

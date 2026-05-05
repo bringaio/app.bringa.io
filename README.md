@@ -94,7 +94,7 @@ pnpm check:supabase-maintenance-key
 pnpm backup:supabase
 ```
 
-The maintenance check prefers `SUPABASE_SECRET_KEY`. Legacy `SUPABASE_SERVICE_ROLE_KEY` is supported only as a fallback for older projects.
+The maintenance check prefers `SUPABASE_SECRET_KEY` and also supports `SUPABASE_SECRET_KEYS` JSON maps. Legacy `SUPABASE_SERVICE_ROLE_KEY` is supported only as a fallback for older projects.
 
 Backups are written to `backups/`, which is ignored by Git. Storage objects and Auth users need separate export steps.
 

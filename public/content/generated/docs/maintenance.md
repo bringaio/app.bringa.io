@@ -2,7 +2,7 @@
 
 ## Regular Tasks
 
-- Run `pnpm backup:supabase` before production database work when `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY` is configured.
+- Run `pnpm backup:supabase` before production database work when `SUPABASE_SECRET_KEY`, `SUPABASE_SECRET_KEYS`, or legacy `SUPABASE_SERVICE_ROLE_KEY` is configured.
 - Keep Supabase free-tier projects active, or document the paid/self-hosted plan for deployments that must not pause.
 - Run `pnpm check:config`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
 - Review dependencies and security advisories regularly.
@@ -12,7 +12,7 @@
 
 ## Supabase Backup Scope
 
-`pnpm backup:supabase` exports configured Postgres tables and configured Storage buckets to `backups/supabase/<timestamp>/`. By default it backs up the public tables listed in `scripts/backup-supabase.mjs` and the `items` Storage bucket. Use `SUPABASE_BACKUP_TABLES`, `SUPABASE_BACKUP_STORAGE_BUCKETS`, `SUPABASE_BACKUP_PAGE_SIZE`, and `SUPABASE_BACKUP_STORAGE_PAGE_SIZE` for deployment-specific scope; set a list variable to `none` to skip that surface deliberately.
+`pnpm backup:supabase` exports configured Postgres tables and configured Storage buckets to `backups/supabase/<timestamp>/`. Configure it with `SUPABASE_URL` or `SUPABASE_PROJECT_REF` plus `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS`; legacy `SUPABASE_SERVICE_ROLE_KEY` is fallback-only. By default it backs up the public tables listed in `scripts/backup-supabase.mjs` and the `items` Storage bucket. Use `SUPABASE_BACKUP_TABLES`, `SUPABASE_BACKUP_STORAGE_BUCKETS`, `SUPABASE_BACKUP_PAGE_SIZE`, and `SUPABASE_BACKUP_STORAGE_PAGE_SIZE` for deployment-specific scope; set a list variable to `none` to skip that surface deliberately.
 
 Run `pnpm check:env-example` after changing backup defaults or `.env.example`. It verifies that the example backup table and Storage bucket defaults still match the backup script source of truth.
 
@@ -30,7 +30,7 @@ Use [Restore Drills](restore-drills.md) for the evidence checklist before claimi
 
 User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed. The approved database-side completion stage anonymizes app data and hides user-owned contributions, but Supabase Auth deletion and Storage object cleanup still require a trusted server-side maintenance workflow.
 
-Use `pnpm cleanup:account-deletion` only after the deletion request is completed in the app database and after backup, export, retention, and Storage path review are complete. The helper uses `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY`, defaults to dry-run, requires `--execute --confirm-user-id <auth-user-id>` for destructive work, removes supplied Storage paths before Auth deletion, and verifies the completed request row before making destructive Supabase calls.
+Use `pnpm cleanup:account-deletion` only after the deletion request is completed in the app database and after backup, export, retention, and Storage path review are complete. The helper uses `SUPABASE_URL` or `SUPABASE_PROJECT_REF` plus `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS`; legacy `SUPABASE_SERVICE_ROLE_KEY` is fallback-only. It defaults to dry-run, requires `--execute --confirm-user-id <auth-user-id>` for destructive work, removes supplied Storage paths before Auth deletion, and verifies the completed request row before making destructive Supabase calls.
 
 ## Local Verification Notes
 
@@ -39,6 +39,6 @@ Use `pnpm cleanup:account-deletion` only after the deletion request is completed
 
 ## Current Known Gaps
 
-- Supabase MCP/server-side maintenance review is pending.
+- Supabase live schema and Edge Function baseline exists; Auth provider redirects, Edge Function secrets, and restore drills are still pending.
 - Live restore drills and encrypted backup retention policy are pending.
 - Maskable PNG icons and complete homescreen testing are pending.

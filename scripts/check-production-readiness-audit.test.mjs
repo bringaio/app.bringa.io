@@ -47,9 +47,9 @@ function validAuditContent() {
 ## Remaining Blockers
 
 - GitHub branch protection and manual Pages deployment settings require repository UI or plan access.
-- Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions review has started through Supabase MCP metadata, but still needs full RLS/Storage/Edge review, migration/write approval, and advisor remediation evidence.
-- Live Supabase health checks, Edge Function log review, and any external error-reporting decision require approved access and policy.
-- Local app development cannot be linked to a Supabase development branch without approved project refs and branch access.
+- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, and an empty-baseline backup have approved evidence.
+- Live Supabase health checks beyond schema/key/API smoke tests, Edge Function log review, and any external error-reporting decision require final operator policy.
+- Local app development cannot be linked to a Supabase development branch until Supabase MCP branch access stops returning the current permission-validation error or an alternate branch workflow is selected.
 - Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence.
 - Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.
 - Live restore drills and encrypted backup handling still need approved access and policy.
@@ -84,7 +84,7 @@ test("rejects audits that omit live Supabase blockers", () => {
   assert.throws(
     () => checkProductionReadinessAuditContent(
       validAuditContent().replace(
-        "- Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions review has started through Supabase MCP metadata, but still needs full RLS/Storage/Edge review, migration/write approval, and advisor remediation evidence.",
+        "- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, and an empty-baseline backup have approved evidence.",
         "- Supabase live review remains pending.",
       ),
     ),

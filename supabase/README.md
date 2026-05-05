@@ -99,7 +99,7 @@ Borrow history reads are admin-only by default.
 `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata.
 `execute_account_deletion_request` is the approved database-side completion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears direct profile references from prepared moderation, notification, media, and sharing surfaces, records item versions for hidden items, and marks the request completed. It returns counters plus `requiresAuthDeletion` and `requiresStorageCleanup` because Supabase Auth deletion and Storage object cleanup must run from a trusted server-side maintenance workflow.
 
-After backup, export, retention, and operator approval checks, run the trusted cleanup helper from a server-side environment with `SUPABASE_URL` and `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY`:
+After backup, export, retention, and operator approval checks, run the trusted cleanup helper from a server-side environment with `SUPABASE_URL` or `SUPABASE_PROJECT_REF` plus `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS`. Legacy `SUPABASE_SERVICE_ROLE_KEY` is fallback-only:
 
 ```bash
 pnpm cleanup:account-deletion -- --user-id <auth-user-id> --request-id <completed-request-id> --storage items:<object-path> --execute --confirm-user-id <auth-user-id>
@@ -107,7 +107,7 @@ pnpm cleanup:account-deletion -- --user-id <auth-user-id> --request-id <complete
 
 The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id` are supplied. It verifies the deletion request is already `completed`, removes supplied Storage object paths through the Storage API first, then calls `auth.admin.deleteUser`. Supabase's current docs require elevated Auth Admin calls to stay server-side and note that Auth deletion can fail while the user still owns Storage objects.
 
-Use `pnpm check:supabase-maintenance-key` after adding a server-only key locally. The preferred key is `SUPABASE_SECRET_KEY`; `SUPABASE_SERVICE_ROLE_KEY` is a legacy fallback. Add `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when a one-row Auth Admin metadata probe is acceptable.
+Use `pnpm check:supabase-maintenance-key` after adding a server-only key locally. The preferred key is `SUPABASE_SECRET_KEY`; `SUPABASE_SECRET_KEYS` JSON maps are also supported, and `SUPABASE_SERVICE_ROLE_KEY` is a legacy fallback. Add `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when a one-row Auth Admin metadata probe is acceptable.
 
 ## Moderation Queue
 

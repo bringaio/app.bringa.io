@@ -36,10 +36,10 @@ As of 2026-05-05, GitHub API checks confirm the merge settings above. The reposi
 - [x] Direct writes to core item state, borrow history, item versions, item images, deletion requests, and moderation queues are blocked by RLS.
 - [x] Storage bucket MIME and size limits are checked against deployment config.
 - [x] Supabase development-branch transition tasks are documented and checked.
-- [ ] Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions have been reviewed with approved access.
+- [x] Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions have been reviewed and baseline-applied with approved access.
 - [ ] Local app development is linked to a Supabase development branch from production.
 
-As of 2026-05-05, Supabase MCP can see the `app.bringa.io` project in `eu-central-1` with `ACTIVE_HEALTHY` status. Initial metadata checks found no applied repository migrations, no public app tables, no Storage buckets, no deployed Edge Functions, no performance advisor lints, and one security advisor warning for public execution of the `public.rls_auto_enable()` SECURITY DEFINER helper. `pnpm check:supabase-maintenance-key` confirmed the modern `SUPABASE_SECRET_KEY` can reach Storage Admin and Auth Admin APIs, so the legacy service-role key is only a fallback for this project. Full schema/RLS/Storage/Edge review, migration application, and branch setup remain open; the MCP `list_branches` call returned a permission-validation error during the first check.
+As of 2026-05-05, Supabase MCP can see the `app.bringa.io` project in `eu-central-1` with `ACTIVE_HEALTHY` status. The live baseline now has the repository schema applied, RLS enabled on app tables, the `items` Storage bucket configured, both Telegram Edge Functions deployed with `verify_jwt=true`, anon/PUBLIC SECURITY DEFINER execution removed, and a verified empty backup recorded. `pnpm check:supabase-maintenance-key` confirmed the modern `SUPABASE_SECRET_KEY` can reach Storage Admin and Auth Admin APIs, so the legacy service-role key is only a fallback for this project. Remaining blockers are Auth provider/redirect setup, Edge Function secrets, Telegram webhook URL settings, restore drills, live log review, and branch setup; the MCP `list_branches` call still returns a permission-validation error.
 
 ## User Experience
 
@@ -76,6 +76,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [x] `pnpm backup:supabase` exports configured public tables and Storage buckets with `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY`.
 - [x] `pnpm backup:supabase` records compact admin-visible backup run metadata after the `backup_runs` migration.
 - [x] Local backup integrity verification checks manifest table counts and Storage object hashes before restore drills.
+- [x] A 2026-05-05 live empty-baseline backup was written and verified after the initial schema setup.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
 - [x] Restore drill and encrypted retention evidence requirements are documented and checked.

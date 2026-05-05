@@ -83,7 +83,7 @@ export function buildOperatorSetupChecklist({ slug, useDeployBranch }) {
     `3. Check config: BRINGA_DEPLOYMENT=${slug} pnpm check:config`,
     "4. Apply the committed Supabase schema and migrations to your Supabase project.",
     "5. Set Supabase Auth Site URL to your app URL and add the exact /dashboard redirect URL.",
-    "6. For backups and trusted cleanup only, copy .env.example to .env.local and set SUPABASE_SECRET_KEY after confirming the target project.",
+    "6. For backups and trusted cleanup only, copy .env.example to .env.local, set SUPABASE_PROJECT_REF or SUPABASE_URL, and set SUPABASE_SECRET_KEY or SUPABASE_SECRET_KEYS after confirming the target project.",
     "7. In GitHub, set Pages source to GitHub Actions and configure your custom domain if you use one.",
     `8. Run the manual Pages workflow with deployment=${slug}.`,
     "9. Run pnpm build before publishing changes.",

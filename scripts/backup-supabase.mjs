@@ -57,14 +57,39 @@ export function requiredEnv(name) {
   return value;
 }
 
+function secretKeyFromMap(value) {
+  if (!value) return null;
+
+  try {
+    const parsed = JSON.parse(value);
+    const defaultKey = parsed?.default;
+    return typeof defaultKey === "string" && defaultKey.trim() ? defaultKey : null;
+  } catch {
+    return null;
+  }
+}
+
+export function resolveSupabaseMaintenanceUrl(env = process.env) {
+  const explicitUrl = String(env.SUPABASE_URL || "").trim().replace(/\/$/, "");
+  if (explicitUrl) return explicitUrl;
+
+  const projectRef = String(env.SUPABASE_PROJECT_REF || "").trim();
+  if (projectRef) return `https://${projectRef}.supabase.co`;
+
+  throw new Error("Missing required environment variable: SUPABASE_URL or SUPABASE_PROJECT_REF");
+}
+
 export function resolveSupabaseMaintenanceKey(env = process.env) {
   const secretKey = env.SUPABASE_SECRET_KEY;
   if (secretKey) return secretKey;
 
+  const mappedSecretKey = secretKeyFromMap(env.SUPABASE_SECRET_KEYS);
+  if (mappedSecretKey) return mappedSecretKey;
+
   const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
   if (serviceRoleKey) return serviceRoleKey;
 
-  throw new Error("Missing required environment variable: SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY");
+  throw new Error("Missing required environment variable: SUPABASE_SECRET_KEY, SUPABASE_SECRET_KEYS, or SUPABASE_SERVICE_ROLE_KEY");
 }
 
 export function backupTimestamp() {
@@ -288,7 +313,7 @@ export async function main() {
   await loadEnvFile(".env.local");
   await loadEnvFile(".env");
 
-  const supabaseUrl = requiredEnv("SUPABASE_URL");
+  const supabaseUrl = resolveSupabaseMaintenanceUrl();
   const maintenanceKey = resolveSupabaseMaintenanceKey();
   const tableList = parseCsvList(process.env.SUPABASE_BACKUP_TABLES, defaultTables);
   const storageBuckets = parseCsvList(process.env.SUPABASE_BACKUP_STORAGE_BUCKETS, defaultStorageBuckets);

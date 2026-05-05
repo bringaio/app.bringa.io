@@ -48,7 +48,7 @@ For first deployment, the normal operator flow is:
 3. set `app.canonicalUrl`, repository links, `supabase.url`, and `supabase.publishableKey`;
 4. generate config;
 5. configure Supabase Auth redirect URLs for the final app domain;
-6. copy `.env.example` to `.env.local` and set `SUPABASE_SECRET_KEY` only for trusted local maintenance after confirming the target project;
+6. copy `.env.example` to `.env.local`, set `SUPABASE_PROJECT_REF` or `SUPABASE_URL`, and set `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS` only for trusted local maintenance after confirming the target project;
 7. run the manual Pages workflow from `main` or `deploy/<slug>`.
 
 This writes:
