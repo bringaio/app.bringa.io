@@ -192,7 +192,7 @@ Risk:
 
 Target:
 
-- Decide whether `supabase/schema.sql` or migrations are authoritative for fresh setup.
+- Treat `supabase/schema.sql` as the authoritative baseline for fresh projects; use `supabase/migrations/` as the reviewed incremental upgrade path for existing deployments.
 - Keep migration docs explicit about production upgrade order.
 - Remove or quarantine obsolete project-specific assumptions.
 - Add checker coverage when new ownership, visibility, versioning, moderation, and media tables become durable schema.

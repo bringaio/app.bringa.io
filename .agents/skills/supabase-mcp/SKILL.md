@@ -14,6 +14,7 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 - Confirm the target: production, staging, or development.
 - Confirm whether real user data may be inspected. Default: no.
 - Run or offer `pnpm backup:supabase` when `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY` is available; confirm whether optional Auth user metadata export is approved before setting `SUPABASE_BACKUP_AUTH_USERS=1`.
+- Use `pnpm check:supabase-maintenance-key` to verify trusted local server-side keys without printing key values. Prefer `SUPABASE_SECRET_KEY`; treat `SUPABASE_SERVICE_ROLE_KEY` as a legacy fallback.
 - Prefer schema, RLS policies, functions, triggers, storage bucket settings, and anonymized counts.
 - Compare the live contract with `supabase/schema.sql`, migrations, edge functions, and client mutations before proposing changes.
 - Keep migrations and `supabase/schema.sql` aligned whenever schema, policies, triggers, functions, buckets, or RPCs change.

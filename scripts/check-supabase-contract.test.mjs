@@ -4,7 +4,10 @@ import path from "node:path";
 import test from "node:test";
 
 import { loadConfigObject } from "./generate-config.mjs";
-import { checkSupabaseContract } from "./check-supabase-contract.mjs";
+import {
+  checkSupabaseContract,
+  checkSupabaseEdgeFunctionContent,
+} from "./check-supabase-contract.mjs";
 
 async function currentContractInputs() {
   const root = process.cwd();
@@ -48,5 +51,19 @@ test("rejects Storage limits that drift from resolved media config", async () =>
   assert.throws(
     () => checkSupabaseContract({ schema, config: driftedConfig }),
     /Storage bucket file size limit is not aligned/,
+  );
+});
+
+test("requires Edge Functions to prefer modern Supabase secret keys", async () => {
+  const root = process.cwd();
+  const content = await readFile(path.join(root, "supabase", "functions", "notifiy-telegram", "index.ts"), "utf8");
+
+  assert.doesNotThrow(() => checkSupabaseEdgeFunctionContent(content, "notifiy-telegram"));
+  assert.throws(
+    () => checkSupabaseEdgeFunctionContent(
+      content.replace("SUPABASE_SECRET_KEY", "SUPABASE_OLD_SECRET_KEY"),
+      "notifiy-telegram",
+    ),
+    /SUPABASE_SECRET_KEY/,
   );
 });

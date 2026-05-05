@@ -19,14 +19,15 @@ Run `pnpm check:supabase-contract` after changing RPCs, item write policies, or 
 For a fork that wants to run the app:
 
 1. Create a Supabase project.
-2. Apply the committed schema and migrations from `supabase/`.
+2. For a fresh project, apply `supabase/schema.sql` as the baseline. For an existing project, apply reviewed incremental migrations from `supabase/migrations/`.
 3. Create or confirm the `items` Storage bucket and policies through the schema/migration flow.
 4. Configure Auth providers such as GitHub or Google in Supabase.
 5. Set the Supabase Site URL to the final app URL, for example `https://share.example.org`.
 6. Add the exact app redirect URL used by `supabase.authRedirectPath`, for example `https://share.example.org/dashboard`.
 7. Copy the public project URL and publishable key into `config/deployments/<slug>.jsonc`.
-8. Copy `.env.example` to `.env.local` and set `SUPABASE_SECRET_KEY` only for trusted local maintenance after confirming the target project.
+8. Copy `.env.example` to `.env.local`, set `SUPABASE_URL` or `SUPABASE_PROJECT_REF`, and set `SUPABASE_SECRET_KEY` only for trusted local maintenance after confirming the target project.
 9. Keep Supabase secret keys, service role keys, OAuth secrets, and provider secrets outside Git.
+10. Run `pnpm check:supabase-maintenance-key` to verify server-side maintenance access without printing key values.
 
 The public project URL and publishable key are expected to reach the browser. They are safe only when Row Level Security, Storage policies, and RPC boundaries are correct. Run `pnpm check:supabase-contract` after schema or policy changes.
 
@@ -60,9 +61,9 @@ Use this sequence for the upstream `app.bringa.io` project after an operator exp
 1. Confirm the target project in Supabase MCP without reading row contents.
 2. Save the project ref, public project URL, and publishable key in local operator notes.
 3. Run Supabase security and performance advisors before changing anything.
-4. Link the local CLI to the approved project with `supabase link --project-ref <project-ref>`.
-5. Preview migrations with `supabase db push --dry-run`.
-6. Apply migrations with `supabase db push` or, when the migration history requires it, `supabase migration up --linked`.
+4. For a fresh empty project, apply `supabase/schema.sql` as the reviewed baseline through MCP or the Supabase SQL editor.
+5. For an existing project, link the local CLI with `supabase link --project-ref <project-ref>`, preview migrations with `supabase db push --dry-run`, and apply the reviewed incremental migration path.
+6. Run `pnpm check:supabase-maintenance-key`; use `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when the one-row Auth Admin metadata probe is acceptable.
 7. Rerun `pnpm check:supabase-contract`.
 8. Deploy Edge Functions with `supabase functions deploy --project-ref <project-ref>` only after function secrets and URL settings are reviewed.
 9. Configure Auth Site URL and redirect URLs for the app domain.

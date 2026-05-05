@@ -39,7 +39,7 @@ As of 2026-05-05, GitHub API checks confirm the merge settings above. The reposi
 - [ ] Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions have been reviewed with approved access.
 - [ ] Local app development is linked to a Supabase development branch from production.
 
-As of 2026-05-05, Supabase MCP can see the `app.bringa.io` project in `eu-central-1` with `ACTIVE_HEALTHY` status. Initial metadata checks found no applied repository migrations, no public app tables, no Storage buckets, no deployed Edge Functions, no performance advisor lints, and one security advisor warning for public execution of the `public.rls_auto_enable()` SECURITY DEFINER helper. Full schema/RLS/Storage/Edge review, migration application, and branch setup remain open; the MCP `list_branches` call returned a permission-validation error during the first check.
+As of 2026-05-05, Supabase MCP can see the `app.bringa.io` project in `eu-central-1` with `ACTIVE_HEALTHY` status. Initial metadata checks found no applied repository migrations, no public app tables, no Storage buckets, no deployed Edge Functions, no performance advisor lints, and one security advisor warning for public execution of the `public.rls_auto_enable()` SECURITY DEFINER helper. `pnpm check:supabase-maintenance-key` confirmed the modern `SUPABASE_SECRET_KEY` can reach Storage Admin and Auth Admin APIs, so the legacy service-role key is only a fallback for this project. Full schema/RLS/Storage/Edge review, migration application, and branch setup remain open; the MCP `list_branches` call returned a permission-validation error during the first check.
 
 ## User Experience
 

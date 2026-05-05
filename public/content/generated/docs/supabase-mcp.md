@@ -17,6 +17,7 @@ This runbook is for agents and maintainers who need to prepare the live `app.bri
 - Supabase's current API key docs recommend publishable keys for public browser clients and secret keys over legacy service_role keys where possible.
 - Never put `SUPABASE_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, or `sb_secret_` values in docs, commits, browser bundles, screenshots, or chat.
 - `pnpm check:secrets` scans committed text for Supabase service-role assignments, `sb_secret_` keys, and legacy service-role JWTs.
+- `pnpm check:supabase-maintenance-key` verifies trusted local server-side access without printing key values.
 
 Useful official references:
 
@@ -63,6 +64,7 @@ The preferred agent access path is Supabase MCP OAuth. Service-role or secret ke
 
 - Prefer a Supabase secret key for server-side maintenance when supported by the script or tool.
 - Existing repository maintenance scripts prefer `SUPABASE_SECRET_KEY` and fall back to the legacy `SUPABASE_SERVICE_ROLE_KEY`.
+- Use `pnpm check:supabase-maintenance-key` after `.env.local` or `.env` is configured. Set `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when a one-row Auth Admin metadata probe is acceptable.
 - If the live project uses legacy keys, copy the `service_role` key from Settings > API Keys > Legacy API Keys.
 - If using the Management API, retrieve legacy keys with `GET /v1/projects/{ref}/api-keys` only in a trusted local environment.
 - For new secret keys, create them in Settings > API Keys or the Management API and reveal them only once in a trusted local environment.
@@ -76,6 +78,7 @@ Recommended local `.env.local` shape:
 SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_PROJECT_REF=<project-ref>
 SUPABASE_SECRET_KEY=<server-only secret key>
+SUPABASE_SECRET_KEYS=<server-only JSON map for Edge Functions, optional>
 # Legacy fallback when a secret key is unavailable:
 SUPABASE_SERVICE_ROLE_KEY=<server-only legacy service_role key>
 ```

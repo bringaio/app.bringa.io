@@ -50,6 +50,7 @@ const requiredRunbookPhrases = [
   "Store local maintenance keys only in .env.local or an approved local secret store.",
   "public-browser-config helpers only",
   "supabase.url and supabase.publishableKey",
+  "pnpm check:supabase-maintenance-key",
   "pnpm backup:supabase",
 ];
 

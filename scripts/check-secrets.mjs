@@ -11,6 +11,7 @@ const jwtPattern = /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g;
 const sensitiveSupabaseAssignments = [
   ["SUPABASE_SERVICE_ROLE_KEY", "nonblank Supabase service role assignment"],
   ["SUPABASE_SECRET_KEY", "nonblank Supabase secret key assignment"],
+  ["SUPABASE_SECRET_KEYS", "nonblank Supabase secret key map assignment"],
 ];
 const binaryExtensions = new Set([
   ".ico",

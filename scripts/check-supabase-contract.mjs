@@ -425,11 +425,42 @@ export function checkSupabaseContract({ schema, config }) {
 
 }
 
+export function checkSupabaseEdgeFunctionContent(content, label = "Edge Function") {
+  const requiredValues = [
+    "SUPABASE_SECRET_KEY",
+    "SUPABASE_SECRET_KEYS",
+    "SUPABASE_SERVICE_ROLE_KEY",
+  ];
+
+  for (const value of requiredValues) {
+    requireIncludes(content, value, `${label} must support ${value}.`);
+  }
+
+  requireMatch(
+    content,
+    /SUPABASE_SECRET_KEY[\s\S]+SUPABASE_SECRET_KEYS[\s\S]+SUPABASE_SERVICE_ROLE_KEY/,
+    `${label} must prefer SUPABASE_SECRET_KEY, then SUPABASE_SECRET_KEYS, before legacy SUPABASE_SERVICE_ROLE_KEY.`,
+  );
+
+  requireIncludes(
+    content,
+    "missing Supabase admin key configuration",
+    `${label} must use generic admin-key wording instead of service-role-only wording.`,
+  );
+}
+
 export async function main() {
   const config = await loadConfigObject({ root });
   const schema = await readFile(schemaPath, "utf8");
+  const edgeFunctionPaths = [
+    path.join(root, "supabase", "functions", "notifiy-telegram", "index.ts"),
+    path.join(root, "supabase", "functions", "notifiy-telegram-user", "index.ts"),
+  ];
 
   checkSupabaseContract({ schema, config });
+  for (const functionPath of edgeFunctionPaths) {
+    checkSupabaseEdgeFunctionContent(await readFile(functionPath, "utf8"), path.relative(root, functionPath));
+  }
   console.log("Supabase contract check passed.");
 }
 

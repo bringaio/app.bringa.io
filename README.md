@@ -90,8 +90,11 @@ BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 When a server-side Supabase maintenance key is available, table backups can be created with:
 
 ```bash
+pnpm check:supabase-maintenance-key
 pnpm backup:supabase
 ```
+
+The maintenance check prefers `SUPABASE_SECRET_KEY`. Legacy `SUPABASE_SERVICE_ROLE_KEY` is supported only as a fallback for older projects.
 
 Backups are written to `backups/`, which is ignored by Git. Storage objects and Auth users need separate export steps.
 

@@ -17,8 +17,11 @@ SUPABASE_SERVICE_ROLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=<server-only legacy service_role key>
 SUPABASE_SECRET_KEY=
 SUPABASE_SECRET_KEY=<server-only secret key>
+SUPABASE_SECRET_KEYS=
+SUPABASE_SECRET_KEYS=<server-only secret key map>
 Use SUPABASE_SERVICE_ROLE_KEY only in .env.local.
 Use SUPABASE_SECRET_KEY only in .env.local.
+Use SUPABASE_SECRET_KEYS only in Supabase Edge Function secrets.
 Authorization: Bearer REDACTED_SUPABASE_SERVICE_ROLE_JWT
 `;
 
@@ -29,17 +32,20 @@ test("rejects committed Supabase secret API keys and nonblank service-role assig
   const fakeSecretKey = "sb_secret_" + "abcdefghijklmnopqrstuvwxyz123456";
   const serviceRoleKeyName = "SUPABASE_SERVICE_ROLE_KEY";
   const secretKeyName = "SUPABASE_SECRET_KEY";
+  const secretKeysName = "SUPABASE_SECRET_KEYS";
   const content = `
 ${serviceRoleKeyName}=not-for-git
 ${secretKeyName}=also-not-for-git
+${secretKeysName}={"default":"also-not-for-git"}
 EXAMPLE_SECRET=${fakeSecretKey}
 `;
 
   const matches = findSecretCandidatesInContent(".env.production", content);
-  assert.equal(matches.length, 3);
+  assert.equal(matches.length, 4);
   assert.equal(matches[0].kind, "nonblank Supabase service role assignment");
   assert.equal(matches[1].kind, "nonblank Supabase secret key assignment");
-  assert.equal(matches[2].kind, "Supabase secret API key");
+  assert.equal(matches[2].kind, "nonblank Supabase secret key map assignment");
+  assert.equal(matches[3].kind, "Supabase secret API key");
 });
 
 test("rejects legacy JWTs that decode to the service_role role", () => {

@@ -16,6 +16,8 @@
 
 Run `pnpm check:env-example` after changing backup defaults or `.env.example`. It verifies that the example backup table and Storage bucket defaults still match the backup script source of truth.
 
+Use `pnpm check:supabase-maintenance-key` after configuring `SUPABASE_URL` or `SUPABASE_PROJECT_REF` plus a server-only key. The check prefers `SUPABASE_SECRET_KEY`, falls back to legacy `SUPABASE_SERVICE_ROLE_KEY` only when no modern key is present, and prints only key names, key type, key length, and API status. Set `SUPABASE_MAINTENANCE_CHECK_AUTH=1` to also verify the Auth Admin API with a one-row metadata probe, and `SUPABASE_MAINTENANCE_CHECK_ALL_KEYS=1` when intentionally comparing the modern key with the legacy fallback.
+
 Set `SUPABASE_BACKUP_AUTH_USERS=1` to export Supabase Auth user metadata through the Admin API to `auth-users.json`. This does not export passwords, provider secrets, or a complete Auth restore package; treat it as operator metadata for reconciliation. Keep backup directories encrypted at rest and test restore procedures before relying on them operationally.
 
 After `backup_runs` has been migrated, the backup script records compact run metadata in Supabase by default. The admin dashboard reads the latest admin-visible row to show backup freshness without exposing backup files or project secrets in public assets. Set `SUPABASE_BACKUP_RECORD_RUN=0` to skip this status write for a one-off run.

@@ -107,6 +107,8 @@ pnpm cleanup:account-deletion -- --user-id <auth-user-id> --request-id <complete
 
 The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id` are supplied. It verifies the deletion request is already `completed`, removes supplied Storage object paths through the Storage API first, then calls `auth.admin.deleteUser`. Supabase's current docs require elevated Auth Admin calls to stay server-side and note that Auth deletion can fail while the user still owns Storage objects.
 
+Use `pnpm check:supabase-maintenance-key` after adding a server-only key locally. The preferred key is `SUPABASE_SECRET_KEY`; `SUPABASE_SERVICE_ROLE_KEY` is a legacy fallback. Add `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when a one-row Auth Admin metadata probe is acceptable.
+
 ## Moderation Queue
 
 `create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. `review_item_suggestion` and `review_item_flag` let admins transition moderation state through RPCs. `apply_item_suggestion` lets admins apply explicit content item fields from a suggestion review, `apply_item_image_suggestion` applies image suggestions into `item_images`, and `apply_owner_item_suggestion` applies owner suggestions. Application RPCs capture a new item version. Direct browser inserts, updates, and deletes remain blocked.

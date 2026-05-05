@@ -8,6 +8,7 @@ function validEnvExampleContent(overrides = {}) {
   const values = {
     SUPABASE_URL: "",
     SUPABASE_SECRET_KEY: "",
+    SUPABASE_SECRET_KEYS: "",
     SUPABASE_SERVICE_ROLE_KEY: "",
     SUPABASE_PROJECT_REF: "",
     SUPABASE_BACKUP_TABLES: defaultTables.join(","),
@@ -64,6 +65,10 @@ test("rejects real service and notification values in the example env", () => {
   assert.throws(
     () => checkEnvExampleContent(validEnvExampleContent({ SUPABASE_SECRET_KEY: "not-for-example" })),
     /SUPABASE_SECRET_KEY.*blank/,
+  );
+  assert.throws(
+    () => checkEnvExampleContent(validEnvExampleContent({ SUPABASE_SECRET_KEYS: "{\"default\":\"not-for-example\"}" })),
+    /SUPABASE_SECRET_KEYS.*blank/,
   );
   assert.throws(
     () => checkEnvExampleContent(validEnvExampleContent({ SUPABASE_SERVICE_ROLE_KEY: "not-for-example" })),

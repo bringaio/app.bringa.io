@@ -14,10 +14,12 @@ Telegram is implemented through Supabase Edge Functions, database webhooks, and 
 - `TELEGRAM_CHAT_ID_USER`
 - `APP_URL`
 - `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
+- `SUPABASE_SECRET_KEYS`
 - `SUPABASE_SERVICE_ROLE_KEY`
 
 Set these as Supabase function secrets, not in public config.
-`SUPABASE_SERVICE_ROLE_KEY` is only used by the Edge Functions to call `record_notification_delivery` after Telegram accepts or rejects a send attempt.
+Use `SUPABASE_SECRET_KEY` for new hosted Supabase deployments. `SUPABASE_SECRET_KEYS` is also supported for Supabase's JSON secret-map style with a `default` entry. `SUPABASE_SERVICE_ROLE_KEY` remains a legacy fallback only. The Edge Functions use this server-only admin key to call `record_notification_delivery` after Telegram accepts or rejects a send attempt.
 
 Database trigger functions also read deployment-specific webhook URLs from database settings:
 
@@ -34,7 +36,7 @@ The database contract suppresses duplicate Telegram sends while an existing even
 
 `notification_mutes` records per-profile mute windows. `set_telegram_mute` supports one day, one week, forever, and unmute. Muted events are recorded as `skipped_muted` without Telegram delivery.
 
-Edge Functions call `record_notification_delivery` with the service role key after a send attempt. Failed sends record `last_error`, increment `attempts`, and set `next_attempt_at` for operator retry planning.
+Edge Functions call `record_notification_delivery` with the configured Supabase admin key after a send attempt. Failed sends record `last_error`, increment `attempts`, and set `next_attempt_at` for operator retry planning.
 
 ## Current Function Names
 

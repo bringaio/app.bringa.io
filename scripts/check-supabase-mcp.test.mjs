@@ -54,6 +54,7 @@ title: Supabase MCP Agent Setup
 - For new secret keys, create them in Settings > API Keys or the Management API and reveal them only once in a trusted local environment.
 - Store local maintenance keys only in .env.local or an approved local secret store.
 - Treat MCP get_project_url and get_publishable_keys as public-browser-config helpers only.
+- Run pnpm check:supabase-maintenance-key after configuring local maintenance keys.
 
 ## Local Handoff
 

@@ -43,7 +43,7 @@ BRINGA_DEPLOYMENT=share.example.org pnpm check:config
 Public Supabase URL and publishable key belong in the deployment profile. Secrets belong in ignored env files, GitHub secrets, OAuth provider dashboards, or Supabase function secrets.
 For trusted local maintenance such as backups or account cleanup, copy `.env.example` to `.env.local` after confirming the target project and set `SUPABASE_SECRET_KEY` there.
 
-For Supabase, start with the committed schema and migrations, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; secret keys and service role keys never belong in Git.
+For Supabase, start fresh projects from `supabase/schema.sql` and use `supabase/migrations/` for existing deployments that need an incremental upgrade path, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; secret keys and service role keys never belong in Git.
 
 ## GitHub Pages
 

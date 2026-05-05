@@ -37,15 +37,37 @@ function notificationEventId(record: WebhookPayload["record"]) {
   return record?.payload ? record.id : undefined;
 }
 
+function secretKeyFromMap() {
+  const value = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    const keys = JSON.parse(value) as Record<string, unknown>;
+    const defaultKey = keys.default;
+    return typeof defaultKey === "string" && defaultKey.trim() ? defaultKey : undefined;
+  } catch {
+    console.warn("Ignoring invalid SUPABASE_SECRET_KEYS JSON");
+    return undefined;
+  }
+}
+
+function supabaseAdminKey() {
+  return Deno.env.get("SUPABASE_SECRET_KEY") ||
+    secretKeyFromMap() ||
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+}
+
 async function recordDelivery(eventId: string | undefined, status: "sent" | "failed", error?: string) {
   if (!eventId) {
     return;
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !serviceRoleKey) {
-    console.warn("Skipping notification delivery status write: missing Supabase service role configuration");
+  const adminKey = supabaseAdminKey();
+  if (!supabaseUrl || !adminKey) {
+    console.warn("Skipping notification delivery status write: missing Supabase admin key configuration");
     return;
   }
 
@@ -53,8 +75,8 @@ async function recordDelivery(eventId: string | undefined, status: "sent" | "fai
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "apikey": serviceRoleKey,
-      "Authorization": `Bearer ${serviceRoleKey}`,
+      "apikey": adminKey,
+      "Authorization": `Bearer ${adminKey}`,
     },
     body: JSON.stringify({
       event_id_input: eventId,
