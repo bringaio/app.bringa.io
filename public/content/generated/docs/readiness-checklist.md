@@ -96,7 +96,9 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:media-policy`
 - [ ] `pnpm test:protected-route`
 - [ ] `pnpm test:env-example`
+- [ ] `pnpm test:secrets`
 - [ ] `pnpm check:env-example`
+- [ ] `pnpm check:secrets`
 - [ ] `pnpm test:agents`
 - [ ] `pnpm check:agents`
 - [ ] `pnpm test:naming-conventions`

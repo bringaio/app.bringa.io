@@ -57,6 +57,9 @@ jobs:
       - name: Test env example checker
         run: pnpm test:env-example
 
+      - name: Test secret leak checker
+        run: pnpm test:secrets
+
       - name: Test agent source-of-truth checker
         run: pnpm test:agents
 
@@ -173,6 +176,9 @@ jobs:
 
       - name: Check env example
         run: pnpm check:env-example
+
+      - name: Check committed secrets
+        run: pnpm check:secrets
 
       - name: Check agent source of truth
         run: pnpm check:agents

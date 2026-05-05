@@ -12,7 +12,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - Source-of-truth rules were considered.
 - User-facing conventions are documented in `docs/` when they affect contributors, forks, setup, CI/CD, security, or operations.
 - Agent-facing conventions are documented in `.agents/` when future agents should remember or enforce them.
-- No secrets, real user data, private exports, or service role keys are committed or pasted into docs.
+- No secrets, real user data, private exports, or service role keys are committed or pasted into docs. `pnpm check:secrets` guards committed Supabase service-role and secret-key patterns.
 - Verification was run and the result is reported honestly.
 - The commit uses Conventional Commits.
 - The branch is pushed after the commit unless the user explicitly requested local-only work or the remote is unavailable.

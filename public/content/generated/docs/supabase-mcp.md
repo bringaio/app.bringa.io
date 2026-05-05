@@ -13,6 +13,7 @@ This runbook is for agents and maintainers who need to prepare the live `app.bri
 - MCP exposes `get_project_url` and `get_publishable_keys` for public browser config.
 - Supabase's current API key docs recommend publishable keys for public browser clients and secret keys over legacy service_role keys where possible.
 - Never put `SUPABASE_SERVICE_ROLE_KEY` or `sb_secret_` values in docs, commits, browser bundles, screenshots, or chat.
+- `pnpm check:secrets` scans committed text for Supabase service-role assignments, `sb_secret_` keys, and legacy service-role JWTs.
 
 Useful official references:
 

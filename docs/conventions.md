@@ -88,6 +88,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:media-policy`
 - `pnpm test:protected-route`
 - `pnpm test:env-example`
+- `pnpm test:secrets`
 - `pnpm test:agents`
 - `pnpm test:naming-conventions`
 - `pnpm test:copy`
@@ -127,6 +128,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:verify-backup`
 - `pnpm test:pwa-manifest`
 - `pnpm check:env-example`
+- `pnpm check:secrets`
 - `pnpm check:agents`
 - `pnpm check:naming-conventions`
 - `pnpm check:copy`
