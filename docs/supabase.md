@@ -86,13 +86,15 @@ Known remaining live setup items are Auth provider configuration, Site URL and r
 
 ## Edge Function Runtime
 
-Supabase Edge Functions run on Deno's edge runtime. The Next.js app itself does not require Deno, but the repository uses it to type-check `supabase/functions/**` before deployment:
+Supabase Edge Functions run on a Deno-compatible edge runtime. Context7's Supabase documentation review on 2026-05-05 confirmed that Supabase's documented function authoring, local serving, and deployment path is Deno/TypeScript through the Supabase CLI and Edge Runtime.
+
+The Next.js app itself does not require Deno. This repository keeps Deno scoped to `supabase/functions/**` so the notification handlers can be type-checked before deployment:
 
 ```bash
 pnpm check:edge-functions
 ```
 
-The alternative is to move notification delivery to another server-side runtime such as a Node service, Cloudflare Worker, or GitHub-hosted job. That would add hosting, secret management, and invocation complexity. Keeping these small notification handlers as Supabase Edge Functions keeps them close to database webhooks and Supabase function secrets while preserving a static GitHub Pages frontend.
+The current Deno config is function-scoped to avoid a root `deno.lock` or repository-wide Deno project. The alternative is to move notification delivery to another server-side runtime such as a Node service, Cloudflare Worker, or GitHub-hosted job. That would add hosting, secret management, and invocation complexity. Keeping these small notification handlers as Supabase Edge Functions keeps them close to database webhooks and Supabase function secrets while preserving a static GitHub Pages frontend.
 
 Never paste database passwords, Supabase secret keys, service-role keys, OAuth secrets, or provider secrets into chat, docs, commits, screenshots, or issue text.
 

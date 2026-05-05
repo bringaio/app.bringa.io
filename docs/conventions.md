@@ -66,6 +66,17 @@ Keep names predictable across React, scripts, config, and Supabase. Prefer match
 - Scripts under `scripts/` use kebab-case and pair checkers with `.test.mjs` when behavior is not trivial.
 - Branches and commits follow the Git And Pull Requests section.
 
+## Scripts
+
+Scripts are operational tooling, so optimize them for reviewability and predictable failure output.
+
+- Prefer small pure helper functions that can be imported by matching `.test.mjs` files.
+- Use CLI output that names the failing file, key, command, or missing artifact directly.
+- Add JSDoc only where it clarifies a non-obvious contract, exported helper shape, side effect, environment variable, or security boundary.
+- Do not add decorative comments to simple one-off checks; tests and command names should carry the routine documentation.
+- Keep secret-handling scripts explicit about which environment variables are read and never print secret values.
+- Pair any new checker that protects a durable contract with a `pnpm check:*` script and, when useful, a `pnpm test:*` script.
+
 ## CI/CD
 
 CI should be useful for upstream and forks without creating noise on every push.

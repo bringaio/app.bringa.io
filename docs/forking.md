@@ -129,3 +129,5 @@ Set up this bringa fork for https://share.example.org using GitHub owner <owner>
 ```
 
 Agents should use `.agents/skills/fork-operator-onboarding/` for this workflow. The expected result is a deployment profile, generated public config, optional deployment content or brand placeholders when requested, and a checked list of remaining Supabase, GitHub Pages, Auth redirect, and secret setup items. Agents should not paste service-role keys, Supabase secret keys, OAuth secrets, Telegram tokens, or real user data into docs, commits, issues, screenshots, or chat.
+
+A new agent session should begin by reading `AGENTS.md`, `.agents/workflows/session-start.md`, `.agents/skills/fork-operator-onboarding/SKILL.md`, this document, [Configuration](configuration.md), [Supabase](supabase.md), and [Repository Settings](repository-settings.md). It should then run `pnpm setup:operator --dry-run`, create or update a deployment profile, keep local demo mode enabled until Supabase is verified, and run the local quality gates before pushing fork setup changes.

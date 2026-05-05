@@ -46,6 +46,17 @@ Use `pnpm cleanup:account-deletion` only after the deletion request is completed
 
 After dependency upgrades, Supabase migrations, RLS policy changes, Edge Function changes, Auth changes, or deployment workflow changes, agents should use `.agents/skills/security-maintenance/`. The skill keeps the evidence workflow explicit: secret scan, config freshness, Supabase contract, Edge Function Deno typecheck, lint, TypeScript, static build, manual CI, and live Supabase advisor or backup evidence when the claim depends on it.
 
+Use [Security](security.md) as the public runbook for this workflow. Treat the command list as a floor, not a proof by itself: if a change touches Auth, Storage, RLS, Edge Function secrets, uploads, deletion, backups, GitHub Pages, or repository settings, collect evidence for that surface specifically.
+
+Suggested security checks by change type:
+
+- Dependency upgrades: `pnpm outdated`, focused package changelog review, `pnpm check:secrets`, `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm build`, and affected unit checks.
+- Supabase schema or RLS changes: backup decision, advisor output when available, `pnpm check:supabase-contract`, focused RPC/policy tests, and restore-drill impact review.
+- Edge Function changes: `pnpm check:edge-functions`, secret-setting review, JWT requirement review, function log review after deployment, and Telegram delivery verification when relevant.
+- Auth or protected-route changes: auth redirect tests, protected-route tests, local demo guard tests, browser evidence, and Supabase Site URL/redirect URL review.
+- GitHub Pages or workflow changes: `pnpm test:github-workflows`, `pnpm check:github-workflows`, `pnpm check:static-export`, static build, and repository settings review.
+- Fork setup changes: deployment config generation, secret scan, local demo verification, public Supabase value review, and a remaining-operator-task list.
+
 ## Current Known Gaps
 
 - Supabase live schema and Edge Function baseline exists; Auth provider redirects, Edge Function secrets, and restore drills are still pending.

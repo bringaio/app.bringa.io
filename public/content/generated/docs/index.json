@@ -127,6 +127,12 @@
       "sourcePath": "docs/roadmap.md"
     },
     {
+      "slug": "security",
+      "title": "Security",
+      "path": "/content/generated/docs/security.md",
+      "sourcePath": "docs/security.md"
+    },
+    {
       "slug": "supabase-branching",
       "title": "Supabase Branching",
       "path": "/content/generated/docs/supabase-branching.md",
