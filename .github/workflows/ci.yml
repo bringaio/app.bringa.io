@@ -45,6 +45,9 @@ jobs:
       - name: Test docs index checker
         run: pnpm test:docs-index
 
+      - name: Test release checklist checker
+        run: pnpm test:release-checklist
+
       - name: Test GitHub workflow checker
         run: pnpm test:github-workflows
 
@@ -104,6 +107,9 @@ jobs:
 
       - name: Check docs index
         run: pnpm check:docs-index
+
+      - name: Check release checklist
+        run: pnpm check:release-checklist
 
       - name: Check GitHub workflows
         run: pnpm check:github-workflows

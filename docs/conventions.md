@@ -56,6 +56,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:env-example`
 - `pnpm test:copy`
 - `pnpm test:docs-index`
+- `pnpm test:release-checklist`
 - `pnpm test:github-workflows`
 - `pnpm test:dashboard-query`
 - `pnpm test:item-visibility-request`
@@ -76,6 +77,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:env-example`
 - `pnpm check:copy`
 - `pnpm check:docs-index`
+- `pnpm check:release-checklist`
 - `pnpm check:github-workflows`
 - `pnpm test:static-export`
 - `pnpm check:static-export`
