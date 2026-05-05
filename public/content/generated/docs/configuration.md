@@ -83,8 +83,8 @@ Browser-visible Supabase values are not secrets. Set `supabase.url` and `supabas
 Production builds ignore local demo mode in code. Keep it documented as a development convenience, not as an authorization feature. To test against the Supabase CLI stack instead:
 
 ```bash
-supabase start
-supabase status -o env
+pnpm exec supabase start
+pnpm exec supabase status -o env
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 

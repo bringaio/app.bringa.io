@@ -34,6 +34,7 @@ pnpm check:secrets
 pnpm check:env-example
 pnpm check:config
 pnpm check:supabase-contract
+pnpm check:supabase-cli
 pnpm check:edge-functions
 pnpm lint
 pnpm exec tsc --noEmit
@@ -54,6 +55,7 @@ For production-linked Supabase work, add live evidence when access is available:
 - backup or restore-drill decision before destructive or migration work;
 - Supabase security and performance advisor output;
 - schema, RLS, RPC, trigger, Storage bucket, and Edge Function metadata review;
+- repo-local Supabase CLI contract evidence when branch setup or remote migration workflow changes;
 - Edge Function log review without copying personal data;
 - Auth log review after provider and redirect configuration;
 - `pnpm check:supabase-maintenance-key` without printing key values;

@@ -24,7 +24,8 @@ function validAuditContent() {
 | Forkability and configuration | \`config/base.config.jsonc\`, \`config/deployments/app.bringa.io.jsonc\`, \`docs/configuration.md\`, \`docs/forking.md\` | Covered |
 | Security maintenance and fork safety | \`SECURITY.md\`, \`docs/security.md\`, \`docs/maintenance.md\`, \`.agents/skills/security-maintenance/SKILL.md\`, \`.agents/skills/fork-operator-onboarding/SKILL.md\`, \`pnpm check:secrets\`, \`pnpm check:release-checklist\` | Covered locally |
 | Secret-free manual CI/CD | \`.github/workflows/ci.yml\`, \`docs/conventions.md\`, \`pnpm check:github-workflows\`, \`pnpm check:edge-functions\` | Covered |
-| Supabase contract and privacy | \`supabase/schema.sql\`, \`supabase/migrations/\`, \`docs/supabase-contract-audit.md\`, \`pnpm test:supabase-contract\`, \`pnpm check:supabase-contract\`, \`pnpm check:edge-functions\` | Partial |
+| Supabase contract and privacy | \`supabase/schema.sql\`, \`supabase/migrations/\`, \`docs/supabase-contract-audit.md\`, \`pnpm test:supabase-contract\`, \`pnpm check:supabase-contract\`, \`pnpm check:supabase-mcp\`, \`pnpm check:edge-functions\` | Partial |
+| Supabase development branch setup | \`docs/supabase-branching.md\`, \`pnpm test:supabase-cli\`, \`pnpm check:supabase-cli\`, \`pnpm check:supabase-branching\` | Blocked |
 | Product model and admin operations | \`docs/admin-operations.md\`, \`docs/readiness-checklist.md\`, \`pnpm test:admin-route-gate\`, \`scripts/admin-system-health.test.mjs\` | Partial |
 | Auth and onboarding decision boundaries | \`pnpm test:auth-redirect\`, \`pnpm test:protected-route\`, \`docs/supabase-branching.md\` Auth redirect URL tasks | Partial |
 | Browser, accessibility, and PWA QA | \`docs/browser-testing.md\`, \`.agents/skills/agentic-browser-testing/SKILL.md\`, \`pnpm test:pwa-manifest\` | Blocked |
@@ -91,5 +92,16 @@ test("rejects audits that omit live Supabase blockers", () => {
       ),
     ),
     /Live Supabase schema/,
+  );
+});
+
+test("requires repo-local Supabase CLI evidence", () => {
+  assert.throws(
+    () => checkProductionReadinessAuditContent(
+      validAuditContent()
+        .replace("`pnpm test:supabase-cli`, ", "")
+        .replace("`pnpm check:supabase-cli`, ", ""),
+    ),
+    /supabase-cli/,
   );
 });

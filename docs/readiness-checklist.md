@@ -43,6 +43,7 @@ As of 2026-05-05, GitHub API checks confirm the merge settings above. The reposi
 - [x] Direct writes to core item state, borrow history, item versions, item images, deletion requests, and moderation queues are blocked by RLS.
 - [x] Storage bucket MIME and size limits are checked against deployment config.
 - [x] Supabase development-branch transition tasks are documented and checked.
+- [x] Repo-local Supabase CLI dependency and invocation are documented and checked.
 - [x] Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions have been reviewed and baseline-applied with approved access.
 - [ ] Local app development is linked to a Supabase development branch from production.
 
@@ -130,6 +131,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:docs-index`
 - [ ] `pnpm test:browser-testing`
 - [ ] `pnpm test:supabase-mcp`
+- [ ] `pnpm test:supabase-cli`
 - [ ] `pnpm test:supabase-branching`
 - [ ] `pnpm test:restore-drills`
 - [ ] `pnpm test:observability`
@@ -154,6 +156,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm check:docs-index`
 - [ ] `pnpm check:browser-testing`
 - [ ] `pnpm check:supabase-mcp`
+- [ ] `pnpm check:supabase-cli`
 - [ ] `pnpm check:supabase-branching`
 - [ ] `pnpm check:restore-drills`
 - [ ] `pnpm check:observability`

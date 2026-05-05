@@ -64,6 +64,16 @@ As of 2026-05-05, the repository baseline has been applied to the live project, 
 9. Apply repository schema and migrations through reviewed Supabase CLI or MCP migration steps; keep `supabase/schema.sql` and migrations aligned.
 10. Verify Auth redirect URLs, Storage bucket settings, Edge Function secrets, advisors, and logs before calling the live app ready.
 
+## CLI Fallback
+
+Supabase MCP OAuth is the preferred agent path. When MCP branch tooling fails, maintainers can use the repo-local CLI after `pnpm install`:
+
+```bash
+pnpm exec supabase branches list --project-ref <production-ref>
+```
+
+This requires `supabase login` or `SUPABASE_ACCESS_TOKEN`. Keep access tokens outside Git, generated docs, screenshots, and chat.
+
 ## Service Role And Secret Keys
 
 The preferred agent access path is Supabase MCP OAuth. Service-role or secret keys are for trusted server-side maintenance scripts, not general agent browsing.

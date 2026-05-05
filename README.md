@@ -74,14 +74,16 @@ Browser-visible Supabase values are public by design. Set `supabase.url` and `su
 
 Read `docs/supabase.md` before changing schema, RLS, Auth, Storage, or Edge Functions.
 
+The Supabase CLI is installed as a repo-local dev dependency. Use `pnpm exec supabase ...` for local and remote Supabase commands so forks, agents, and CI do not depend on a global CLI install. A bare global `supabase` binary is optional.
+
 For local backend work:
 
 ```bash
-supabase start
-supabase status
+pnpm exec supabase start
+pnpm exec supabase status
 ```
 
-Use `supabase status -o env` to inspect the local API URL and anon key. To use the local Supabase stack instead of the browser demo, create an ignored `config/local.config.jsonc`, set `development.localDemoMode` to `false`, add the local public Supabase values there, then run:
+Use `pnpm exec supabase status -o env` to inspect the local API URL and anon key. To use the local Supabase stack instead of the browser demo, create an ignored `config/local.config.jsonc`, set `development.localDemoMode` to `false`, add the local public Supabase values there, then run:
 
 ```bash
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev

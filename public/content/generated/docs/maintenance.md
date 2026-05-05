@@ -4,7 +4,7 @@
 
 - Run `pnpm backup:supabase` before production database work when `SUPABASE_SECRET_KEY`, `SUPABASE_SECRET_KEYS`, or legacy `SUPABASE_SERVICE_ROLE_KEY` is configured.
 - Keep Supabase free-tier projects active, or document the paid/self-hosted plan for deployments that must not pause.
-- Run `pnpm check:config`, `pnpm check:edge-functions`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
+- Run `pnpm check:config`, `pnpm check:supabase-cli`, `pnpm check:edge-functions`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
 - Review dependencies and security advisories regularly.
 - Run `pnpm outdated` before dependency upgrade work and record major-version deferrals in `docs/dependency-audit.md`.
 - Verify Auth providers, redirect URLs, Edge Function secrets, Telegram chat IDs, and Storage bucket policies after deployment changes.
@@ -40,14 +40,14 @@ Use `pnpm cleanup:account-deletion` only after the deletion request is completed
 
 ## Agent-Assisted Security Maintenance
 
-After dependency upgrades, Supabase migrations, RLS policy changes, Edge Function changes, Auth changes, or deployment workflow changes, agents should use `.agents/skills/security-maintenance/`. The skill keeps the evidence workflow explicit: secret scan, config freshness, Supabase contract, Edge Function Deno typecheck, lint, TypeScript, static build, manual CI, and live Supabase advisor or backup evidence when the claim depends on it.
+After dependency upgrades, Supabase migrations, RLS policy changes, Edge Function changes, Auth changes, or deployment workflow changes, agents should use `.agents/skills/security-maintenance/`. The skill keeps the evidence workflow explicit: secret scan, config freshness, Supabase contract, repo-local Supabase CLI contract when branch or migration workflow changes, Edge Function Deno typecheck, lint, TypeScript, static build, manual CI, and live Supabase advisor or backup evidence when the claim depends on it.
 
 Use [Security](security.md) as the public runbook for this workflow. Treat the command list as a floor, not a proof by itself: if a change touches Auth, Storage, RLS, Edge Function secrets, uploads, deletion, backups, GitHub Pages, or repository settings, collect evidence for that surface specifically.
 
 Suggested security checks by change type:
 
 - Dependency upgrades: `pnpm outdated`, focused package changelog review, `pnpm check:secrets`, `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm build`, and affected unit checks.
-- Supabase schema or RLS changes: backup decision, advisor output when available, `pnpm check:supabase-contract`, focused RPC/policy tests, and restore-drill impact review.
+- Supabase schema or RLS changes: backup decision, advisor output when available, `pnpm check:supabase-contract`, `pnpm check:supabase-cli` when branch or remote migration workflow changes, focused RPC/policy tests, and restore-drill impact review.
 - Edge Function changes: `pnpm check:edge-functions`, secret-setting review, JWT requirement review, function log review after deployment, and Telegram delivery verification when relevant.
 - Auth or protected-route changes: auth redirect tests, protected-route tests, local demo guard tests, browser evidence, and Supabase Site URL/redirect URL review.
 - GitHub Pages or workflow changes: `pnpm test:github-workflows`, `pnpm check:github-workflows`, `pnpm check:static-export`, static build, and repository settings review.

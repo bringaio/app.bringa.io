@@ -35,6 +35,8 @@ const requiredPhrases = [
   "Auth provider redirect URLs",
   "branch merge endpoint",
   "prefer reviewed migrations in git",
+  "repo-local Supabase CLI",
+  "SUPABASE_ACCESS_TOKEN",
   "Production deployment secrets point at the production Supabase project.",
   "Local `.env.local` for app development points at a persistent Supabase development branch",
   "The Supabase CLI is linked to the development branch ref",
@@ -60,7 +62,8 @@ const requiredCheckboxes = [
   "Verify Auth provider redirect URLs",
   "Verify Storage bucket policy and object behavior",
   "Verify Edge Function secrets and Telegram settings",
-  "Run `supabase db push --dry-run`",
+  "Run `pnpm check:supabase-cli`",
+  "Run `pnpm exec supabase db push --dry-run`",
   "Apply migrations to the development branch only after dry-run review",
   "Generate and review TypeScript types",
   "Run `pnpm check:supabase-contract`",
@@ -69,10 +72,10 @@ const requiredCheckboxes = [
 ];
 
 const requiredCommands = [
-  "supabase branches create dev --persistent --project-ref <production-ref>",
-  "supabase branches list --project-ref <production-ref>",
-  "supabase link --project-ref <development-branch-ref>",
-  "supabase db push --dry-run",
+  "pnpm exec supabase branches create dev --persistent --project-ref <production-ref>",
+  "pnpm exec supabase branches list --project-ref <production-ref>",
+  "pnpm exec supabase link --project-ref <development-branch-ref>",
+  "pnpm exec supabase db push --dry-run",
 ];
 
 function requireIncludes(content, phrase, label) {

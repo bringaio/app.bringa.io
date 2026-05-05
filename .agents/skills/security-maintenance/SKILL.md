@@ -26,6 +26,7 @@ pnpm check:secrets
 pnpm check:env-example
 pnpm check:config
 pnpm check:supabase-contract
+pnpm check:supabase-cli
 pnpm check:edge-functions
 pnpm lint
 pnpm exec tsc --noEmit
@@ -42,6 +43,7 @@ pnpm test:github-workflows
 ## Supabase Work
 
 - Confirm the target project or branch before any live operation.
+- Run `pnpm check:supabase-cli` when branch setup, Supabase CLI docs, or remote migration workflow changes.
 - Prefer schema, policy, function, trigger, Storage bucket settings, advisor output, and anonymized counts.
 - Do not inspect real user rows unless the maintainer explicitly approves that access for the current task.
 - Run or offer a backup before production-linked database changes when a maintenance key is configured.
@@ -57,6 +59,7 @@ Before calling an update release-ready, collect:
 - secret scan result;
 - config and generated-docs freshness result;
 - RLS/RPC/Storage contract result;
+- repo-local Supabase CLI contract result when branch or CLI workflow changed;
 - Edge Function Deno typecheck result;
 - lint, TypeScript, and static build result;
 - manual GitHub CI result when changes are pushed;

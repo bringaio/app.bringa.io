@@ -10,6 +10,7 @@ const requiredSections = [
   "Current Documentation Signals",
   "Target Project",
   "Agent Workflow",
+  "CLI Fallback",
   "Service Role And Secret Keys",
   "Local Handoff",
 ];
@@ -45,6 +46,10 @@ const requiredRunbookPhrases = [
   "Add feature groups narrowly for the task",
   "Ask before reading real user rows.",
   "separate non-read-only MCP configuration",
+  "repo-local CLI",
+  "pnpm exec supabase branches list --project-ref <production-ref>",
+  "SUPABASE_ACCESS_TOKEN",
+  "Keep access tokens outside Git",
   "Settings > API Keys > Legacy API Keys",
   "GET /v1/projects/{ref}/api-keys",
   "Store local maintenance keys only in .env.local or an approved local secret store.",

@@ -89,6 +89,9 @@ jobs:
       - name: Test Supabase MCP runbook checker
         run: pnpm test:supabase-mcp
 
+      - name: Test Supabase CLI contract checker
+        run: pnpm test:supabase-cli
+
       - name: Test Supabase branching runbook checker
         run: pnpm test:supabase-branching
 
@@ -205,6 +208,9 @@ jobs:
 
       - name: Check Supabase MCP runbook
         run: pnpm check:supabase-mcp
+
+      - name: Check Supabase CLI contract
+        run: pnpm check:supabase-cli
 
       - name: Check Supabase branching runbook
         run: pnpm check:supabase-branching

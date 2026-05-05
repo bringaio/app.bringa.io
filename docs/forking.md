@@ -113,8 +113,8 @@ Fork operators can keep upstream workflows if they configure their own repositor
 When a fork needs the local Supabase CLI stack:
 
 ```bash
-supabase start
-supabase status -o env
+pnpm exec supabase start
+pnpm exec supabase status -o env
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 

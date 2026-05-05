@@ -58,10 +58,10 @@ Use this sequence for the upstream `app.bringa.io` project after an operator exp
 2. Save the project ref, public project URL, and publishable key in local operator notes.
 3. Run Supabase security and performance advisors before changing anything.
 4. For a fresh empty project, apply `supabase/schema.sql` as the reviewed baseline through MCP or the Supabase SQL editor.
-5. For an existing project, link the local CLI with `supabase link --project-ref <project-ref>`, preview migrations with `supabase db push --dry-run`, and apply the reviewed incremental migration path.
+5. For an existing project, link the repo-local CLI with `pnpm exec supabase link --project-ref <project-ref>`, preview migrations with `pnpm exec supabase db push --dry-run`, and apply the reviewed incremental migration path.
 6. Run `pnpm check:supabase-maintenance-key`; use `SUPABASE_MAINTENANCE_CHECK_AUTH=1` only when the one-row Auth Admin metadata probe is acceptable.
 7. Rerun `pnpm check:supabase-contract`.
-8. Deploy Edge Functions with Supabase MCP or `supabase functions deploy --project-ref <project-ref>` only after function secrets and URL settings are reviewed.
+8. Deploy Edge Functions with Supabase MCP or `pnpm exec supabase functions deploy --project-ref <project-ref>` only after function secrets and URL settings are reviewed.
 9. Configure Auth Site URL and redirect URLs for the app domain.
 10. Verify Storage bucket limits, MIME allowlists, and policies through Supabase metadata.
 11. Rerun security and performance advisors. Resolve anon/PUBLIC `SECURITY DEFINER` execute warnings before calling the backend ready; document signed-in RPC warnings when the functions are intentionally exposed and enforce authorization internally.

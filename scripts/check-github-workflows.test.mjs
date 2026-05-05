@@ -17,7 +17,7 @@ jobs:
   assert.deepEqual([...triggers], ["workflow_dispatch"]);
 });
 
-test("accepts the CI workflow when it checks Supabase Edge Functions", () => {
+test("accepts the CI workflow when it checks Supabase CLI and Edge Functions", () => {
   const triggers = checkWorkflowContent(".github/workflows/ci.yml", `name: CI
 
 on:
@@ -28,13 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: denoland/setup-deno@v2
+      - run: pnpm check:supabase-cli
       - run: pnpm check:edge-functions
 `);
 
   assert.deepEqual([...triggers], ["workflow_dispatch"]);
 });
 
-test("requires the CI workflow to check Supabase Edge Functions", () => {
+test("requires the CI workflow to check Supabase CLI and Edge Functions", () => {
   assert.throws(
     () => checkWorkflowContent(".github/workflows/ci.yml", `name: CI
 
@@ -45,7 +46,25 @@ jobs:
   quality:
     runs-on: ubuntu-latest
 `),
-    /Deno before checking Supabase Edge Functions|check:edge-functions/,
+    /check:supabase-cli|Deno before checking Supabase Edge Functions|check:edge-functions/,
+  );
+});
+
+test("requires the CI workflow to check the repo-local Supabase CLI contract", () => {
+  assert.throws(
+    () => checkWorkflowContent(".github/workflows/ci.yml", `name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: denoland/setup-deno@v2
+      - run: pnpm check:edge-functions
+`),
+    /check:supabase-cli/,
   );
 });
 

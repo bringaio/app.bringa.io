@@ -20,6 +20,8 @@ Do not run these steps against production until the target project, backup polic
 - Edge Functions can be deployed to a specific project with `supabase functions deploy --project-ref <ref>`.
 - The Management API exposes a branch merge endpoint for moving database changes and deployed Edge Functions from a development branch to production. For this repository, prefer reviewed migrations in git and only use branch merge after the target workflow is explicitly approved.
 - Supabase's GitHub integration can deploy migrations, Edge Functions, and Storage buckets declared in `config.toml` when a production branch is pushed or merged. Treat that as a later trusted-environment option, not a default secret-free CI behavior.
+- This repository installs the Supabase CLI as a repo-local dev dependency. Use the repo-local Supabase CLI through `pnpm exec supabase ...` for operator commands so agents and forks do not rely on a global CLI install.
+- Remote branch commands require `supabase login` or `SUPABASE_ACCESS_TOKEN`. Keep access tokens outside Git, generated docs, screenshots, and chat.
 
 ## Target State
 
@@ -42,7 +44,8 @@ Do not run these steps against production until the target project, backup polic
 - [ ] Verify Auth provider redirect URLs for both production and development branch app URLs.
 - [ ] Verify Storage bucket policy and object behavior on the development branch.
 - [ ] Verify Edge Function secrets and Telegram settings on the development branch before sending notifications.
-- [ ] Run `supabase db push --dry-run` against the development branch before applying migrations.
+- [ ] Run `pnpm check:supabase-cli` before relying on branch CLI instructions.
+- [ ] Run `pnpm exec supabase db push --dry-run` against the development branch before applying migrations.
 - [ ] Apply migrations to the development branch only after dry-run review and branch backup decision.
 - [ ] Generate and review TypeScript types from the development branch if typed database types are introduced.
 - [ ] Run `pnpm check:supabase-contract` after pulling or applying remote schema changes.
@@ -54,7 +57,7 @@ Do not run these steps against production until the target project, backup polic
 1. Create a persistent Supabase development branch from the production project:
 
    ```bash
-   supabase branches create dev --persistent --project-ref <production-ref>
+   pnpm exec supabase branches create dev --persistent --project-ref <production-ref>
    ```
 
    Add `--with-data` only after confirming the production-data privacy policy.
@@ -62,20 +65,20 @@ Do not run these steps against production until the target project, backup polic
 2. List branches and record the development branch ref outside git:
 
    ```bash
-   supabase branches list --project-ref <production-ref>
+   pnpm exec supabase branches list --project-ref <production-ref>
    ```
 
 3. Link the local Supabase CLI to the development branch ref:
 
    ```bash
-   supabase link --project-ref <development-branch-ref>
+   pnpm exec supabase link --project-ref <development-branch-ref>
    ```
 
 4. Point local app env values at the development branch API URL and publishable key. Keep production deploy secrets unchanged.
 5. Preview pending repository migrations against the development branch:
 
    ```bash
-   supabase db push --dry-run
+   pnpm exec supabase db push --dry-run
    ```
 
 6. Apply reviewed migrations to the development branch.
@@ -88,5 +91,6 @@ Do not run these steps against production until the target project, backup polic
 
 - Supabase Auth users and Storage objects are separate surfaces; a database branch does not by itself prove Auth/Storage backup or cleanup behavior.
 - Branches copied from production may contain personal data. Treat copied rows as production data.
+- The current MCP `list_branches` call still returns `Project reference is missing when validating permissions`; the repo-local CLI currently reports `Access token not provided` until `supabase login` or `SUPABASE_ACCESS_TOKEN` is configured.
 - Telegram, Edge Function, OAuth, and redirect settings need explicit branch verification.
 - The repository does not yet generate committed database types from Supabase.

@@ -45,6 +45,13 @@ title: Supabase MCP Agent Setup
 7. Configure Codex for the app project with project_ref=<project-ref>&read_only=true for audits.
 8. Use a separate non-read-only MCP configuration only for approved setup or migration work.
 
+## CLI Fallback
+
+- When MCP branch tooling fails, use the repo-local CLI after pnpm install.
+- Run pnpm exec supabase branches list --project-ref <production-ref>.
+- This requires supabase login or SUPABASE_ACCESS_TOKEN.
+- Keep access tokens outside Git, generated docs, screenshots, and chat.
+
 ## Service Role And Secret Keys
 
 - Prefer a Supabase secret key for server-side maintenance when supported by the script or tool.
@@ -79,6 +86,13 @@ test("requires project scoping, read-only defaults, key handling, and non-destru
   assert.throws(
     () => checkSupabaseMcpContent(incomplete),
     /missing required/i,
+  );
+});
+
+test("requires the MCP runbook to document the repo-local CLI fallback", () => {
+  assert.throws(
+    () => checkSupabaseMcpContent(validRunbook.replace(/## CLI Fallback[\s\S]*?(?=## Service Role And Secret Keys)/, "")),
+    /CLI Fallback/,
   );
 });
 

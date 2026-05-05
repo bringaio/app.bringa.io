@@ -93,6 +93,9 @@ export function checkWorkflowContent(filePath, content) {
     if (!content.includes("denoland/setup-deno")) {
       throw new Error(`${filePath} must set up Deno before checking Supabase Edge Functions.`);
     }
+    if (!content.includes("pnpm check:supabase-cli")) {
+      throw new Error(`${filePath} must run pnpm check:supabase-cli so repo-local Supabase CLI usage is checked in CI.`);
+    }
     if (!content.includes("pnpm check:edge-functions")) {
       throw new Error(`${filePath} must run pnpm check:edge-functions so Edge Functions are checked in CI.`);
     }
