@@ -53,6 +53,25 @@ When Supabase MCP and server-side maintenance access are available, inspect:
 
 Use the audit checklist to compare local UI behavior, schema, migrations, Storage, and Edge Functions before proposing migrations.
 
+## Live Setup Sequence
+
+Use this sequence for the upstream `app.bringa.io` project after an operator explicitly approves live writes for the project ref.
+
+1. Confirm the target project in Supabase MCP without reading row contents.
+2. Save the project ref, public project URL, and publishable key in local operator notes.
+3. Run Supabase security and performance advisors before changing anything.
+4. Link the local CLI to the approved project with `supabase link --project-ref <project-ref>`.
+5. Preview migrations with `supabase db push --dry-run`.
+6. Apply migrations with `supabase db push` or, when the migration history requires it, `supabase migration up --linked`.
+7. Rerun `pnpm check:supabase-contract`.
+8. Deploy Edge Functions with `supabase functions deploy --project-ref <project-ref>` only after function secrets and URL settings are reviewed.
+9. Configure Auth Site URL and redirect URLs for the app domain.
+10. Verify Storage bucket limits, MIME allowlists, and policies through Supabase metadata.
+11. Rerun security and performance advisors; resolve `SECURITY DEFINER` execute warnings before calling the backend ready.
+12. Update `config/deployments/app.bringa.io.jsonc` with public browser values only after RLS, Storage, and RPC boundaries are confirmed.
+
+Never paste database passwords, Supabase secret keys, service-role keys, OAuth secrets, or provider secrets into chat, docs, commits, screenshots, or issue text.
+
 ## Storage Contract
 
 The upstream schema creates a public `items` bucket for item images and mirrors the default media settings from resolved deployment config:
