@@ -71,7 +71,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 
 ## Operations
 
-- [x] `pnpm backup:supabase` exports configured public tables and Storage buckets with a service role key.
+- [x] `pnpm backup:supabase` exports configured public tables and Storage buckets with `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY`.
 - [x] `pnpm backup:supabase` records compact admin-visible backup run metadata after the `backup_runs` migration.
 - [x] Local backup integrity verification checks manifest table counts and Storage object hashes before restore drills.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.

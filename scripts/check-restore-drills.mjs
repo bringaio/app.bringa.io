@@ -30,7 +30,7 @@ const requiredPhrases = [
   "without treating it as account restore",
   "Backup directories must stay out of git and public artifacts.",
   "encrypted volume or in an encrypted archive",
-  "Keep service-role keys, Management API tokens, and provider secrets out of evidence files.",
+  "Keep Supabase secret keys, service-role keys, Management API tokens, and provider secrets out of evidence files.",
   "No live restore drill has been completed with approved Supabase access.",
   "No project-specific encrypted retention policy has been approved.",
   "Auth restore remains reconciliation-only",

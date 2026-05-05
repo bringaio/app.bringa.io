@@ -112,7 +112,7 @@ Secrets never belong in config or content files.
 
 Use local env files, deployment secrets, or Supabase function secrets for:
 
-- service role keys;
+- Supabase secret keys or service role keys;
 - Telegram tokens;
 - deployment tokens;
 - private MCP credentials;

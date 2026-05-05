@@ -9,6 +9,7 @@ const envExamplePath = path.join(root, ".env.example");
 
 const requiredKeys = [
   "SUPABASE_URL",
+  "SUPABASE_SECRET_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_PROJECT_REF",
   "SUPABASE_BACKUP_TABLES",
@@ -28,6 +29,7 @@ const requiredKeys = [
 
 const blankExampleKeys = [
   "SUPABASE_URL",
+  "SUPABASE_SECRET_KEY",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_PROJECT_REF",
   "TELEGRAM_BOT_TOKEN",

@@ -12,7 +12,7 @@ This runbook is the source of truth for privacy-preserving observability in the 
 
 ## Privacy Boundaries
 
-- Do not log service-role keys, access tokens, provider secrets, private URLs, personal data, or real row contents.
+- Do not log Supabase secret keys, service-role keys, access tokens, provider secrets, private URLs, personal data, or real row contents.
 - Do not paste screenshots, logs, or row contents containing personal data into chat, issues, docs, or AI prompts.
 - Prefer counts, ids only when necessary, status fields, timestamps, and anonymized metadata.
 - Ask for explicit approval before inspecting real Supabase row contents.

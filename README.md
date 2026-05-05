@@ -68,7 +68,7 @@ pnpm create:deployment -- share.example.org --owner your-github-owner --repo you
 BRINGA_DEPLOYMENT=share.example.org pnpm generate:config
 ```
 
-Browser-visible Supabase values are public by design. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config, not in `.env.local`. Secrets stay in `.env.local` or the deployment provider. Never put service role keys in public config.
+Browser-visible Supabase values are public by design. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config, not in `.env.local`. Secrets stay in `.env.local` or the deployment provider. Never put service role or secret keys in public config.
 
 ## Supabase
 
@@ -87,7 +87,7 @@ Use `supabase status -o env` to inspect the local API URL and anon key. To use t
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 
-When a service role key is available, table backups can be created with:
+When a server-side Supabase maintenance key is available, table backups can be created with:
 
 ```bash
 pnpm backup:supabase

@@ -21,7 +21,7 @@ For a fork that wants to run the app:
 5. Set the Supabase Site URL to the final app URL, for example `https://share.example.org`.
 6. Add the exact app redirect URL used by `supabase.authRedirectPath`, for example `https://share.example.org/dashboard`.
 7. Copy the public project URL and publishable key into `config/deployments/<slug>.jsonc`.
-8. Keep service role keys, OAuth secrets, and provider secrets outside Git.
+8. Keep Supabase secret keys, service role keys, OAuth secrets, and provider secrets outside Git.
 
 The public project URL and publishable key are expected to reach the browser. They are safe only when Row Level Security, Storage policies, and RPC boundaries are correct. Run `pnpm check:supabase-contract` after schema or policy changes.
 
@@ -30,14 +30,14 @@ Hosted Supabase is the default documented path. Self-hosted Supabase is possible
 ## Before MCP Access
 
 - Configure `.env.local` from `.env.example`.
-- Do not add real service role keys to docs or commits.
+- Do not add real Supabase secret keys or service role keys to docs or commits.
 - Use `pnpm backup:supabase` only after confirming the target project.
 - Prefer schema and policy review before reading real rows.
-- Use [Supabase MCP Agent Setup](supabase-mcp.md) for project-scoped MCP, read-only audit mode, `app-bringa-io` creation, and service-role or secret-key handoff.
+- Use [Supabase MCP Agent Setup](supabase-mcp.md) for project-scoped MCP, read-only audit mode, `app-bringa-io` creation, and secret-key or legacy service-role handoff.
 
 ## Live MCP Review
 
-When Supabase MCP and service role access are available, inspect:
+When Supabase MCP and server-side maintenance access are available, inspect:
 
 - Tables, columns, constraints, indexes, triggers, functions, and migration drift.
 - RLS policies for `profiles`, `admins`, `items`, `borrow_history`, `item_sharing`, and Storage buckets.

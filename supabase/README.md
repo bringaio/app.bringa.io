@@ -97,15 +97,15 @@ Borrow history reads are admin-only by default.
 
 `request_account_deletion` records one active operator-reviewed deletion request per user while a request is `pending` or `reviewing`.
 `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata.
-`execute_account_deletion_request` is the approved database-side completion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears direct profile references from prepared moderation, notification, media, and sharing surfaces, records item versions for hidden items, and marks the request completed. It returns counters plus `requiresAuthDeletion` and `requiresStorageCleanup` because Supabase Auth deletion and Storage object cleanup must run from a trusted service-role workflow.
+`execute_account_deletion_request` is the approved database-side completion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears direct profile references from prepared moderation, notification, media, and sharing surfaces, records item versions for hidden items, and marks the request completed. It returns counters plus `requiresAuthDeletion` and `requiresStorageCleanup` because Supabase Auth deletion and Storage object cleanup must run from a trusted server-side maintenance workflow.
 
-After backup, export, retention, and operator approval checks, run the trusted cleanup helper from a server-side environment with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`:
+After backup, export, retention, and operator approval checks, run the trusted cleanup helper from a server-side environment with `SUPABASE_URL` and `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY`:
 
 ```bash
 pnpm cleanup:account-deletion -- --user-id <auth-user-id> --request-id <completed-request-id> --storage items:<object-path> --execute --confirm-user-id <auth-user-id>
 ```
 
-The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id` are supplied. It verifies the deletion request is already `completed`, removes supplied Storage object paths through the Storage API first, then calls `auth.admin.deleteUser`. Supabase's current docs require service-role Auth Admin calls to stay server-side and note that Auth deletion can fail while the user still owns Storage objects.
+The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id` are supplied. It verifies the deletion request is already `completed`, removes supplied Storage object paths through the Storage API first, then calls `auth.admin.deleteUser`. Supabase's current docs require elevated Auth Admin calls to stay server-side and note that Auth deletion can fail while the user still owns Storage objects.
 
 ## Moderation Queue
 
@@ -113,7 +113,7 @@ The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id`
 
 ## Before Live Review
 
-When Supabase MCP or service-role access is available, read `docs/supabase-mcp.md`, then inspect schema and metadata first:
+When Supabase MCP or server-side maintenance access is available, read `docs/supabase-mcp.md`, then inspect schema and metadata first:
 
 - table definitions;
 - RLS policies;

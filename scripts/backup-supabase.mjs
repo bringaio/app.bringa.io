@@ -57,6 +57,16 @@ export function requiredEnv(name) {
   return value;
 }
 
+export function resolveSupabaseMaintenanceKey(env = process.env) {
+  const secretKey = env.SUPABASE_SECRET_KEY;
+  if (secretKey) return secretKey;
+
+  const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
+  if (serviceRoleKey) return serviceRoleKey;
+
+  throw new Error("Missing required environment variable: SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY");
+}
+
 export function backupTimestamp() {
   return new Date().toISOString().replace(/[:.]/g, "-");
 }
@@ -279,7 +289,7 @@ export async function main() {
   await loadEnvFile(".env");
 
   const supabaseUrl = requiredEnv("SUPABASE_URL");
-  const serviceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const maintenanceKey = resolveSupabaseMaintenanceKey();
   const tableList = parseCsvList(process.env.SUPABASE_BACKUP_TABLES, defaultTables);
   const storageBuckets = parseCsvList(process.env.SUPABASE_BACKUP_STORAGE_BUCKETS, defaultStorageBuckets);
   const pageSize = parsePositiveInteger(process.env.SUPABASE_BACKUP_PAGE_SIZE, 1000, "SUPABASE_BACKUP_PAGE_SIZE");
@@ -297,7 +307,7 @@ export async function main() {
 
   await mkdir(outputDir, { recursive: true });
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+  const supabase = createClient(supabaseUrl, maintenanceKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,

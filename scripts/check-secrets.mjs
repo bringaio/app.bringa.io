@@ -8,6 +8,10 @@ const execFileAsync = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const supabaseSecretKeyPattern = /\bsb_secret_[A-Za-z0-9_-]{20,}\b/g;
 const jwtPattern = /\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g;
+const sensitiveSupabaseAssignments = [
+  ["SUPABASE_SERVICE_ROLE_KEY", "nonblank Supabase service role assignment"],
+  ["SUPABASE_SECRET_KEY", "nonblank Supabase secret key assignment"],
+];
 const binaryExtensions = new Set([
   ".ico",
   ".jpg",
@@ -56,9 +60,11 @@ export function findSecretCandidatesInContent(filePath, content) {
   const lines = content.split(/\r?\n/);
 
   for (const [index, line] of lines.entries()) {
-    const assignment = line.match(/^\s*SUPABASE_SERVICE_ROLE_KEY\s*=\s*(.*)$/);
-    if (assignment && !isAllowedPlaceholder(assignment[1])) {
-      addMatch(matches, filePath, index + 1, "nonblank Supabase service role assignment");
+    for (const [key, kind] of sensitiveSupabaseAssignments) {
+      const assignment = line.match(new RegExp(`^\\s*${key}\\s*=\\s*(.*)$`));
+      if (assignment && !isAllowedPlaceholder(assignment[1])) {
+        addMatch(matches, filePath, index + 1, kind);
+      }
     }
 
     supabaseSecretKeyPattern.lastIndex = 0;

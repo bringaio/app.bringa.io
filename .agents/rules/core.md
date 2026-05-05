@@ -3,7 +3,7 @@
 - Treat `config/base.config.jsonc` plus `config/deployments/<slug>.jsonc` as the public deployment source of truth; regenerate with `pnpm generate:config`.
 - Treat this repository as the generic `app.bringa.io` upstream. Keep CONTEKT or other operator-specific content in fork configuration or documented override content, not in shared app logic.
 - Ask whether GitHub/GitLab issues should be processed at the start of a new session.
-- Ask whether a Supabase backup should be run when a service role key is available; if the user has previously answered "always", run `pnpm backup:supabase` first.
+- Ask whether a Supabase backup should be run when `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY` is available; if the user has previously answered "always", run `pnpm backup:supabase` first.
 - Keep `AGENTS.md` short. Put durable rules, skills, and workflows in `.agents/`.
 - Keep texts compact, kind, and precise. Prefer one clear source of truth over repeated explanations.
 - Record useful but out-of-scope modularization, refactoring, documentation, test, security, performance, accessibility, observability, and developer-experience ideas in `docs/optimization-options.md`; do not implement them without user intent unless they are necessary for the current task.

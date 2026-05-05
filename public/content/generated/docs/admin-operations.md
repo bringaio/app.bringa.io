@@ -28,7 +28,7 @@ Status transitions record reviewer and reviewed time. Applying a content, image 
 
 Item creation, item updates, and admin version restore create append-only `item_versions` snapshots through `record_item_version`. Admin restore uses `restore_item_version` and records the restore reason as the newly current version.
 
-The deletion request route separates triage from execution. Review actions can mark requests `reviewing` or `cancelled` and record admin notes. The completion action anonymizes the profile, hides user-owned or user-created non-operator items, clears prepared profile references, and records item versions for hidden items. Self-execution is blocked so an admin cannot complete their own account deletion request. The database stage does not delete Supabase Auth users or Storage objects; those must run from a trusted service-role workflow after export, retention, and Storage policy checks.
+The deletion request route separates triage from execution. Review actions can mark requests `reviewing` or `cancelled` and record admin notes. The completion action anonymizes the profile, hides user-owned or user-created non-operator items, clears prepared profile references, and records item versions for hidden items. Self-execution is blocked so an admin cannot complete their own account deletion request. The database stage does not delete Supabase Auth users or Storage objects; those must run from a trusted server-side maintenance workflow after export, retention, and Storage policy checks.
 
 For the trusted follow-up, use `pnpm cleanup:account-deletion` from a server-side operator environment. It is dry-run-first, verifies the request is already `completed`, removes explicitly supplied Storage object paths through the Storage API, then deletes the Auth user through the Supabase Admin API. Collect Storage paths before anonymizing or from backup/operator evidence; do not infer them from chat logs.
 
@@ -37,7 +37,7 @@ For the trusted follow-up, use `pnpm cleanup:account-deletion` from a server-sid
 - Use the app for detail review instead of sending personal data through Telegram.
 - Keep queue summaries compact and avoid exporting row contents into chat or issue comments.
 - Do not inspect real user rows through Supabase tools unless the maintainer explicitly approves that access for the current task.
-- Run or offer `pnpm backup:supabase` before production database work when a service role key is available.
+- Run or offer `pnpm backup:supabase` before production database work when a server-side Supabase maintenance key is available.
 - Use `/admin/user-items` for item review instead of copying user item lists into chat or external systems.
 - Use `/admin/deletion-requests` for account deletion triage instead of exporting deletion request rows into chat or issue comments.
 - Use [Observability](observability.md) for diagnostics, live log boundaries, and redaction rules before sharing troubleshooting evidence.
@@ -45,7 +45,7 @@ For the trusted follow-up, use `pnpm cleanup:account-deletion` from a server-sid
 ## Before Production Changes
 
 1. Confirm the target Supabase project and deployment profile.
-2. Run a table and Storage backup if `SUPABASE_SERVICE_ROLE_KEY` is configured; explicitly decide whether optional Auth user metadata export is needed.
+2. Run a table and Storage backup if `SUPABASE_SECRET_KEY` or legacy `SUPABASE_SERVICE_ROLE_KEY` is configured; explicitly decide whether optional Auth user metadata export is needed.
 3. Apply migrations in order and compare the live contract with `supabase/schema.sql`.
 4. Run `pnpm check:supabase-contract` after local schema or policy changes.
 5. Verify admin routes with the agentic browser skill using admin and non-admin accounts.

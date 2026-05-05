@@ -8,7 +8,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - Source-of-truth rules were considered.
 - User-facing conventions are documented in `docs/` when they affect contributors, forks, setup, CI/CD, security, or operations.
 - Agent-facing conventions are documented in `.agents/` when future agents should remember or enforce them.
-- No secrets, real user data, private exports, or service role keys are committed or pasted into docs. `pnpm check:secrets` guards committed Supabase service-role and secret-key patterns.
+- No secrets, real user data, private exports, or Supabase server-side maintenance keys are committed or pasted into docs. `pnpm check:secrets` guards committed Supabase secret-key and legacy service-role patterns.
 - Verification was run and the result is reported honestly.
 - The commit uses Conventional Commits.
 - The branch is pushed after the commit unless the user explicitly requested local-only work or the remote is unavailable.
@@ -86,5 +86,5 @@ This is the current definition of done for upstream work. It is intentionally pr
 ## Current Known Exceptions
 
 - Full `pnpm lint` is expected to pass without warnings.
-- Supabase MCP/service-role verification is pending. Do not claim production database hardening until schema, RLS, Storage, functions, and migrations have been reviewed with approved access.
+- Supabase MCP/server-side maintenance verification is pending. Do not claim production database hardening until schema, RLS, Storage, functions, and migrations have been reviewed with approved access.
 - The CI workflow is secret-free and manual-only. `pnpm check:github-workflows` guards that workflow files keep `workflow_dispatch` and avoid automatic triggers. Docs deployment is also manual-only and only deploys from `main`. Supabase backups and remote migrations require separate trusted workflows.

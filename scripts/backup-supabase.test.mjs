@@ -13,6 +13,7 @@ import {
   parseBoolean,
   parseCsvList,
   recordBackupRun,
+  resolveSupabaseMaintenanceKey,
   safeBackupPath,
 } from "./backup-supabase.mjs";
 
@@ -25,6 +26,22 @@ test("parses backup environment values", () => {
   assert.equal(parseBoolean("yes"), true);
   assert.equal(parseBoolean("0"), false);
   assert.equal(parseBoolean(undefined), false);
+});
+
+test("prefers Supabase secret keys for trusted server-side maintenance", () => {
+  assert.equal(resolveSupabaseMaintenanceKey({
+    SUPABASE_SECRET_KEY: "sb_secret_preferred",
+    SUPABASE_SERVICE_ROLE_KEY: "legacy-service-role",
+  }), "sb_secret_preferred");
+
+  assert.equal(resolveSupabaseMaintenanceKey({
+    SUPABASE_SERVICE_ROLE_KEY: "legacy-service-role",
+  }), "legacy-service-role");
+
+  assert.throws(
+    () => resolveSupabaseMaintenanceKey({}),
+    /SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY/,
+  );
 });
 
 test("includes operational notification metadata in the default table backup scope", () => {

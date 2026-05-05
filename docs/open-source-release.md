@@ -42,7 +42,7 @@ BRINGA_DEPLOYMENT=share.example.org pnpm check:config
 
 Public Supabase URL and publishable key belong in the deployment profile. Secrets belong in ignored env files, GitHub secrets, OAuth provider dashboards, or Supabase function secrets.
 
-For Supabase, start with the committed schema and migrations, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; service role keys never belong in Git.
+For Supabase, start with the committed schema and migrations, then configure Auth redirect URLs for the final app domain. The public project URL and publishable key are safe for the browser when Row Level Security and policies are correct; secret keys and service role keys never belong in Git.
 
 ## GitHub Pages
 
@@ -68,7 +68,7 @@ Keep these concerns separate:
 
 - generic code, tests, docs, schema, and scripts belong in upstream pull requests;
 - fork deployment profiles, legal text, brand assets, and operator policies belong in the fork unless the pull request is explicitly about fork tooling or examples;
-- Supabase secrets, service role keys, OAuth secrets, and Telegram tokens never belong in Git.
+- Supabase secret keys, service role keys, OAuth secrets, and Telegram tokens never belong in Git.
 
 When syncing from upstream, preserve fork-owned config and content deliberately. Do not hide legal or deployment conflicts with ignored files or merge drivers.
 

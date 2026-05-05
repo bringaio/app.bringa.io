@@ -67,7 +67,7 @@ This runbook is based on a 2026-05-05 Context7 review of current Supabase backup
 
 - Backup directories must stay out of git and public artifacts.
 - Store backups on an encrypted volume or in an encrypted archive.
-- Keep service-role keys, Management API tokens, and provider secrets out of evidence files.
+- Keep Supabase secret keys, service-role keys, Management API tokens, and provider secrets out of evidence files.
 - Define who can access backups, when they expire, and how deletion is verified.
 
 ## Known Gaps

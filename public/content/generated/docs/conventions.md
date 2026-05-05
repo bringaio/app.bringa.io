@@ -156,7 +156,7 @@ Secret-required work belongs only on trusted branches and environments:
 - trusted account deletion cleanup through `pnpm cleanup:account-deletion`
 - remote Supabase migrations
 - Edge Function deployment
-- any workflow that needs service role keys or provider secrets
+- any workflow that needs Supabase secret keys, service role keys, or provider secrets
 
 ## Documentation
 

@@ -24,7 +24,7 @@ title: Supabase MCP Agent Setup
 - MCP exposes get_project_url and get_publishable_keys for public browser config.
 - Storage tools are disabled by default in Supabase MCP, so bucket review requires an explicit storage feature group.
 - Supabase's current API key docs recommend publishable keys for public browser clients and secret keys over legacy service_role keys where possible.
-- Never put SUPABASE_SERVICE_ROLE_KEY or sb_secret_ values in docs, commits, browser bundles, screenshots, or chat.
+- Never put SUPABASE_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, or sb_secret_ values in docs, commits, browser bundles, screenshots, or chat.
 
 ## Target Project
 
@@ -47,7 +47,7 @@ title: Supabase MCP Agent Setup
 ## Service Role And Secret Keys
 
 - Prefer a Supabase secret key for server-side maintenance when supported by the script or tool.
-- Existing repository scripts currently expect SUPABASE_SERVICE_ROLE_KEY in .env.local.
+- Existing repository maintenance scripts prefer SUPABASE_SECRET_KEY and fall back to the legacy SUPABASE_SERVICE_ROLE_KEY.
 - If the live project uses legacy keys, copy the service_role key from Settings > API Keys > Legacy API Keys.
 - If using the Management API, retrieve legacy keys with GET /v1/projects/{ref}/api-keys only in a trusted local environment.
 - For new secret keys, create them in Settings > API Keys or the Management API and reveal them only once in a trusted local environment.
@@ -57,7 +57,7 @@ title: Supabase MCP Agent Setup
 
 - After app-bringa-io exists, record only SUPABASE_PROJECT_REF and public browser values in local operator notes.
 - Put supabase.url and supabase.publishableKey in config/deployments/app.bringa.io.jsonc after RLS review.
-- Run pnpm backup:supabase only after SUPABASE_SERVICE_ROLE_KEY is configured and the target is confirmed.
+- Run pnpm backup:supabase only after SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY is configured and the target is confirmed.
 `;
 
 test("accepts a complete Supabase MCP setup runbook", () => {
@@ -70,6 +70,7 @@ test("requires project scoping, read-only defaults, key handling, and non-destru
     .replace("read_only=true", "read only")
     .replace("app-bringa-io", "app")
     .replace("Do not delete or pause any contekt project without a separate explicit confirmation in the active session.", "")
+    .replace("SUPABASE_SECRET_KEY", "SECRET_KEY")
     .replace("SUPABASE_SERVICE_ROLE_KEY", "SERVICE_KEY");
 
   assert.throws(
@@ -90,7 +91,7 @@ Read docs/supabase-mcp.md before project setup or live review.
 Prefer project-scoped mode with project_ref=<project-ref> and read_only=true for audits.
 Use app-bringa-io as the target project name until the user changes it.
 Never read real user rows without explicit approval.
-Never reveal, paste, or commit SUPABASE_SERVICE_ROLE_KEY or sb_secret_ values.
+Never reveal, paste, or commit SUPABASE_SECRET_KEY, SUPABASE_SERVICE_ROLE_KEY, or sb_secret_ values.
 Do not delete or pause contekt projects without separate explicit confirmation.
 `));
 });

@@ -6,7 +6,7 @@ title: Supabase Contract Audit
 
 This audit is based on local source files only. It does not inspect live Supabase rows or real user data.
 
-Use it as the first checklist when Supabase MCP or service-role access is available.
+Use it as the first checklist when Supabase MCP or server-side maintenance access is available.
 
 ## Contract Goal
 
