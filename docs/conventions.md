@@ -67,6 +67,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:issue-prompt`
 - `pnpm test:admin-notification-settings`
 - `pnpm test:admin-deletion-requests`
+- `pnpm test:account-deletion-cleanup`
 - `pnpm test:admin-moderation-review`
 - `pnpm test:admin-profile-validation`
 - `pnpm test:admin-queue-counts`
@@ -103,6 +104,7 @@ Secret-required work belongs only on trusted branches and environments:
 
 - production deployment
 - Supabase backups
+- trusted account deletion cleanup through `pnpm cleanup:account-deletion`
 - remote Supabase migrations
 - Edge Function deployment
 - any workflow that needs service role keys or provider secrets

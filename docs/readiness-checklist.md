@@ -60,8 +60,9 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
 - [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
 - [x] Approved database-side deletion execution stage is complete for anonymizing profiles and hiding user-owned contributions.
+- [x] Trusted Auth deletion and Storage cleanup operator workflow is documented and covered by a dry-run-first test.
 - [x] Admin notification settings route shows Telegram status, mute-window state, dedupe state, and admin seen-state without exposing user data.
-- [ ] Trusted Auth deletion and Storage cleanup execution are complete.
+- [ ] Trusted account deletion cleanup has been rehearsed or run with approved access, backup/export evidence, and operator retention policy.
 
 ## Operations
 
@@ -94,6 +95,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm test:release-checklist`
 - [ ] `pnpm test:admin-notification-settings`
 - [ ] `pnpm test:admin-deletion-requests`
+- [ ] `pnpm test:account-deletion-cleanup`
 - [ ] `pnpm test:admin-moderation-review`
 - [ ] `pnpm test:admin-profile-validation`
 - [ ] `pnpm test:admin-queue-counts`

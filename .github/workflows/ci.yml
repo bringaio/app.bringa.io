@@ -78,6 +78,9 @@ jobs:
       - name: Test admin deletion request summary
         run: pnpm test:admin-deletion-requests
 
+      - name: Test trusted account deletion cleanup helper
+        run: pnpm test:account-deletion-cleanup
+
       - name: Test admin moderation review notes
         run: pnpm test:admin-moderation-review
 

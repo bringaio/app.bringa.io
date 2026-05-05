@@ -34,6 +34,8 @@ Item creation, item updates, and admin version restore create append-only `item_
 
 The deletion request route separates triage from execution. Review actions can mark requests `reviewing` or `cancelled` and record admin notes. The completion action anonymizes the profile, hides user-owned or user-created non-operator items, clears prepared profile references, and records item versions for hidden items. Self-execution is blocked so an admin cannot complete their own account deletion request. The database stage does not delete Supabase Auth users or Storage objects; those must run from a trusted service-role workflow after export, retention, and Storage policy checks.
 
+For the trusted follow-up, use `pnpm cleanup:account-deletion` from a server-side operator environment. It is dry-run-first, verifies the request is already `completed`, removes explicitly supplied Storage object paths through the Storage API, then deletes the Auth user through the Supabase Admin API. Collect Storage paths before anonymizing or from backup/operator evidence; do not infer them from chat logs.
+
 ## Privacy Defaults
 
 - Use the app for detail review instead of sending personal data through Telegram.
@@ -58,4 +60,4 @@ Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 - item/image-specific moderation;
 - operator retry jobs for failed Telegram sends when manual retry planning is not enough;
 - restore drills, encrypted backup handling, and live Supabase health visibility;
-- trusted Auth deletion and Storage cleanup after the approved database-side deletion stage.
+- live rehearsal or approved production run of trusted Auth deletion and Storage cleanup after the approved database-side deletion stage.

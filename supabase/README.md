@@ -99,6 +99,14 @@ Borrow history reads are admin-only by default.
 `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` with review metadata.
 `execute_account_deletion_request` is the approved database-side completion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears direct profile references from prepared moderation, notification, media, and sharing surfaces, records item versions for hidden items, and marks the request completed. It returns counters plus `requiresAuthDeletion` and `requiresStorageCleanup` because Supabase Auth deletion and Storage object cleanup must run from a trusted service-role workflow.
 
+After backup, export, retention, and operator approval checks, run the trusted cleanup helper from a server-side environment with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`:
+
+```bash
+pnpm cleanup:account-deletion -- --user-id <auth-user-id> --request-id <completed-request-id> --storage items:<object-path> --execute --confirm-user-id <auth-user-id>
+```
+
+The helper is dry-run-only unless `--execute` and a matching `--confirm-user-id` are supplied. It verifies the deletion request is already `completed`, removes supplied Storage object paths through the Storage API first, then calls `auth.admin.deleteUser`. Supabase's current docs require service-role Auth Admin calls to stay server-side and note that Auth deletion can fail while the user still owns Storage objects.
+
 ## Moderation Queue
 
 `create_item_suggestion` and `create_item_flag` let validated users send item feedback through RPCs. `review_item_suggestion` and `review_item_flag` let admins transition moderation state through RPCs. `apply_item_suggestion` lets admins apply explicit content item fields from a suggestion review, `apply_item_image_suggestion` applies image suggestions into `item_images`, and `apply_owner_item_suggestion` applies owner suggestions. Application RPCs capture a new item version. Direct browser inserts, updates, and deletes remain blocked.

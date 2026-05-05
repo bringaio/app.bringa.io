@@ -208,6 +208,7 @@ Current script:
 - `request_account_deletion` records one active operator-reviewed request while a request is `pending` or `reviewing`.
 - `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` and record review metadata.
 - `execute_account_deletion_request` lets admins complete the database-side deletion stage for requests already in review. It anonymizes the profile, hides user-owned or user-created non-operator items, clears prepared profile references, records item versions for hidden items, and returns counters plus Auth/Storage follow-up flags.
+- `pnpm cleanup:account-deletion` provides the trusted server-side follow-up for completed requests. It is dry-run-first, verifies the completed request row, removes supplied Storage object paths through the Storage API before Auth deletion, and calls `auth.admin.deleteUser` only when `--execute --confirm-user-id <auth-user-id>` are supplied.
 
 Risk:
 
@@ -217,7 +218,7 @@ Risk:
 Target:
 
 - Add restore drills and encrypted backup handling before claiming operational readiness.
-- Add trusted Auth deletion and Storage cleanup execution after the database-side account deletion completion stage.
+- Rehearse trusted Auth deletion and Storage cleanup with approved access, backup/export evidence, and operator retention policy before claiming live operational readiness.
 
 ## Required RPC Candidates
 
