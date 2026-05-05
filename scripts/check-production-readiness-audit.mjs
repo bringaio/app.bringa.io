@@ -23,6 +23,8 @@ const requiredPhrases = [
   "`docs/hyperoptimum.md`",
   "`docs/optimization-options.md`",
   "`.agents/rules/source-of-truth.md`",
+  "`pnpm test:naming-conventions`",
+  "`pnpm check:naming-conventions`",
   "`config/base.config.jsonc`",
   "`config/deployments/app.bringa.io.jsonc`",
   "`docs/configuration.md`",
@@ -55,6 +57,7 @@ const requiredPhrases = [
 
 const requiredRows = [
   "Source of truth and hyperoptimum",
+  "Naming conventions and developer experience",
   "Forkability and configuration",
   "Secret-free manual CI/CD",
   "Supabase contract and privacy",

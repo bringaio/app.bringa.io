@@ -39,6 +39,22 @@ Every durable fact should have one home.
 
 When adding new text, decide whether it is a source of truth, a short summary, or a pointer. Prefer pointers over repeated prose.
 
+## Naming Conventions
+
+Keep names predictable across React, scripts, config, and Supabase. Prefer matching established local patterns over broad renames.
+
+- React component exports use PascalCase.
+- Component filenames under `src/components/` use kebab-case.
+- Hooks use `useX` names and may keep camelCase filenames such as `src/hooks/useAuth.tsx`.
+- App Router route folders use lowercase or kebab-case segments.
+- Utility and domain modules under `src/lib/` use kebab-case filenames.
+- Config keys use lower camelCase.
+- Supabase tables, columns, enums, policies, and RPC function names use snake_case.
+- Supabase migrations use `YYYYMMDDHHMMSS_snake_case.sql`.
+- Edge Function directory names use kebab-case; preserve legacy deployed names until a migration plan exists.
+- Scripts under `scripts/` use kebab-case and pair checkers with `.test.mjs` when behavior is not trivial.
+- Branches and commits follow the Git And Pull Requests section.
+
 ## CI/CD
 
 CI should be useful for upstream and forks without creating noise on every push.
@@ -55,6 +71,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:config`
 - `pnpm test:env-example`
 - `pnpm test:agents`
+- `pnpm test:naming-conventions`
 - `pnpm test:copy`
 - `pnpm test:optimization-options`
 - `pnpm test:docs-index`
@@ -84,6 +101,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:pwa-manifest`
 - `pnpm check:env-example`
 - `pnpm check:agents`
+- `pnpm check:naming-conventions`
 - `pnpm check:copy`
 - `pnpm check:optimization-options`
 - `pnpm check:docs-index`

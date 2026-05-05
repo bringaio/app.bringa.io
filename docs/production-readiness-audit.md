@@ -20,6 +20,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | --- | --- | --- |
 | Read `temp/20260504-prompt.md` and `temp/goal-mode-hyperoptimum-production-readiness-plan.md` | This audit maps those temp prompts to durable docs, code, scripts, and blockers. | Covered |
 | Source of truth and hyperoptimum | `docs/hyperoptimum.md`, `docs/optimization-options.md`, `.agents/rules/source-of-truth.md` | Covered |
+| Naming conventions and developer experience | `docs/conventions.md`, `pnpm test:naming-conventions`, `pnpm check:naming-conventions` | Covered |
 | Agent rules, skills, and workflows | `AGENTS.md`, `.agents/workflows/session-start.md`, `.agents/workflows/goal-mode-preflight.md`, `.agents/workflows/quality-loop.md`, `.agents/skills/*/SKILL.md`, `pnpm check:agents` | Covered |
 | Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm check:config` | Covered |
 | Secret-free manual CI/CD | `.github/workflows/ci.yml`, `.github/workflows/docs.yml`, `docs/conventions.md`, `docs/repository-settings.md`, `pnpm check:github-workflows` | Covered |

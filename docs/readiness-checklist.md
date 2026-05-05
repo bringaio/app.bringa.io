@@ -13,6 +13,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] `AGENTS.md` points agents to `.agents/`.
 - [x] Agent rules cover privacy, source of truth, implementation, quality, and finishing work.
 - [x] Conventional Commits and branch cleanup expectations are documented.
+- [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
 - [ ] GitHub branch protection and manual Pages deployment settings have been confirmed in the repository UI.
 
@@ -87,6 +88,8 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm check:env-example`
 - [ ] `pnpm test:agents`
 - [ ] `pnpm check:agents`
+- [ ] `pnpm test:naming-conventions`
+- [ ] `pnpm check:naming-conventions`
 - [ ] `pnpm test:optimization-options`
 - [ ] `pnpm check:optimization-options`
 - [ ] `pnpm test:dashboard-query`

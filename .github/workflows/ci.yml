@@ -42,6 +42,9 @@ jobs:
       - name: Test agent source-of-truth checker
         run: pnpm test:agents
 
+      - name: Test naming conventions checker
+        run: pnpm test:naming-conventions
+
       - name: Test copy checker
         run: pnpm test:copy
 
@@ -128,6 +131,9 @@ jobs:
 
       - name: Check agent source of truth
         run: pnpm check:agents
+
+      - name: Check naming conventions
+        run: pnpm check:naming-conventions
 
       - name: Check English documentation copy
         run: pnpm check:copy
