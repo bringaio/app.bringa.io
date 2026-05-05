@@ -45,6 +45,9 @@ jobs:
       - name: Test copy checker
         run: pnpm test:copy
 
+      - name: Test optimization options checker
+        run: pnpm test:optimization-options
+
       - name: Test docs index checker
         run: pnpm test:docs-index
 
@@ -113,6 +116,9 @@ jobs:
 
       - name: Check English documentation copy
         run: pnpm check:copy
+
+      - name: Check optimization options
+        run: pnpm check:optimization-options
 
       - name: Check docs index
         run: pnpm check:docs-index

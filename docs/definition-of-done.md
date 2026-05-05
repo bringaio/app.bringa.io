@@ -23,6 +23,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
 - `pnpm test:env-example` and `pnpm check:env-example` when `.env.example`, backup defaults, or operational env docs change
 - `pnpm test:agents` and `pnpm check:agents` when `AGENTS.md`, `.agents/`, agent workflows, or agent skills change
+- `pnpm test:optimization-options` and `pnpm check:optimization-options` when `docs/optimization-options.md` changes
 - `pnpm test:dashboard-query` when dashboard item list filtering, search, or default view behavior changes
 - `pnpm test:item-visibility-request` when user-facing item visibility actions change
 - `pnpm test:issue-prompt` when issue prompt content paths or rendering changes

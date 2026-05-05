@@ -56,6 +56,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:env-example`
 - `pnpm test:agents`
 - `pnpm test:copy`
+- `pnpm test:optimization-options`
 - `pnpm test:docs-index`
 - `pnpm test:browser-testing`
 - `pnpm test:release-checklist`
@@ -79,6 +80,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:env-example`
 - `pnpm check:agents`
 - `pnpm check:copy`
+- `pnpm check:optimization-options`
 - `pnpm check:docs-index`
 - `pnpm check:browser-testing`
 - `pnpm check:release-checklist`
