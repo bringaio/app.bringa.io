@@ -66,7 +66,7 @@ test("accepts privacy-preserving observability runbook content", () => {
 
 - [ ] Choose whether any external error-reporting service is necessary.
 - [ ] Define retention and access rules for logs and screenshots.
-- [ ] Verify Supabase Edge Function logs with approved access.
+- [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
 - [ ] Verify live restore drill evidence.
 - [ ] Verify notification retry handling with operator-approved Telegram settings.
@@ -74,7 +74,7 @@ test("accepts privacy-preserving observability runbook content", () => {
 
 ## Known Gaps
 
-- Live Supabase logs, Edge Function logs, and Auth provider diagnostics still need final operator review.
+- Supabase Edge Function logs were checked on 2026-05-05 and had no invocations in the last 24 hours.
 - No external error reporting is configured.
 - Live schema/key/API health checks passed on 2026-05-05; full connected-auth behavior still needs browser evidence.
 - Browser/PWA failure evidence is still pending.

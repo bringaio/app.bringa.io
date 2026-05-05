@@ -47,8 +47,8 @@ function validAuditContent() {
 ## Remaining Blockers
 
 - GitHub branch protection and manual Pages deployment settings require repository UI or plan access.
-- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, and an empty-baseline backup have approved evidence.
-- Live Supabase health checks beyond schema/key/API smoke tests, Edge Function log review, and any external error-reporting decision require final operator policy.
+- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, Storage bucket metadata, and an empty-baseline backup have approved evidence.
+- Live Supabase health checks beyond schema/key/API smoke tests and any external error-reporting decision require final operator policy. Supabase Edge Function logs were checked on 2026-05-05 and had no invocations in the last 24 hours; recheck them after Telegram delivery is configured.
 - Local app development cannot be linked to a Supabase development branch until Supabase MCP branch access stops returning the current permission-validation error or an alternate branch workflow is selected.
 - Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence.
 - Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.
@@ -84,7 +84,7 @@ test("rejects audits that omit live Supabase blockers", () => {
   assert.throws(
     () => checkProductionReadinessAuditContent(
       validAuditContent().replace(
-        "- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, and an empty-baseline backup have approved evidence.",
+        "- Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, Storage bucket metadata, and an empty-baseline backup have approved evidence.",
         "- Supabase live review remains pending.",
       ),
     ),

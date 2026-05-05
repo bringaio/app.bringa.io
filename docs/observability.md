@@ -51,7 +51,7 @@ This runbook is the source of truth for privacy-preserving observability in the 
 
 - [ ] Choose whether any external error-reporting service is necessary.
 - [ ] Define retention and access rules for logs and screenshots.
-- [ ] Verify Supabase Edge Function logs with approved access.
+- [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
 - [ ] Verify live restore drill evidence.
 - [ ] Verify notification retry handling with operator-approved Telegram settings.
@@ -59,7 +59,8 @@ This runbook is the source of truth for privacy-preserving observability in the 
 
 ## Known Gaps
 
-- Live Supabase logs, Edge Function logs, and Auth provider diagnostics still need final operator review.
+- Supabase Edge Function logs were checked on 2026-05-05 and had no invocations in the last 24 hours. Live notification delivery still needs another review after Edge Function secrets, Telegram webhook URLs, and Telegram settings are configured.
+- Auth logs were checked on 2026-05-05 without app auth failures, but Supabase-managed GoTrue default/admin group deprecation warnings appeared and should be rechecked after Auth provider setup.
 - Live schema/key/API health checks passed on 2026-05-05; full connected-auth behavior still needs browser evidence.
 - No external error reporting is configured.
 - Browser/PWA failure evidence is still pending.
