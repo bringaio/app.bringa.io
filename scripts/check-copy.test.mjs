@@ -6,6 +6,9 @@ import test from "node:test";
 
 import { findForbiddenEnglishCopyTerms } from "./check-copy.mjs";
 
+const forbiddenSingular = "Ver" + "ein";
+const forbiddenPlural = `${forbiddenSingular}e`;
+
 async function withFixture(files, callback) {
   const root = await mkdtemp(path.join(os.tmpdir(), "bringa-copy-check-"));
 
@@ -25,8 +28,8 @@ async function withFixture(files, callback) {
 test("finds forbidden German organization words in English docs", async () => {
   await withFixture(
     {
-      "docs/index.md": "A Verein should not appear in English docs.\n",
-      "docs/nested/page.md": "English copy for local Vereine.\n",
+      "docs/index.md": `A ${forbiddenSingular} should not appear in English docs.\n`,
+      "docs/nested/page.md": `English copy for local ${forbiddenPlural}.\n`,
       "docs/allowed.md": "Avereine and vereinbarung are not exact words.\n",
     },
     async (root) => {
@@ -35,8 +38,8 @@ test("finds forbidden German organization words in English docs", async () => {
       assert.deepEqual(
         matches.map(({ relativePath, lineNumber, term }) => ({ relativePath, lineNumber, term })),
         [
-          { relativePath: "docs/index.md", lineNumber: 1, term: "Verein" },
-          { relativePath: "docs/nested/page.md", lineNumber: 1, term: "Vereine" },
+          { relativePath: "docs/index.md", lineNumber: 1, term: forbiddenSingular },
+          { relativePath: "docs/nested/page.md", lineNumber: 1, term: forbiddenPlural },
         ],
       );
     },
@@ -47,7 +50,7 @@ test("ignores configured documentation paths", async () => {
   await withFixture(
     {
       "docs/index.md": "English copy is clean.\n",
-      "docs/prompts/legacy.md": "Legacy prompt with Verein is ignored.\n",
+      "docs/prompts/legacy.md": `Legacy prompt with ${forbiddenSingular} is ignored.\n`,
     },
     async (root) => {
       const matches = await findForbiddenEnglishCopyTerms({

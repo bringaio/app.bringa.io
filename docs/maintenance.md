@@ -22,6 +22,8 @@ Set `SUPABASE_BACKUP_AUTH_USERS=1` to export Supabase Auth user metadata through
 
 After `backup_runs` has been migrated, the backup script records compact run metadata in Supabase by default. The admin dashboard reads the latest admin-visible row to show backup freshness without exposing backup files or project secrets in public assets. Set `SUPABASE_BACKUP_RECORD_RUN=0` to skip this status write for a one-off run.
 
+Run `pnpm verify:backup <backup-directory>` after a local backup and before any restore drill. The verifier reads `manifest.json`, checks table JSON row counts, verifies Storage object counts, byte totals, and SHA-256 hashes, and checks optional Auth user metadata counts when exported. It is an integrity gate for the files this repository writes; it does not replace a live restore rehearsal.
+
 Supabase database backups do not restore Storage object bytes, and Auth exports are not complete account restore packages. Treat table JSON, Storage object downloads, optional Auth metadata, and Supabase platform backups as separate recovery surfaces that need their own restore drill.
 
 User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed and do not remove Auth users or Storage objects by themselves.
@@ -34,5 +36,5 @@ User-facing data export is separate from operator backups. It is provided throug
 ## Current Known Gaps
 
 - Supabase MCP/service-role review is pending.
-- Restore drills and encrypted backup retention policy are pending.
+- Live restore drills and encrypted backup retention policy are pending.
 - Maskable PNG icons and complete homescreen testing are pending.

@@ -84,6 +84,9 @@ jobs:
       - name: Test Supabase backup helpers
         run: pnpm test:backup-supabase
 
+      - name: Test Supabase backup verifier
+        run: pnpm test:verify-backup
+
       - name: Test PWA manifest
         run: pnpm test:pwa-manifest
 

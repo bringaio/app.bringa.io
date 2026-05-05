@@ -66,9 +66,10 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 
 - [x] `pnpm backup:supabase` exports configured public tables and Storage buckets with a service role key.
 - [x] `pnpm backup:supabase` records compact admin-visible backup run metadata after the `backup_runs` migration.
+- [x] Local backup integrity verification checks manifest table counts and Storage object hashes before restore drills.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
-- [ ] Restore drills and encrypted backup handling are complete.
+- [ ] Live restore drills and encrypted backup handling are complete.
 - [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 
 ## Verification Before Release
@@ -91,6 +92,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm test:admin-item-versions`
 - [ ] `pnpm test:admin-visibility-queue`
 - [ ] `pnpm test:backup-supabase`
+- [ ] `pnpm test:verify-backup`
 - [ ] `pnpm test:pwa-manifest`
 - [ ] `pnpm check:copy`
 - [ ] `pnpm check:docs-index`

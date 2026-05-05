@@ -66,6 +66,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:admin-item-versions`
 - `pnpm test:admin-visibility-queue`
 - `pnpm test:backup-supabase`
+- `pnpm test:verify-backup`
 - `pnpm test:pwa-manifest`
 - `pnpm check:copy`
 - `pnpm check:docs-index`
