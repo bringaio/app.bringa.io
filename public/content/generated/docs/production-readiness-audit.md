@@ -20,6 +20,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Agent rules, skills, and workflows | `AGENTS.md`, `.agents/workflows/session-start.md`, `.agents/workflows/goal-mode-preflight.md`, `.agents/workflows/quality-loop.md`, `.agents/skills/*/SKILL.md`, `pnpm check:agents` | Covered |
 | Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `scripts/create-deployment-profile.mjs`, `scripts/setup-operator.mjs`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm test:create-deployment`, `pnpm test:operator-setup`, `pnpm check:config` | Covered |
 | Open-source contribution surface | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, pull request template, configured GitHub repository description/topics, `docs/open-source-release.md` | Covered locally; public visibility and forkability remain blocked |
+| Security maintenance and fork safety | `SECURITY.md`, `docs/security.md`, `docs/maintenance.md`, `.agents/skills/security-maintenance/SKILL.md`, `.agents/skills/fork-operator-onboarding/SKILL.md`, `pnpm check:secrets`, `pnpm check:release-checklist` | Covered locally; live Auth, restore, browser, and branch evidence remain blocked |
 | Secret-free manual CI/CD | `.github/workflows/ci.yml`, `.github/workflows/pages.yml`, `docs/conventions.md`, `docs/repository-settings.md`, `pnpm check:github-workflows`, `pnpm check:edge-functions` | Covered |
 | In-app docs | `docs/index.md`, `public/content/generated/docs/index.json`, `/docs`, `pnpm check:docs-index` | Covered locally |
 | Supabase contract and privacy | `supabase/schema.sql`, `supabase/migrations/`, `supabase/README.md`, `docs/supabase.md`, `docs/supabase-mcp.md`, `docs/supabase-contract-audit.md`, `pnpm test:supabase-contract`, `pnpm check:supabase-contract`, `pnpm check:supabase-mcp`, `pnpm check:edge-functions` | Partial; live baseline applied, remaining Auth, secret, log, restore, and branch blockers |
@@ -38,6 +39,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 - `docs/readiness-checklist.md`
 - `docs/open-source-release.md`
 - `docs/definition-of-done.md`
+- `docs/security.md`
 - `docs/optimization-options.md`
 - `docs/conventions.md`
 - `docs/browser-testing.md`

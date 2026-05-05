@@ -12,6 +12,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
 - [x] `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, and the pull request template exist.
+- [x] Security maintenance, fork safety, server-only key handling, live evidence expectations, and security optimization gaps are documented.
 - [x] GitHub merge settings prefer rebase merges, disable merge and squash merges, allow pull request branch updates, and delete merged head branches automatically.
 - [x] GitHub repository description and topics are configured for open-source discovery.
 - [ ] Repository visibility or organization policy allows forks.
@@ -89,7 +90,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 
 ## Verification Before Release
 
-2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. Current branch run `25402520805` on commit `c52c513d8246a7ffef0c88b54766bb8e2d96feea` also passed with the Supabase Edge Function Deno check.
+2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. Current branch run `25404738384` on commit `056ac332b237065f7cdad108ac862f8e24347a84` passed the full secret-free workflow after adding the Security runbook and fixing the release checklist checker for wildcard documentation placeholders.
 
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
