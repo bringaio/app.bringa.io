@@ -23,6 +23,7 @@ export type AdminSystemHealthItemKey =
   | "config"
   | "supabase"
   | "storage"
+  | "devBranch"
   | "backups"
   | "docs"
   | "telegram";
@@ -134,6 +135,13 @@ export function buildAdminSystemHealthItems(input: AdminSystemHealthInput): Admi
       value: `${formatMegabytes(input.maxUploadBytes)} MB, ${acceptedTypes} ${pluralizeType(acceptedTypes)}`,
       detail: "Frontend media limits and the committed Storage contract should stay aligned.",
       href: docHref(input.repositoryUrl, "docs/supabase.md"),
+    },
+    {
+      key: "devBranch",
+      label: "Development branch",
+      value: "Task list",
+      detail: "Use the Supabase branch checklist before pointing local app development at a production-derived branch.",
+      href: docHref(input.repositoryUrl, "docs/supabase-branching.md"),
     },
     {
       key: "backups",

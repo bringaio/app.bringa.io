@@ -4,16 +4,17 @@ title: Supabase Branching
 
 # Supabase Branching
 
-This is the task list for moving app development onto a Supabase development branch that is created from the production project. It is based on a 2026-05-04 Context7 review of the current Supabase Branching, Supabase Management API, and Supabase CLI documentation.
+This is the task list for moving app development onto a Supabase development branch that is created from the production project. It is based on 2026-05-04 and 2026-05-05 Context7 reviews of the current Supabase Branching, Supabase Management API, and Supabase CLI documentation.
 
 Do not run these steps against production until the target project, backup policy, and row-access privacy boundary are explicitly confirmed.
 
 ## Current Documentation Signals
 
-- Supabase supports development or preview branches for a project.
+- Supabase supports development or preview branches for a project, with persistent branches available for long-lived development setups.
+- Supabase describes branches as isolated project copies for database, Edge Function, and configuration changes. Default development branch planning should assume no production row data is copied.
 - Branches can be created through the Management API with `POST /v1/projects/{ref}/branches` or through the CLI with `supabase branches create [name]`.
 - The CLI branch creation command supports `--project-ref <production-ref>`, `--persistent`, `--region`, `--size`, `--notify-url`, and `--with-data`.
-- `--with-data` clones production data into the branch; use it only after a privacy decision because copied branch rows remain production data.
+- If a workflow explicitly copies production data into a branch, use it only after a privacy decision because copied branch rows remain production data.
 - Branches can be listed with `supabase branches list --project-ref <production-ref>`.
 - Local repositories can link to a remote project ref with `supabase link --project-ref <ref>`.
 - Migrations remain the durable source of schema changes and can be previewed with `supabase db push --dry-run`.

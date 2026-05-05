@@ -19,14 +19,16 @@ test("builds compact admin health items from public config", () => {
       ["config", "Config", "Manual CI"],
       ["supabase", "Supabase contract", "Local checker"],
       ["storage", "Storage contract", "10 MB, 3 types"],
+      ["devBranch", "Development branch", "Task list"],
       ["backups", "Backup freshness", "Checking"],
       ["docs", "Docs", "Manual workflow"],
       ["telegram", "Telegram", "Configured"],
     ],
   );
   assert.equal(items[0].href, "https://github.com/example/app/blob/main/docs/configuration.md");
-  assert.equal(items[3].detail, "Looking for the latest recorded pnpm backup:supabase run.");
-  assert.equal(items[5].detail, "Mute, dedupe, and seen-state are prepared roadmap items.");
+  assert.equal(items[3].href, "https://github.com/example/app/blob/main/docs/supabase-branching.md");
+  assert.equal(items[4].detail, "Looking for the latest recorded pnpm backup:supabase run.");
+  assert.equal(items[6].detail, "Mute, dedupe, and seen-state are prepared roadmap items.");
 });
 
 test("reports disabled telegram notifications without requiring a repository url", () => {

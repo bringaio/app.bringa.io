@@ -51,7 +51,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin dashboard shows item counts, visibility states, media stats, and system-readiness placeholders.
 - [x] Admin dashboard shows pending suggestions, flags, account deletion requests, and unvalidated users.
 - [x] Admin dashboard shows recent borrow/return activity and recent image uploads.
-- [x] Admin dashboard links config, Supabase contract, Storage contract, backups, docs, and Telegram health to source-of-truth docs.
+- [x] Admin dashboard links config, Supabase contract, Storage contract, development branch setup, backups, docs, and Telegram health to source-of-truth docs.
 - [x] Admin dashboard shows latest backup run freshness when the `backup_runs` migration is present.
 - [x] Admin users route supports user validation, access revocation with self-protection, admin promotion, and admin demotion with self-demotion protection.
 - [x] Admin moderation route lists pending visibility requests, suggestions, and flags, and reviews status through RPCs with notes for final decisions.
