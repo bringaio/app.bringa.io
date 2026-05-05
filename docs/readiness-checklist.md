@@ -97,7 +97,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 
 ## Verification Before Release
 
-2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. Current branch run `25407104362` on commit `fdae9eb79eabd506973447c2d52ab81dda30920f` passed the full secret-free workflow after adding the local Supabase development default, local seed helper, and free-account-oriented Branching reframing.
+2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. Current branch run `25407429297` on commit `60faac216320305f5867f9a75e93416a0e821580` passed the full secret-free workflow after adding the redacted Supabase live observability follow-up evidence and checker coverage.
 
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
