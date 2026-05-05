@@ -84,6 +84,8 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 
 ## Verification Before Release
 
+2026-05-05 manual GitHub Actions run `25389614721` on `main` passed the full secret-free quality workflow, including generated config, unit/script checks, documentation checks, lint, TypeScript, and static build.
+
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
 - [ ] `pnpm test:create-deployment`
