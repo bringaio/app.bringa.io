@@ -15,7 +15,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] GitHub merge settings prefer rebase merges, disable merge and squash merges, allow pull request branch updates, and delete merged head branches automatically.
 - [ ] GitHub branch protection and manual Pages deployment settings have been confirmed in the repository UI.
 
-As of 2026-05-05, GitHub API checks confirm the merge settings above. The repository is private, `has_pages` is `false`, the Pages endpoint returns 404, and the branch-protection endpoint returns 403 unless the repository is public or on a plan that supports branch protection for private repositories. Confirm the remaining UI-only item after the visibility or plan decision is made.
+As of 2026-05-05, GitHub API checks confirm the merge settings above. The repository is private, `has_pages` is `false`, the Pages endpoint returns 404, creating a Pages site with `build_type=workflow` returns `422 Your current plan does not support GitHub Pages for this repository`, and the branch-protection endpoint returns 403 unless the repository is public or on a plan that supports branch protection for private repositories. Confirm the remaining repository-setting item after the visibility or plan decision is made.
 
 ## Forkability
 

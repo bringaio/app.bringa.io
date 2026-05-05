@@ -54,7 +54,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 
 ## Remaining Blockers
 
-- GitHub branch protection and manual Pages deployment settings require repository UI or plan access. Merge method and branch cleanup settings are confirmed through the GitHub API.
+- GitHub branch protection and manual Pages deployment settings require repository UI or plan access. Merge method and branch cleanup settings are confirmed through the GitHub API, while GitHub Pages site creation currently returns a plan limitation for this private repository.
 - Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions review requires approved access.
 - Live Supabase health checks, Edge Function log review, and any external error-reporting decision require approved access and policy.
 - Local app development cannot be linked to a Supabase development branch without approved project refs and branch access.
