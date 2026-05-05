@@ -25,6 +25,12 @@ The default deployment is `app.bringa.io`. To generate another deployment:
 BRINGA_DEPLOYMENT=example-community pnpm generate:config
 ```
 
+To create a new fork profile before generating config:
+
+```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
+```
+
 This writes:
 
 - `public/bringa.config.json` for runtime/public inspection.

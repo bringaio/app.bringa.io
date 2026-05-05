@@ -11,6 +11,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] Conventional Commits and branch cleanup expectations are documented.
 - [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
+- [x] `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, and the pull request template exist.
 - [ ] GitHub branch protection and manual Pages deployment settings have been confirmed in the repository UI.
 
 As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` is `false`, the Pages endpoint returns 404, and the branch-protection endpoint returns 403 unless the repository is public or on a plan that supports branch protection for private repositories. Confirm this item in the GitHub UI after the visibility or plan decision is made.
@@ -23,6 +24,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Forking and fork-content strategy docs describe upstream sync and tracked fork overrides.
 - [x] Docs index and generated in-app docs artifacts cover every top-level docs page and are checked by `pnpm check:docs-index`.
 - [x] Deployment content profiles generate legal, onboarding, help, and issue copy from `content/default` plus deployment overrides.
+- [x] Fork deployment profiles can be scaffolded with `pnpm create:deployment -- <slug>` and are covered by `pnpm test:create-deployment`.
 
 ## Supabase Contract
 
@@ -44,6 +46,8 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Item details let users suggest changes, flag issues, hide their own items, or request visibility for admin review.
 - [x] PWA manifest fields, PNG install icons, and maskable icon paths are generated from public app and branding config and covered by `pnpm test:pwa-manifest`.
 - [ ] Auth persistence, logout, PWA install, slow network, and long-content states have been browser-tested across target browsers.
+
+A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long item details, in-app docs, admin dashboard, and item creation in local demo mode. Connected auth, PWA install, slow-network, and target-browser evidence remain open.
 
 ## Admin Experience
 
@@ -80,6 +84,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
+- [ ] `pnpm test:create-deployment`
 - [ ] `pnpm test:auth-redirect`
 - [ ] `pnpm test:app-config`
 - [ ] `pnpm test:admin-route-gate`

@@ -12,15 +12,12 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 ## Active Goal Candidates
 
-- Goal-mode production readiness: define one larger `/goal` target around repository coherence before adding broad product features. Impact: makes the next autonomous work session safer and measurable. Uncertainty/research: `/goal` behavior is still a local Codex feature and may require a fresh session after config activation.
+- First open-source release evidence closure: finish browser evidence, repository UI checks, live Supabase review, restore drills, and external observability decisions before making a production-readiness claim. Impact: prevents proxy checks from being mistaken for live readiness. Uncertainty/research: requires approved access to repository settings, Supabase, and browser/platform evidence.
 - Supabase contract alignment: reconcile `supabase/schema.sql`, migrations, client code, Storage buckets, edge functions, and generated docs into one enforceable contract. Impact: security, reliability, and maintainability. Uncertainty/research: requires Supabase MCP or service-role access, but real row contents must not be inspected without explicit user approval.
 - Supabase development branch activation: use the documented branch task list to point local development at a Supabase development branch from production once access exists. Impact: safer live-adjacent testing without editing production directly. Uncertainty/research: confirm plan support, branch data policy, Auth/Storage/Edge Function behavior, and project refs with approved access.
 - Supabase integrity verifier coverage: extend the local checker as moderation, notification, export, cleanup, and ownership RPC contracts land. Impact: catches data-integrity regressions before live migrations. Uncertainty/research: confirm live-project drift and migration order with Supabase metadata before applying production changes.
 - RLS-safe mutations: move invite application, borrow/return, admin promotion, admin edits, moderation, deletion, and visibility changes behind RPCs where direct client table updates create weak or contradictory policies. Impact: protects data invariants and makes UI behavior testable. Side effect: migrations and UI calls must land in a careful sequence.
 - Storage and upload hardening: align create/edit upload validation, server-side bucket limits, MIME allowlists, max size, compression behavior, image cleanup, and image export. Impact: security, performance, and user trust. Uncertainty/research: verify current Supabase Storage controls from official docs before implementation.
-- Generic upstream identity: keep deployment-specific names, logos, legal text, invite copy, and operator labels in deployment config or content files. Impact: forks can rebase without fighting upstream. Side effect: app copy still needs a content/i18n source of truth beyond config fields.
-- Repository template readiness: document GitHub Template, fork, and upstream remote workflows, including rebase-first sync, branch cleanup after merge, branch protection, and docs publishing. Impact: improves developer experience for open-source maintainers. Uncertainty/research: confirm GitHub's current fork/template metadata behavior before automating fork research.
-- CI/CD forkability: keep upstream workflows secret-free by default, preserve GitHub Pages app hosting, and document how forks add deployment secrets without editing shared workflow logic. Impact: forks stay close to upstream. Side effect: deployment-specific workflows may need optional examples instead of mandatory jobs.
 
 ## Product Model
 
@@ -68,6 +65,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 - Major dependency upgrades: review Node 25 runtime/types, ESLint, and TypeScript major updates with current official docs before upgrading. Impact: keeps tooling current without avoidable breakage. Uncertainty/research: confirm runtime Node policy, lint migration path, and compiler changes.
 - Source-of-truth comments: where duplication is unavoidable, add a nearby note naming the canonical file. Impact: prevents future drift.
 - Generated backend config: media MIME and size limits currently exist in resolved deployment config and Supabase Storage SQL; `pnpm check:supabase-contract` checks the committed schema. Impact: reduces deployment drift if future tooling generates backend settings from config. Uncertainty/research: wait until Supabase MCP confirms live bucket metadata and migration workflow.
+- Deployment profile generator growth: consider optional flags that also scaffold deployment content directories, brand asset placeholders, and a CNAME file once real fork usage shows repeated friction. Impact: makes fork onboarding smoother without forcing unused files into every operator setup. Uncertainty/research: observe first fork setup and GitHub Pages custom-domain behavior before expanding the script.
 - Agent skill growth: when repeated friction appears, update `.agents/` and this register rather than relying on memory. Impact: future sessions start stronger.
 - In-app docs polish: keep generated docs minimal, elegant, searchable, and directly available through the app. Impact: developers can understand setup, operations, and contribution paths quickly.
 - Share-worthy improvements: when a change would benefit other open-source app maintainers, consider adding it to release notes, social posts, or mailing-list material. Impact: community growth. Side effect: avoid marketing noise inside the product UI.
@@ -76,13 +74,13 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 - Full federated/decentralized peer-to-peer architecture.
 - Separate Astro repository for the public `bringa.io` home page.
-- Dev-mode auth bypass and impersonation. This needs a security design before implementation.
+- Full role-switch impersonation beyond the local demo fixture identities. This needs a security design before implementation.
 - Merge queue. Consider only after the repository has enough PR volume to justify it.
 - Installing Playwright or other browser-test packages. Prefer agentic browser skills unless the user explicitly chooses package-based automation.
 
 ## Questions Waiting For User
 
-- Should deployment content profiles be generated from `content/deployments/<slug>/`, or should public content files remain directly referenced by config paths?
+- Should `pnpm create:deployment` also create deployment-specific content and brand asset folders, or should it stay focused on one profile file until forks prove the need?
 - Should GIF uploads be rejected, flattened to still WebP, or supported as animated media?
 - Which SSO providers beyond GitHub and Google should be supported first?
 - Should item contributions use CC0 wording, a public-domain dedication plus fallback license, or only deployment-specific legal text?

@@ -38,7 +38,7 @@ Use current package metadata and official documentation before dependency upgrad
 
 ## 2026-05-05 Deferred Major Recheck
 
-After applying the compatible updates, the reviewed `lucide-react` major update, and Node-24-aligned type update, `pnpm outdated` still lists only deferred major-version work:
+After applying the compatible updates, the reviewed `lucide-react` major update, Node-24-aligned type update, and the `supabase` CLI patch from `2.98.1` to `2.98.2`, `pnpm outdated` still lists only deferred major-version work:
 
 | Package | Current | Latest | Decision |
 | --- | ---: | ---: | --- |

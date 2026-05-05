@@ -17,7 +17,7 @@ export default function TermsPage() {
 
     return (
         <div className="min-h-screen bg-background p-4 py-12">
-            <div className="max-w-4xl mx-auto bg-card rounded-xl shadow-sm border p-8 md:p-12">
+            <div className="max-w-4xl mx-auto bg-card rounded-lg shadow-sm border p-8 md:p-12">
                 <article className="prose prose-sm md:prose-base dark:prose-invert max-w-none
                     prose-headings:font-bold prose-headings:tracking-tight
                     prose-h1:text-3xl prose-h1:mb-4

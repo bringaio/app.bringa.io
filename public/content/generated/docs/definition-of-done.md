@@ -17,6 +17,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 
 - `pnpm check:config`
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
+- `pnpm test:create-deployment` when fork deployment profile scaffolding, deployment-profile docs, or fork setup behavior changes
 - `pnpm test:auth-redirect` when OAuth redirect URL normalization or provider sign-in redirect behavior changes
 - `pnpm test:app-config` when typed app-config helpers or page-title formatting change
 - `pnpm test:admin-route-gate` when admin route loading, redirect, or render decisions change

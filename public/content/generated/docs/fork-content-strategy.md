@@ -41,6 +41,14 @@ config/local.config.jsonc
 
 `config/local.config.jsonc` is ignored and only loaded when `BRINGA_CONFIG_INCLUDE_LOCAL=true`.
 
+Forks should scaffold profiles with:
+
+```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
+```
+
+This keeps fork-owned deployment edits in one predictable file instead of spreading local identity through shared source.
+
 ### Longer Local Text
 
 Use content files for text that will diverge by operator, language, jurisdiction, or tone:

@@ -3,7 +3,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const defaultTargets = ["AGENTS.md", "README.md", "SECURITY.md", "docs", ".agents"];
+const defaultTargets = [
+  "AGENTS.md",
+  "README.md",
+  "CONTRIBUTING.md",
+  "CODE_OF_CONDUCT.md",
+  "SECURITY.md",
+  "docs",
+  ".agents",
+];
 const defaultIgnoredPathPrefixes = ["docs/prompts/"];
 const textExtensions = new Set([".md", ".mdx", ".txt", ".yml", ".yaml"]);
 const forbiddenTermPattern = /\bvereine?\b/giu;

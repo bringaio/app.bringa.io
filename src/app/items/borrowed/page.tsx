@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseclient";
 import { ItemDb } from "@/app/model/model";
-import { Loader2, Package } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import ProtectedRoute from "@/components/auth/protected-route";
-import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item-card";
-import { AppImage } from "@/components/ui/app-image";
+import { ItemListCard } from "@/components/items/item-list-card";
 
 export default function BorrowedItemsPage() {
     const [items, setItems] = useState<ItemDb[]>([]);
@@ -62,33 +61,7 @@ export default function BorrowedItemsPage() {
                     ) : (
                         <div className="space-y-3">
                             {items.map((item) => (
-                                <Link href={`/items/details?id=${item.id}`} key={item.id} className="block">
-                                    <div className="w-full border rounded-lg p-4 bg-card shadow-sm hover:shadow-md transition-shadow flex justify-between items-center">
-                                        <div className="flex items-center gap-4">
-                                            {item.image_url ? (
-                                                <AppImage
-                                                    src={item.image_url}
-                                                    alt={item.name}
-                                                    width={56}
-                                                    height={56}
-                                                    sizes="56px"
-                                                    className="w-14 h-14 rounded-lg object-cover border"
-                                                />
-                                            ) : (
-                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border">
-                                                    <Package className="h-6 w-6 text-muted-foreground" />
-                                                </div>
-                                            )}
-                                            <ItemContent>
-                                                <ItemTitle>{item.name}</ItemTitle>
-                                                <ItemDescription>{item.description || "No description"}</ItemDescription>
-                                            </ItemContent>
-                                        </div>
-                                        <div className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200">
-                                            Borrowed
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ItemListCard item={item} key={item.id} />
                             ))}
                         </div>
                     )}

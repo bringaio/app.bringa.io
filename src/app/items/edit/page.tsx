@@ -182,7 +182,7 @@ function EditItemContent() {
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-background p-4 pt-20">
-                <div className="max-w-md mx-auto bg-card rounded-xl shadow-sm border p-6">
+                <div className="max-w-md mx-auto bg-card rounded-lg shadow-sm border p-6">
                     <div className="mb-6">
                         <h1 className="text-xl font-bold">Edit Item</h1>
                     </div>

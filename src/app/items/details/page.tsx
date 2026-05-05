@@ -282,7 +282,7 @@ function ItemDetailsContent() {
         <ProtectedRoute>
             <div className="min-h-screen bg-background pb-20">
                 <div className="max-w-2xl mx-auto px-4 pt-20 relative z-10">
-                    <div className="bg-card rounded-xl shadow-sm border p-6 space-y-4">
+                    <div className="bg-card rounded-lg shadow-sm border p-6 space-y-4">
                         {item.image_url ? (
                             <AppImage
                                 src={item.image_url}
@@ -291,27 +291,29 @@ function ItemDetailsContent() {
                                 height={800}
                                 sizes="(max-width: 768px) 100vw, 672px"
                                 loading="lazy"
-                                className="w-full h-full object-cover rounded-xl rounded-b-none"
+                                className="aspect-[4/3] w-full rounded-lg object-cover"
                             />
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border bg-muted text-sm text-muted-foreground">
                                 No Image
                             </div>
                         )}
                         <div className="flex justify-between items-start">
-                            <div>
-                                <h1 className="text-2xl font-bold">{item.name}</h1>
-                                <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${item.status === 'borrowed'
-                                    ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
-                                    : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200'
-                                    }`}>
-                                    {item.status === 'borrowed' ? 'Borrowed' : 'In Stock'}
-                                </span>
-                                {item.visibility_state && item.visibility_state !== "visible" && (
-                                    <span className="ml-2 inline-block rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-                                        {item.visibility_state.replaceAll("_", " ")}
+                            <div className="min-w-0">
+                                <h1 className="break-words text-2xl font-bold">{item.name}</h1>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${item.status === 'borrowed'
+                                        ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
+                                        : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200'
+                                        }`}>
+                                        {item.status === 'borrowed' ? 'Borrowed' : 'In Stock'}
                                     </span>
-                                )}
+                                    {item.visibility_state && item.visibility_state !== "visible" && (
+                                        <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                                            {item.visibility_state.replaceAll("_", " ")}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
 

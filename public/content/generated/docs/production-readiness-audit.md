@@ -18,7 +18,8 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Source of truth and hyperoptimum | `docs/hyperoptimum.md`, `docs/optimization-options.md`, `.agents/rules/source-of-truth.md` | Covered |
 | Naming conventions and developer experience | `docs/conventions.md`, `pnpm test:naming-conventions`, `pnpm check:naming-conventions` | Covered |
 | Agent rules, skills, and workflows | `AGENTS.md`, `.agents/workflows/session-start.md`, `.agents/workflows/goal-mode-preflight.md`, `.agents/workflows/quality-loop.md`, `.agents/skills/*/SKILL.md`, `pnpm check:agents` | Covered |
-| Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm check:config` | Covered |
+| Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `scripts/create-deployment-profile.mjs`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm test:create-deployment`, `pnpm check:config` | Covered |
+| Open-source contribution surface | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, pull request template, `docs/open-source-release.md` | Covered locally |
 | Secret-free manual CI/CD | `.github/workflows/ci.yml`, `.github/workflows/pages.yml`, `docs/conventions.md`, `docs/repository-settings.md`, `pnpm check:github-workflows` | Covered |
 | In-app docs | `docs/index.md`, `public/content/generated/docs/index.json`, `/docs`, `pnpm check:docs-index` | Covered locally |
 | Supabase contract and privacy | `supabase/schema.sql`, `supabase/migrations/`, `supabase/README.md`, `docs/supabase.md`, `docs/supabase-contract-audit.md`, `pnpm test:supabase-contract`, `pnpm check:supabase-contract` | Partial until live review |
@@ -26,7 +27,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Product model and admin operations | `docs/admin-operations.md`, `docs/readiness-checklist.md`, `pnpm test:admin-route-gate`, `scripts/admin-system-health.test.mjs`, admin route tests in `scripts/admin-*.test.mjs` | Partial until browser and live backend evidence |
 | Auth and onboarding decision boundaries | `pnpm test:auth-redirect`, `pnpm test:protected-route`, `docs/supabase-branching.md` Auth redirect URL tasks | Partial until live Auth provider and browser persistence review |
 | Media upload and Storage contract | `src/lib/media.ts`, create/edit item routes, `supabase/schema.sql`, `pnpm check:supabase-contract` | Partial until live Storage bucket review |
-| Browser, accessibility, and PWA QA | `docs/browser-testing.md`, `.agents/skills/agentic-browser-testing/SKILL.md`, `pnpm test:pwa-manifest` | Blocked until browser evidence |
+| Browser, accessibility, and PWA QA | `docs/browser-testing.md`, `.agents/skills/agentic-browser-testing/SKILL.md`, local in-app browser pass, `pnpm test:pwa-manifest` | Partial until connected auth, PWA, slow-network, and target-browser evidence |
 | Backups, restore, and deletion cleanup | `scripts/backup-supabase.mjs`, `scripts/verify-supabase-backup.mjs`, `scripts/cleanup-account-deletion.mjs`, `docs/maintenance.md`, `docs/restore-drills.md`, `pnpm test:account-deletion-cleanup`, `pnpm check:restore-drills` | Partial until live rehearsal and retention policy |
 | Privacy-preserving observability | `docs/observability.md`, `pnpm test:observability`, `pnpm check:observability` | Partial until live log review and external error-reporting decision |
 | Dependency and tooling currency | `package.json`, `pnpm-lock.yaml`, `docs/dependency-audit.md`, `pnpm outdated` | Partial; major upgrades intentionally deferred |
@@ -35,6 +36,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 ## Evidence Sources
 
 - `docs/readiness-checklist.md`
+- `docs/open-source-release.md`
 - `docs/definition-of-done.md`
 - `docs/optimization-options.md`
 - `docs/conventions.md`
@@ -45,6 +47,8 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 - `supabase/README.md`
 - `.agents/`
 - `.github/workflows/`
+- `CONTRIBUTING.md`
+- `CODE_OF_CONDUCT.md`
 - `package.json`
 - `scripts/`
 
@@ -54,7 +58,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 - Live Supabase schema, RLS, functions, triggers, Storage, and Edge Functions review requires approved access.
 - Live Supabase health checks, Edge Function log review, and any external error-reporting decision require approved access and policy.
 - Local app development cannot be linked to a Supabase development branch without approved project refs and branch access.
-- Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence.
+- Connected auth persistence, logout, PWA install, slow network, and target-browser states still need browser evidence.
 - Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.
 - Live restore drills and encrypted backup handling still need approved access and policy.
 

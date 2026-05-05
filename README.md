@@ -1,8 +1,8 @@
 # bringa.io
 
-Open source sharing and borrowing software for communities, clubs, and associations.
+Open source sharing and borrowing software for communities, clubs, associations, and local operators.
 
-[Configuration](docs/configuration.md) | [Supabase](docs/supabase.md) | [Repository settings](docs/repository-settings.md) | [Roadmap](docs/roadmap.md) | [Security](SECURITY.md)
+[Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Repository settings](docs/repository-settings.md) | [Roadmap](docs/roadmap.md) | [Contributing](CONTRIBUTING.md) | [Security](SECURITY.md)
 
 ## Status
 
@@ -36,6 +36,13 @@ pnpm check:config
 ```
 
 Set `BRINGA_DEPLOYMENT=<profile-slug>` to generate a fork profile. The upstream default is `app.bringa.io`.
+
+To scaffold a fork deployment profile:
+
+```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
+BRINGA_DEPLOYMENT=share.example.org pnpm generate:config
+```
 
 Browser-visible Supabase values are public by design. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config, not in `.env.local`. Secrets stay in `.env.local` or the deployment provider. Never put service role keys in public config.
 
@@ -93,7 +100,7 @@ The app is built as a static Next.js export and can be deployed through the manu
 
 ## Contributing
 
-Use Conventional Commits and small pull requests. Preserve fork-specific config and legal/branding text when syncing from upstream.
+Use Conventional Commits and small pull requests. Preserve fork-specific config and legal/branding text when syncing from upstream. See `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
 
 ## License
 

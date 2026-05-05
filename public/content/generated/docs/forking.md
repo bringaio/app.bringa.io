@@ -24,9 +24,15 @@ public/icon.svg
 
 Deployment-specific content lives in `content/deployments/<fork-slug>/` and is generated into `public/content/generated/` with `pnpm generate:config`. The current app references generated public files through config paths.
 
-To create a fork profile:
+To create a fork profile, use the generator first:
 
-1. Add `config/deployments/<fork-slug>.jsonc`.
+```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
+```
+
+Then:
+
+1. Edit `config/deployments/<fork-slug>.jsonc`.
 2. Add matching longer text overrides under `content/deployments/<fork-slug>/` when local legal, onboarding, help, or issue copy differs.
 3. Override only the values that differ from `config/base.config.jsonc`.
 4. Run `BRINGA_DEPLOYMENT=<fork-slug> pnpm generate:config`.
@@ -35,7 +41,7 @@ To create a fork profile:
 To publish a fork on GitHub Pages:
 
 1. Choose a deployment slug, usually the app domain such as `share.example.org`.
-2. Set `app.canonicalUrl`, repository links, public Supabase values, legal content, and brand assets in that deployment profile.
+2. Scaffold the profile with `pnpm create:deployment -- <slug>`, then set `app.canonicalUrl`, repository links, public Supabase values, legal content, and brand assets in that deployment profile.
 3. Configure the repository's Pages source as GitHub Actions.
 4. Point a subdomain CNAME to `<github-owner>.github.io`.
 5. Add the matching Site URL and redirect URLs in Supabase Auth settings.

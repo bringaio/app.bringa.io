@@ -85,6 +85,12 @@
       "sourcePath": "docs/observability.md"
     },
     {
+      "slug": "open-source-release",
+      "title": "Open Source Release",
+      "path": "/content/generated/docs/open-source-release.md",
+      "sourcePath": "docs/open-source-release.md"
+    },
+    {
       "slug": "optimization-options",
       "title": "Optimization Options",
       "path": "/content/generated/docs/optimization-options.md",

@@ -108,7 +108,7 @@ export default function CreateItemPage() {
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-background p-4 pt-12 mt-12">
-                <div className="max-w-md mx-auto bg-card rounded-xl shadow-sm border p-6">
+                <div className="max-w-md mx-auto bg-card rounded-lg shadow-sm border p-6">
                     <div className="mb-6">
                         <h1 className="text-xl font-bold">Create New Item</h1>
                     </div>

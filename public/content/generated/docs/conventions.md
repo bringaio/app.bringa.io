@@ -26,6 +26,7 @@ Recommended branch names:
 Every durable fact should have one home.
 
 - Public deployment config: `config/base.config.jsonc` plus `config/deployments/<slug>.jsonc`
+- Deployment profile scaffolding: `scripts/create-deployment-profile.mjs` exposed as `pnpm create:deployment -- <slug>`
 - Generated public config: `public/bringa.config.json`
 - Typed app config: `src/config/bringa.config.generated.json`
 - Secrets: `.env.local`, deployment secrets, or Supabase function secrets
@@ -65,6 +66,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm install --frozen-lockfile`
 - `pnpm check:config`
 - `pnpm test:config`
+- `pnpm test:create-deployment`
 - `pnpm test:auth-redirect`
 - `pnpm test:app-config`
 - `pnpm test:admin-route-gate`

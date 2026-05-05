@@ -33,6 +33,9 @@ jobs:
       - name: Test config layering
         run: pnpm test:config
 
+      - name: Test deployment profile generator
+        run: pnpm test:create-deployment
+
       - name: Test auth redirect helpers
         run: pnpm test:auth-redirect
 

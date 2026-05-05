@@ -39,7 +39,7 @@ Recommended rules:
 
 For `app.bringa.io` or a fork-owned subdomain:
 
-1. Add or update a deployment profile in `config/deployments/<slug>.jsonc`.
+1. Add or update a deployment profile with `pnpm create:deployment -- <slug>` or by editing `config/deployments/<slug>.jsonc`.
 2. Set `app.canonicalUrl` to the final HTTPS app URL.
 3. Set `supabase.url` and `supabase.publishableKey` to that deployment's public Supabase API values.
 4. Run `BRINGA_DEPLOYMENT=<slug> pnpm generate:config` and commit the generated app config/content in the deployment branch.

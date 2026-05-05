@@ -112,7 +112,10 @@ export default function DocsClient() {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 md:grid-cols-[240px_1fr]">
         <aside className="md:sticky md:top-6 md:self-start">
           <div className="mb-3 text-xs font-medium uppercase text-muted-foreground">Docs</div>
-          <nav className="flex flex-col gap-1" aria-label="Documentation">
+          <nav
+            className="flex max-h-56 flex-col gap-1 overflow-y-auto rounded-lg border p-2 md:max-h-[calc(100vh-3rem)] md:border-0 md:p-0"
+            aria-label="Documentation"
+          >
             {(manifest?.docs ?? []).map((doc) => (
               <Link
                 key={doc.slug}

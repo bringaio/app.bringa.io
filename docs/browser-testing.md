@@ -53,6 +53,19 @@ When the browser supports installation, install or simulate installed mode and t
 - app icon and theme colors look correct on the target platform;
 - slow-network behavior is understandable.
 
+## Latest Local Evidence
+
+2026-05-05 local in-app browser pass against `pnpm dev` and local demo mode:
+
+- `/login`: terms gate, disabled OAuth buttons, local demo entry, and Docs link rendered.
+- `/dashboard`: borrowed-first default rendered, Available view showed long item cards without overlap, and bottom controls stayed usable.
+- `/items/details?id=demo-long-label`: long title wrapped, no-image state had stable aspect ratio, and user/admin actions remained visible.
+- `/docs`: generated docs loaded, Open Source Release appeared in the manifest, and mobile navigation was constrained so article content reached the first viewport.
+- `/admin/dashboard`: local demo admin route rendered counts, source-of-truth links, recent activity, and item list.
+- `/items/create`: form labels, image drop zone, and primary action rendered in local demo mode.
+
+Remaining release evidence still needs connected Supabase auth persistence, logout, PWA install behavior, slow-network review, target-browser coverage, and approved live/staging data boundaries.
+
 ## Reporting
 
 Use short, factual notes. If a tool is unavailable, record that as a gap rather than marking the scenario complete. Keep screenshots only when they clarify layout, overflow, or state that text evidence cannot capture.

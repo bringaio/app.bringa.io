@@ -7,11 +7,9 @@ import { supabase } from "@/lib/supabaseclient";
 import { ItemDb } from "@/app/model/model";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ItemContent, ItemTitle, ItemDescription } from "@/components/items/item-card";
+import { ItemListCard } from "@/components/items/item-list-card";
 import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
-import { Package } from "lucide-react";
-import { AppImage } from "@/components/ui/app-image";
 import {
     buildDashboardEmptyMessage,
     buildDashboardInitialViewState,
@@ -151,37 +149,7 @@ export default function DashboardPage() {
                     >
                         <div className="flex flex-col items-center w-full max-w-2xl mx-auto space-y-2 px-4 pb-32">
                             {results.map((item) => (
-                                <Link href={`/items/details?id=${item.id}`} key={item.id} className="w-full">
-                                    <div className="w-full border rounded-lg p-4 bg-card shadow-sm hover:shadow-md transition-shadow flex justify-between items-center">
-                                        <div className="flex items-center gap-4">
-                                            {item.image_url ? (
-                                                <AppImage
-                                                    src={item.image_url}
-                                                    alt={item.name}
-                                                    width={56}
-                                                    height={56}
-                                                    sizes="56px"
-                                                    loading="lazy"
-                                                    className="w-14 h-14 rounded-lg object-cover border"
-                                                />
-                                            ) : (
-                                                <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center border">
-                                                    <Package className="h-6 w-6 text-muted-foreground" />
-                                                </div>
-                                            )}
-                                            <ItemContent>
-                                                <ItemTitle>{item.name}</ItemTitle>
-                                                <ItemDescription>{item.description || "No description"}</ItemDescription>
-                                            </ItemContent>
-                                        </div>
-                                        <div className={`px-3 py-1 rounded-full text-xs font-medium ${item.status === 'borrowed'
-                                            ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200'
-                                            : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200'
-                                            }`}>
-                                            {item.status === 'borrowed' ? 'Borrowed' : 'In Stock'}
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ItemListCard item={item} key={item.id} />
                             ))}
                         </div>
                     </div>
@@ -227,7 +195,7 @@ export default function DashboardPage() {
                             </Button>
                         </div>
                     )}
-                    <div className="flex items-center gap-2 bg-card border rounded-xl shadow-lg p-2">
+                    <div className="flex items-center gap-2 bg-card border rounded-lg shadow-lg p-2">
                         <Input
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}

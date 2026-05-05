@@ -121,7 +121,7 @@ export default function AdminInviteCodePage() {
                     </p>
                 </div>
 
-                <div className="w-full bg-card rounded-xl shadow-sm border p-6 space-y-6">
+                <div className="w-full bg-card rounded-lg shadow-sm border p-6 space-y-6">
                     {error && (
                         <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
                             {error}
