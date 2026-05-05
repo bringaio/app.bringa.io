@@ -8,9 +8,11 @@ This runbook is for agents and maintainers who need to prepare the live `app.bri
 - Dynamic OAuth is the default; personal access tokens are no longer required for normal MCP login.
 - Use `project_ref=<project-ref>` once the `app-bringa-io` project ref exists. This scopes the MCP server to one project and disables account management tools.
 - Use `read_only=true` for production audits or any project that may contain real user data.
-- Limit feature groups with `features=database,docs` for ordinary audits; add `debugging,development` only when logs, project URLs, or publishable keys are needed.
+- Supabase recommends development or test projects for MCP work. If the live project must be inspected, combine project scoping, read-only mode, restricted feature groups, and the repository privacy rules below.
+- Limit feature groups with `features=database,docs` for ordinary schema/RLS audits; add `development` only when project URLs or publishable keys are needed, `debugging` only when advisors or logs are needed, and `storage` only when bucket metadata or Storage configuration must be reviewed.
 - Account management tools such as `list_projects`, `create_project`, `pause_project`, and `restore_project` are disabled in project-scoped mode.
 - MCP exposes `get_project_url` and `get_publishable_keys` for public browser config.
+- Storage tools are disabled by default in Supabase MCP, so bucket review requires an explicit `storage` feature group.
 - Supabase's current API key docs recommend publishable keys for public browser clients and secret keys over legacy service_role keys where possible.
 - Never put `SUPABASE_SERVICE_ROLE_KEY` or `sb_secret_` values in docs, commits, browser bundles, screenshots, or chat.
 - `pnpm check:secrets` scans committed text for Supabase service-role assignments, `sb_secret_` keys, and legacy service-role JWTs.
@@ -35,17 +37,18 @@ If capacity or plan limits block a new project, first report the exact blocker a
 1. Verify that Supabase MCP tools are visible in the current Codex session. If `~/.codex/config.toml` was edited during the session but no Supabase tools are discoverable, start a new Codex session or restart the MCP runtime.
 2. Use unscoped MCP only for organization/project discovery and approved project setup. List organizations and projects without reading real row contents.
 3. Create app-bringa-io only after checking project capacity and cost confirmation.
-4. After creation, switch to a project-scoped read-only MCP URL for audits:
+4. After creation, switch to a project-scoped read-only MCP URL for ordinary schema/RLS audits:
 
    ```text
-   https://mcp.supabase.com/mcp?project_ref=<project-ref>&read_only=true&features=database,docs,debugging,development
+   https://mcp.supabase.com/mcp?project_ref=<project-ref>&read_only=true&features=database,docs
    ```
 
-5. Prefer schema, RLS policies, functions, triggers, Storage buckets, advisors, and logs over row contents.
-6. Ask before reading real user rows. If copied branch rows exist, treat them as production data.
-7. Use a separate non-read-only MCP configuration only for approved setup or migration work.
-8. Apply repository schema and migrations through reviewed Supabase CLI or MCP migration steps; keep `supabase/schema.sql` and migrations aligned.
-9. Verify Auth redirect URLs, Storage bucket settings, Edge Function secrets, advisors, and logs before calling the live app ready.
+5. Add feature groups narrowly for the task: `development` for public browser config, `storage` for bucket metadata, and `debugging` for advisors or logs.
+6. Prefer schema, RLS policies, functions, triggers, Storage bucket metadata, advisors, and logs over row contents.
+7. Ask before reading real user rows. If copied branch rows exist, treat them as production data.
+8. Use a separate non-read-only MCP configuration only for approved setup or migration work.
+9. Apply repository schema and migrations through reviewed Supabase CLI or MCP migration steps; keep `supabase/schema.sql` and migrations aligned.
+10. Verify Auth redirect URLs, Storage bucket settings, Edge Function secrets, advisors, and logs before calling the live app ready.
 
 ## Service Role And Secret Keys
 

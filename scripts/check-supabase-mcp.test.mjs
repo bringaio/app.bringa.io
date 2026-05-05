@@ -18,9 +18,11 @@ title: Supabase MCP Agent Setup
 - Dynamic OAuth is the default; personal access tokens are no longer required for normal MCP login.
 - Use project-scoped mode with project_ref=<project-ref> once the app-bringa-io project ref exists.
 - Use read_only=true for production or any project that may contain real user data.
-- Limit feature groups with features=database,docs,debugging,development when write tools are not needed.
+- Supabase recommends development or test projects for MCP work.
+- Limit feature groups with features=database,docs for ordinary schema/RLS audits; add development, debugging, or storage only when needed.
 - Account management tools such as list_projects, create_project, pause_project, and restore_project are disabled in project-scoped mode.
 - MCP exposes get_project_url and get_publishable_keys for public browser config.
+- Storage tools are disabled by default in Supabase MCP, so bucket review requires an explicit storage feature group.
 - Supabase's current API key docs recommend publishable keys for public browser clients and secret keys over legacy service_role keys where possible.
 - Never put SUPABASE_SERVICE_ROLE_KEY or sb_secret_ values in docs, commits, browser bundles, screenshots, or chat.
 
@@ -36,10 +38,11 @@ title: Supabase MCP Agent Setup
 1. Verify that Supabase MCP tools are visible in the current Codex session.
 2. List organizations and projects without reading real row contents.
 3. Create app-bringa-io only after checking project capacity and cost confirmation.
-4. Prefer schema, RLS policies, functions, triggers, Storage buckets, advisors, and logs over row contents.
-5. Ask before reading real user rows.
-6. Configure Codex for the app project with project_ref=<project-ref>&read_only=true for audits.
-7. Use a separate non-read-only MCP configuration only for approved setup or migration work.
+4. Add feature groups narrowly for the task.
+5. Prefer schema, RLS policies, functions, triggers, Storage buckets, advisors, and logs over row contents.
+6. Ask before reading real user rows.
+7. Configure Codex for the app project with project_ref=<project-ref>&read_only=true for audits.
+8. Use a separate non-read-only MCP configuration only for approved setup or migration work.
 
 ## Service Role And Secret Keys
 
