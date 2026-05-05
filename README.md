@@ -60,8 +60,10 @@ Set `BRINGA_DEPLOYMENT=<profile-slug>` to generate a fork profile. The upstream 
 To scaffold a fork deployment profile:
 
 ```bash
+pnpm setup:operator --dry-run
 pnpm setup:operator
 # or, non-interactively:
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork --dry-run
 pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
 BRINGA_DEPLOYMENT=share.example.org pnpm generate:config
 ```

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { Writable } from "node:stream";
 import os from "node:os";
 import path from "node:path";
@@ -98,4 +98,32 @@ test("creates an operator deployment profile from setup answers", async (t) => {
   assert.match(profile, /"organizationName": "Share Example"/);
   assert.match(profile, /"url": "https:\/\/abc\.supabase\.co"/);
   assert.match(profile, /"publishableKey": "public-publishable-key"/);
+});
+
+test("previews operator setup without writing a deployment profile in dry run mode", async (t) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "bringa-operator-setup-dry-run-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const output = captureOutput();
+  const result = await createOperatorSetupFromAnswers({
+    root,
+    dryRun: true,
+    rawAnswers: {
+      slug: "share.example.org",
+      githubOwner: "example",
+      githubRepo: "sharing-app",
+      operatorName: "Share Example",
+      canonicalUrl: "",
+      supabaseUrl: "https://abc.supabase.co",
+      supabasePublishableKey: "public-publishable-key",
+      useDeployBranch: "yes",
+    },
+    output: output.stream,
+  });
+
+  assert.equal(result.dryRun, true);
+  assert.match(output.text(), /Dry run: would create config\/deployments\/share\.example\.org\.jsonc/);
+  assert.match(output.text(), /"publishableKey": "public-publishable-key"/);
+  assert.match(output.text(), /Run pnpm build/);
+  await assert.rejects(() => access(result.filePath), /ENOENT/);
 });

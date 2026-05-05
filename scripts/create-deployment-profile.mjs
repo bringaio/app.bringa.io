@@ -23,6 +23,7 @@ Options:
   --canonical-url <url>               Public app URL, defaults to https://<slug>
   --supabase-url <url>                Public Supabase project URL
   --supabase-publishable-key <key>    Public Supabase publishable key
+  --dry-run                           Print the generated profile without writing it
   --force                             Replace an existing profile
   --help                              Show this help
 `;
@@ -132,12 +133,23 @@ export async function createDeploymentProfile({
   root = defaultRoot,
   slug,
   force = false,
+  dryRun = false,
   ...profileOptions
 } = {}) {
   const normalizedSlug = normalizeDeploymentSlug(slug);
   const filePath = path.join(root, "config", "deployments", `${normalizedSlug}.jsonc`);
   const relativePath = path.relative(root, filePath).split(path.sep).join("/");
   const content = buildDeploymentProfileContent({ slug: normalizedSlug, ...profileOptions });
+
+  if (dryRun) {
+    return {
+      slug: normalizedSlug,
+      filePath,
+      relativePath,
+      content,
+      dryRun: true,
+    };
+  }
 
   await mkdir(path.dirname(filePath), { recursive: true });
 
@@ -154,6 +166,8 @@ export async function createDeploymentProfile({
     slug: normalizedSlug,
     filePath,
     relativePath,
+    content,
+    dryRun: false,
   };
 }
 
@@ -172,6 +186,10 @@ export function parseArgs(args, env = process.env) {
       return { help: true };
     }
 
+    if (arg === "--") {
+      continue;
+    }
+
     if (!arg.startsWith("--")) {
       positional.push(arg);
       continue;
@@ -179,6 +197,11 @@ export function parseArgs(args, env = process.env) {
 
     if (arg === "--force") {
       options.force = true;
+      continue;
+    }
+
+    if (arg === "--dry-run") {
+      options.dryRun = true;
       continue;
     }
 
@@ -221,7 +244,12 @@ async function main() {
   }
 
   const result = await createDeploymentProfile(parsed);
-  console.log(`Created ${result.relativePath}.`);
+  if (result.dryRun) {
+    console.log(`Dry run: would create ${result.relativePath}.`);
+    console.log(result.content.trimEnd());
+  } else {
+    console.log(`Created ${result.relativePath}.`);
+  }
   console.log(`Next: BRINGA_DEPLOYMENT=${result.slug} pnpm generate:config`);
 }
 

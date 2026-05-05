@@ -13,10 +13,15 @@ const publicSupabaseUrlPlaceholder = "https://replace-with-your-project-ref.supa
 const publicSupabaseKeyPlaceholder = "replace-with-your-public-publishable-key";
 
 function usage() {
-  return `Usage: pnpm setup:operator
+  return `Usage: pnpm setup:operator [--dry-run] [--force]
 
 Interactive first-run helper for fork operators. It creates a public
 deployment profile and prints the remaining GitHub Pages and Supabase steps.
+
+Options:
+  --dry-run  Preview the generated deployment profile without writing it
+  --force    Replace an existing profile
+  --help     Show this help
 
 It never asks for service role keys, OAuth secrets, or provider secrets.
 `;
@@ -92,11 +97,13 @@ export async function createOperatorSetupFromAnswers({
   env = process.env,
   output = defaultOutput,
   force = false,
+  dryRun = false,
 } = {}) {
   const resolved = resolveOperatorSetupAnswers(rawAnswers, env);
   const result = await createDeploymentProfile({
     root,
     force,
+    dryRun,
     slug: resolved.slug,
     githubOwner: resolved.githubOwner,
     githubRepo: resolved.githubRepo,
@@ -106,7 +113,13 @@ export async function createOperatorSetupFromAnswers({
     supabasePublishableKey: resolved.supabasePublishableKey,
   });
 
-  output.write(`\nCreated ${result.relativePath}.\n\n`);
+  if (result.dryRun) {
+    output.write(`\nDry run: would create ${result.relativePath}.\n\n`);
+    output.write(`${result.content.trimEnd()}\n\n`);
+  } else {
+    output.write(`\nCreated ${result.relativePath}.\n\n`);
+  }
+
   for (const line of buildOperatorSetupChecklist(resolved)) {
     output.write(`${line}\n`);
   }
@@ -123,6 +136,7 @@ export async function runOperatorSetup({
   output = defaultOutput,
   env = process.env,
   force = false,
+  dryRun = false,
 } = {}) {
   const questioner = createInterface({ input, output });
 
@@ -145,6 +159,7 @@ export async function runOperatorSetup({
       env,
       output,
       force,
+      dryRun,
     });
   } finally {
     questioner.close();
@@ -159,6 +174,7 @@ async function main() {
 
   await runOperatorSetup({
     force: process.argv.includes("--force"),
+    dryRun: process.argv.includes("--dry-run"),
   });
 }
 

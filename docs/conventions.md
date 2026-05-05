@@ -40,7 +40,7 @@ Branch handling:
 Every durable fact should have one home.
 
 - Public deployment config: `config/base.config.jsonc` plus `config/deployments/<slug>.jsonc`
-- Deployment profile scaffolding: `scripts/create-deployment-profile.mjs` exposed as `pnpm create:deployment -- <slug>`
+- Deployment profile scaffolding: `scripts/create-deployment-profile.mjs` exposed as `pnpm create:deployment -- <slug>` with `--dry-run` for previews
 - Generated public config: `public/bringa.config.json`
 - Typed app config: `src/config/bringa.config.generated.json`
 - Secrets: `.env.local`, deployment secrets, or Supabase function secrets

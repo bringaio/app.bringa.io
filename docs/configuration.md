@@ -28,14 +28,18 @@ BRINGA_DEPLOYMENT=example-community pnpm generate:config
 To create a new fork profile before generating config:
 
 ```bash
+pnpm setup:operator --dry-run
 pnpm setup:operator
 ```
 
 For non-interactive use:
 
 ```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork --dry-run
 pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
 ```
+
+Dry runs print the generated public profile and next steps without writing `config/deployments/<slug>.jsonc`. Use them for review, agent planning, and onboarding before committing a fork profile.
 
 For first deployment, the normal operator flow is:
 

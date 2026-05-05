@@ -31,14 +31,18 @@ Deployment-specific content lives in `content/deployments/<fork-slug>/` and is g
 To create a fork profile, use the generator first:
 
 ```bash
+pnpm setup:operator --dry-run
 pnpm setup:operator
 ```
 
 For non-interactive use:
 
 ```bash
+pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork --dry-run
 pnpm create:deployment -- share.example.org --owner your-github-owner --repo your-fork
 ```
+
+Use `--dry-run` to preview the public profile and next steps before writing files.
 
 Then:
 

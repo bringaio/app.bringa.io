@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -8,6 +8,7 @@ import {
   buildDeploymentProfileContent,
   createDeploymentProfile,
   normalizeDeploymentSlug,
+  parseArgs,
 } from "./create-deployment-profile.mjs";
 
 test("normalizes safe deployment slugs and rejects unsafe paths", () => {
@@ -65,5 +66,44 @@ test("writes a deployment profile and refuses overwrite by default", async (t) =
   await assert.rejects(
     () => createDeploymentProfile({ root, slug: "share.example.org" }),
     /already exists/i,
+  );
+});
+
+test("previews a deployment profile without writing it in dry run mode", async (t) => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "bringa-deployment-profile-dry-run-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  const result = await createDeploymentProfile({
+    root,
+    slug: "share.example.org",
+    githubOwner: "example",
+    githubRepo: "sharing-app",
+    dryRun: true,
+  });
+
+  assert.equal(result.slug, "share.example.org");
+  assert.equal(result.dryRun, true);
+  assert.match(result.content, /"name": "share\.example\.org"/);
+  await assert.rejects(() => access(result.filePath), /ENOENT/);
+});
+
+test("parses pnpm argument separator before deployment options", () => {
+  assert.deepEqual(
+    parseArgs([
+      "--",
+      "share.example.org",
+      "--owner",
+      "example",
+      "--repo",
+      "sharing-app",
+      "--dry-run",
+    ]),
+    {
+      slug: "share.example.org",
+      githubOwner: "example",
+      githubRepo: "sharing-app",
+      dryRun: true,
+      force: false,
+    },
   );
 });
