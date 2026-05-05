@@ -71,7 +71,8 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Local backup integrity verification checks manifest table counts and Storage object hashes before restore drills.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
-- [ ] Live restore drills and encrypted backup handling are complete.
+- [x] Restore drill and encrypted retention evidence requirements are documented and checked.
+- [ ] Live restore drills and encrypted backup handling are complete with approved access and policy.
 - [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 
 ## Verification Before Release
@@ -92,6 +93,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm test:docs-index`
 - [ ] `pnpm test:browser-testing`
 - [ ] `pnpm test:supabase-branching`
+- [ ] `pnpm test:restore-drills`
 - [ ] `pnpm test:release-checklist`
 - [ ] `pnpm test:admin-notification-settings`
 - [ ] `pnpm test:admin-deletion-requests`
@@ -111,6 +113,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm check:docs-index`
 - [ ] `pnpm check:browser-testing`
 - [ ] `pnpm check:supabase-branching`
+- [ ] `pnpm check:restore-drills`
 - [ ] `pnpm check:release-checklist`
 - [ ] `pnpm check:github-workflows`
 - [ ] `pnpm test:static-export`

@@ -57,6 +57,9 @@ jobs:
       - name: Test Supabase branching runbook checker
         run: pnpm test:supabase-branching
 
+      - name: Test restore drill runbook checker
+        run: pnpm test:restore-drills
+
       - name: Test release checklist checker
         run: pnpm test:release-checklist
 
@@ -134,6 +137,9 @@ jobs:
 
       - name: Check Supabase branching runbook
         run: pnpm check:supabase-branching
+
+      - name: Check restore drill runbook
+        run: pnpm check:restore-drills
 
       - name: Check release checklist
         run: pnpm check:release-checklist

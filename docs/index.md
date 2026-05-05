@@ -15,6 +15,7 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 - [Supabase Branching](supabase-branching.md): future task list for moving development onto a Supabase branch from production.
 - [Supabase Contract Audit](supabase-contract-audit.md): local app/schema mismatch checklist before live MCP review.
 - [Admin Operations](admin-operations.md): current admin surfaces, moderation queues, privacy defaults, and production-change steps.
+- [Restore Drills](restore-drills.md): backup restore rehearsal, encrypted retention, and recovery evidence requirements.
 - [Browser Testing](browser-testing.md): manual and agentic browser runbook for responsive, accessibility, PWA, user, and admin flows.
 - [Maintenance](maintenance.md): recurring operations and safety checks.
 

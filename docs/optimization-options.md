@@ -62,7 +62,7 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 ## Operations
 
 - Telegram operations: add an operator retry job for failed sends if manual retry planning through `notification_events.next_attempt_at` is not enough. Impact: admin attention and reliability. Uncertainty/research: confirm deployment volume and failure modes with live Edge Function logs.
-- Backups: table and Storage backup script exists with optional Auth metadata export, admin-visible freshness metadata, and a local manifest/hash verifier; add live restore drills and encrypted retention policy. Impact: recovery confidence. Uncertainty/research: service role scope, Supabase Auth restore limits, and Storage reconciliation details need live-project verification after setup.
+- Backups: table and Storage backup script exists with optional Auth metadata export, admin-visible freshness metadata, local manifest/hash verifier, and checked restore-drill evidence runbook; add live restore drills and encrypted retention policy. Impact: recovery confidence. Uncertainty/research: service role scope, Supabase Auth restore limits, and Storage reconciliation details need live-project verification after setup.
 - Observability: add privacy-preserving error reporting, edge-function logs guidance, live Supabase health checks, and notification status visibility. Impact: diagnose failures without exposing user data. Uncertainty/research: choose minimal tools and avoid unnecessary tracking.
 - Maintenance tasks: keep reminders for Supabase free-tier activity, dependency updates, config schema checks, docs review, browser-test skill updates, and fork sync research. Impact: operations stay humane.
 
