@@ -17,6 +17,8 @@ export const defaultTables = [
   "item_suggestions",
   "item_flags",
   "backup_runs",
+  "notification_events",
+  "notification_mutes",
 ];
 export const defaultStorageBuckets = ["items"];
 

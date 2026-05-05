@@ -74,6 +74,11 @@ async function main() {
     "restore_item_version",
     "set_item_visibility",
     "request_item_visibility",
+    "enqueue_telegram_notification",
+    "is_telegram_muted",
+    "mark_notification_seen",
+    "set_telegram_mute",
+    "record_notification_delivery",
   ];
 
   for (const functionName of requiredFunctions) {
@@ -210,6 +215,20 @@ async function main() {
       "backup_runs time order",
       "CONSTRAINT backup_runs_time_order CHECK (finished_at >= started_at)",
     ],
+    ["notification_events table", "CREATE TABLE IF NOT EXISTS public.notification_events ("],
+    [
+      "notification_events status",
+      "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text, 'skipped_muted'::text]))",
+    ],
+    [
+      "notification_events unseen dedupe",
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_notification_events_unseen_dedupe ON public.notification_events(channel, audience, dedupe_key) WHERE seen_at IS NULL AND status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text]);",
+    ],
+    ["notification_mutes table", "CREATE TABLE IF NOT EXISTS public.notification_mutes ("],
+    [
+      "notification_mutes window constraint",
+      "CONSTRAINT notification_mutes_has_window CHECK (muted_forever OR muted_until IS NOT NULL)",
+    ],
   ];
 
   for (const [label, expectedSql] of requiredProductModelSql) {
@@ -282,6 +301,28 @@ async function main() {
     requireIncludes(schema, expectedSql, `Missing suggestion application contract in supabase/schema.sql: ${label}`);
   }
 
+  const requiredNotificationSql = [
+    ["notification enqueue helper", "CREATE OR REPLACE FUNCTION public.enqueue_telegram_notification("],
+    ["notification enqueue uses hardened search path", "RETURNS uuid LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$"],
+    ["notification enqueue records muted skips", "status\n        )\n        VALUES ("],
+    ["notification enqueue suppresses unseen duplicates", "AND seen_at IS NULL\n      AND status = ANY (ARRAY['pending'::text, 'sent'::text, 'failed'::text])"],
+    ["notification enqueue handles concurrent duplicates", "ON CONFLICT DO NOTHING\n    RETURNING id INTO new_event_id;"],
+    ["notification delivery records retry state", "next_attempt_at = CASE WHEN normalized_status = 'failed' THEN now() + interval '15 minutes' ELSE NULL END"],
+    ["notification delivery is service role only", "IF auth.role() IS DISTINCT FROM 'service_role' THEN"],
+    ["notification seen admin RPC", "CREATE OR REPLACE FUNCTION public.mark_notification_seen("],
+    ["notification mute admin RPC", "CREATE OR REPLACE FUNCTION public.set_telegram_mute("],
+    ["notification mute supports one day", "selected_until := now() + interval '1 day';"],
+    ["notification mute supports forever", "normalized_window = 'forever'"],
+    ["item webhook enqueues notification event", "notification_event_id := public.enqueue_telegram_notification("],
+    ["webhook payload uses notification events", "'table', 'notification_events'"],
+    ["notification delivery blocks anonymous execute", "REVOKE EXECUTE ON FUNCTION public.record_notification_delivery(uuid, text, text) FROM PUBLIC;"],
+    ["notification delivery allows service role execute", "GRANT EXECUTE ON FUNCTION public.record_notification_delivery(uuid, text, text) TO service_role;"],
+  ];
+
+  for (const [label, expectedSql] of requiredNotificationSql) {
+    requireIncludes(schema, expectedSql, `Missing notification contract in supabase/schema.sql: ${label}`);
+  }
+
   const requiredDeletionReviewSql = [
     ["deletion review admin RPC", "CREATE OR REPLACE FUNCTION public.review_account_deletion_request("],
     ["deletion review remains non-destructive", "normalized_status <> ALL (ARRAY['reviewing', 'cancelled'])"],
@@ -325,6 +366,14 @@ async function main() {
     "No direct backup run inserts",
     "No direct backup run updates",
     "No direct backup run deletes",
+    "Admins can view notification events",
+    "No direct notification event inserts",
+    "No direct notification event updates",
+    "No direct notification event deletes",
+    "Admins can view notification mutes",
+    "No direct notification mute inserts",
+    "No direct notification mute updates",
+    "No direct notification mute deletes",
   ];
 
   for (const policyName of requiredProductPolicies) {

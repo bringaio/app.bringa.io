@@ -163,19 +163,20 @@ Current schema:
 
 Current functions:
 
-- Telegram notifications do not implement unseen-request throttling, admin mute windows, or privacy minimization.
-- User notifications avoid email by default and send a minimal profile activity summary.
+- Telegram notifications enqueue `notification_events` before delivery, suppress duplicate unseen events by dedupe key, honor `notification_mutes`, and record send status through `record_notification_delivery`.
+- Telegram payloads contain only a short title and an app-relative URL by default. Admins use the app for details instead of receiving row bodies, emails, names, or notes in Telegram.
+- User profile notifications avoid email by default and use the same minimal event payload contract.
 
 Risk:
 
 - Fresh forks must configure webhook URL settings before expecting Telegram delivery.
-- Telegram can still become overly chatty until request dedupe and mute state exist.
+- A deployment still needs its webhook URLs, function secrets, and service role status write tested with approved live access.
 
 Target:
 
 - Keep project URLs/secrets in deploy-time configuration.
-- Use a notification event table or state table for dedupe, seen-state, mute windows, and retry behavior.
-- Send minimal Telegram summaries and link admins back into the app for details.
+- Keep `notification_events` and `notification_mutes` as the source of truth for dedupe, seen-state, mute windows, and retry planning.
+- Add an operator retry job only if manual retry planning is not enough for the deployment.
 
 ### Schema And Migration Drift
 

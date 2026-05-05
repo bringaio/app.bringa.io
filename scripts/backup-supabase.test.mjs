@@ -7,6 +7,7 @@ import test from "node:test";
 import {
   backupStorageBucket,
   buildBackupRunRecord,
+  defaultTables,
   fetchAuthUsers,
   listStorageFiles,
   parseBoolean,
@@ -24,6 +25,11 @@ test("parses backup environment values", () => {
   assert.equal(parseBoolean("yes"), true);
   assert.equal(parseBoolean("0"), false);
   assert.equal(parseBoolean(undefined), false);
+});
+
+test("includes operational notification metadata in the default table backup scope", () => {
+  assert.ok(defaultTables.includes("notification_events"));
+  assert.ok(defaultTables.includes("notification_mutes"));
 });
 
 test("keeps storage backup paths inside the bucket directory", () => {

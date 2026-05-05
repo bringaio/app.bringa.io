@@ -80,10 +80,12 @@ Borrow history reads are admin-only by default.
 - prepared account deletion request table and non-destructive admin review RPC;
 - prepared item suggestion and item flag tables;
 - admin-visible `backup_runs` metadata for backup freshness;
+- admin-visible `notification_events` and `notification_mutes` for Telegram dedupe, mute windows, seen-state, and retry planning;
 - blocked direct browser writes to item versions and item image metadata;
 - blocked direct browser writes to account deletion request state;
 - blocked direct browser writes to moderation queue state;
 - blocked direct browser writes to backup run status;
+- blocked direct browser writes to notification event and mute state;
 - `borrow_history.item_id` and `item_sharing.item_id` foreign keys to `items.id`;
 - unique admin invite codes.
 

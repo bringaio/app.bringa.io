@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Bell, Eye, Loader2, Radio, TimerOff } from "lucide-react"
@@ -8,8 +8,11 @@ import ProtectedRoute from "@/components/auth/protected-route"
 import { Button } from "@/components/ui/button"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
 import { appConfig } from "@/lib/app-config"
+import { supabase } from "@/lib/supabaseclient"
 import {
     buildAdminNotificationSettings,
+    type AdminNotificationEvent,
+    type AdminNotificationMute,
     type AdminNotificationSectionKey,
 } from "@/lib/admin-notification-settings"
 
@@ -33,8 +36,12 @@ function StatusBadge({ value }: { value: string }) {
 export default function AdminNotificationsPage() {
     const router = useRouter()
     const { isAdmin, loading: adminLoading } = useIsAdmin()
+    const [notificationEvents, setNotificationEvents] = useState<AdminNotificationEvent[] | undefined>(undefined)
+    const [notificationMutes, setNotificationMutes] = useState<AdminNotificationMute[] | undefined>(undefined)
     const settings = buildAdminNotificationSettings({
         telegramAdminNotifications: appConfig.features.telegramAdminNotifications,
+        notificationEvents,
+        notificationMutes,
     })
 
     useEffect(() => {
@@ -42,6 +49,35 @@ export default function AdminNotificationsPage() {
             router.push("/dashboard")
         }
     }, [adminLoading, isAdmin, router])
+
+    useEffect(() => {
+        const fetchNotificationState = async () => {
+            try {
+                const [eventsRes, mutesRes] = await Promise.all([
+                    supabase
+                        .from("notification_events")
+                        .select("status,seen_at")
+                        .order("created_at", { ascending: false })
+                        .limit(100),
+                    supabase
+                        .from("notification_mutes")
+                        .select("muted_forever,muted_until,revoked_at")
+                        .order("created_at", { ascending: false })
+                        .limit(100),
+                ])
+
+                setNotificationEvents(eventsRes.error ? [] : (eventsRes.data as AdminNotificationEvent[]))
+                setNotificationMutes(mutesRes.error ? [] : (mutesRes.data as AdminNotificationMute[]))
+            } catch {
+                setNotificationEvents([])
+                setNotificationMutes([])
+            }
+        }
+
+        if (isAdmin) {
+            fetchNotificationState()
+        }
+    }, [isAdmin])
 
     if (adminLoading) {
         return (
@@ -68,7 +104,7 @@ export default function AdminNotificationsPage() {
                                 </Link>
                             </Button>
                             <h1 className="text-2xl font-bold">Notification Settings</h1>
-                            <p className="mt-1 text-sm text-muted-foreground">Read-only Telegram notification planning surface</p>
+                            <p className="mt-1 text-sm text-muted-foreground">Telegram notification state and safeguards</p>
                         </div>
                     </div>
 

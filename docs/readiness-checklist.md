@@ -59,8 +59,8 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin user item views group current borrower, owner, and creator relationships for one profile, with reasoned visibility actions through RPCs.
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
 - [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
-- [x] Admin notification settings route shows Telegram, mute-window, dedupe, and seen-state planning without mutating user data.
-- [ ] Approved deletion execution, image-metadata suggestion application, and notification execution are complete.
+- [x] Admin notification settings route shows Telegram status, mute-window state, dedupe state, and admin seen-state without exposing user data.
+- [ ] Approved deletion execution and image-metadata suggestion application are complete.
 
 ## Operations
 
@@ -69,7 +69,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
 - [ ] Restore drills and encrypted backup handling are complete.
-- [ ] Telegram notification dedupe, mute windows, retry state, and privacy review are complete.
+- [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 
 ## Verification Before Release
 
