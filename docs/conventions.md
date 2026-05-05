@@ -99,6 +99,7 @@ Documentation should be compact, practical, and link to the source of truth.
 - Keep `AGENTS.md` short and navigational.
 - Develop docs in this repository so they can later publish cleanly to GitHub Pages.
 - Keep English documentation in English; `pnpm check:copy` blocks configured German organization terms in English docs/source-of-truth files.
+- Keep `docs/index.md` and the GitHub Pages sidebar navigation linked to every top-level docs page; `pnpm check:docs-index` enforces both.
 
 ## Static Export
 
