@@ -42,6 +42,7 @@ config/local.config.jsonc
 supabase.tar.gz
 supabase_binary_backup
 supabase/.temp/
+supabase/functions/**/node_modules/
 
 # process output / local scratch
 stderr.txt

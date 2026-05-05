@@ -11,7 +11,7 @@
     "generate:config": "node scripts/generate-config.mjs",
     "create:deployment": "node scripts/create-deployment-profile.mjs",
     "setup:operator": "node scripts/setup-operator.mjs",
-    "check:edge-functions": "deno check --no-lock supabase/functions/notifiy-telegram/index.ts supabase/functions/notifiy-telegram-user/index.ts",
+    "check:edge-functions": "deno check --no-lock --config supabase/functions/notifiy-telegram/deno.json supabase/functions/notifiy-telegram/index.ts && deno check --no-lock --config supabase/functions/notifiy-telegram-user/deno.json supabase/functions/notifiy-telegram-user/index.ts",
     "test:config": "node --test scripts/generate-config.test.mjs",
     "test:create-deployment": "node --test scripts/create-deployment-profile.test.mjs",
     "test:operator-setup": "node --test scripts/setup-operator.test.mjs",
