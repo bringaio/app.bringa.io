@@ -55,12 +55,12 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin dashboard shows latest backup run freshness when the `backup_runs` migration is present.
 - [x] Admin users route supports user validation, access revocation with self-protection, admin promotion, and admin demotion with self-demotion protection.
 - [x] Admin moderation route lists pending visibility requests, suggestions, and flags, and reviews status through RPCs with notes for final decisions.
-- [x] Admin moderation can apply content/image and owner suggestions through admin-only RPCs with item version capture.
+- [x] Admin moderation can apply content, image metadata, and owner suggestions through admin-only RPCs with item version capture.
 - [x] Admin user item views group current borrower, owner, and creator relationships for one profile, with reasoned visibility actions through RPCs.
 - [x] Admin item version route lists snapshots and restores selected versions through an admin-only RPC.
 - [x] Admin deletion request queue triages operator-reviewed account deletion requests without destructive action.
 - [x] Admin notification settings route shows Telegram status, mute-window state, dedupe state, and admin seen-state without exposing user data.
-- [ ] Approved deletion execution and image-metadata suggestion application are complete.
+- [ ] Approved deletion execution is complete.
 
 ## Operations
 

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   buildAcceptedSuggestionApplication,
+  buildImageSuggestionApplication,
   buildOwnerSuggestionApplication,
   buildAdminModerationReviewNote,
   moderationReviewRequiresNote,
@@ -135,6 +136,46 @@ test("builds owner suggestion applications with explicit admin notes", () => {
     ownerKind: null,
     ownerProfileId: null,
     ownerLabel: null,
+    adminNote: null,
+  });
+});
+
+test("builds image metadata suggestion applications with explicit admin notes", () => {
+  assert.deepEqual(buildImageSuggestionApplication({
+    storageBucket: " items ",
+    storagePath: " item-photos/table.webp ",
+    publicUrl: " https://example.com/storage/v1/object/public/items/item-photos/table.webp ",
+    caption: "  Folded table in storage. ",
+    altText: "  Wooden folding table leaning against a wall. ",
+    isCover: true,
+    note: " Accepted as the cover image. ",
+  }), {
+    ok: true,
+    storageBucket: "items",
+    storagePath: "item-photos/table.webp",
+    publicUrl: "https://example.com/storage/v1/object/public/items/item-photos/table.webp",
+    caption: "Folded table in storage.",
+    altText: "Wooden folding table leaning against a wall.",
+    isCover: true,
+    adminNote: "Accepted as the cover image.",
+  });
+
+  assert.deepEqual(buildImageSuggestionApplication({
+    storageBucket: "",
+    storagePath: "../escape.webp",
+    publicUrl: "",
+    caption: "",
+    altText: "ok",
+    isCover: false,
+    note: "ok",
+  }), {
+    ok: false,
+    storageBucket: null,
+    storagePath: null,
+    publicUrl: null,
+    caption: null,
+    altText: null,
+    isCover: false,
     adminNote: null,
   });
 });

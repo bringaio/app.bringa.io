@@ -15,7 +15,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 - `/admin/deletion-requests`: non-destructive operator queue for account deletion requests, review notes, cancellation, and per-user item review.
 - `/admin/notifications`: notification status view for Telegram configuration, active mute windows, unseen dedupe state, and admin seen-state.
 - `/admin/invite-code`: current admin invite code display and update flow.
-- `/admin/moderation`: pending visibility requests, item suggestions, and flags, with admin review and content/image suggestion application routed through RPCs.
+- `/admin/moderation`: pending visibility requests, item suggestions, and flags, with admin review and content, image metadata, and owner suggestion application routed through RPCs.
 
 ## Review Queues
 
@@ -28,7 +28,7 @@ Moderation queue records live in Supabase:
 
 Users create these records through `create_item_suggestion`, `create_item_flag`, `request_item_visibility`, and `request_account_deletion`. Admins transition state through `review_item_suggestion`, `review_item_flag`, `set_item_visibility`, and `review_account_deletion_request`; content/image suggestions can be applied through `apply_item_suggestion`, and owner suggestions through `apply_owner_item_suggestion`. Final suggestion and flag decisions require an admin note; cancelled deletion requests require an admin note. Direct browser inserts, updates, and deletes remain blocked by RLS.
 
-Status transitions record reviewer and reviewed time. Applying a content/image or owner suggestion updates explicit item fields and creates a new `item_versions` snapshot. Admin item visibility actions require a reason and reuse `set_item_visibility`, including version capture. Telegram notification events now dedupe unseen subjects, support per-profile mute windows, and record delivery status. Image metadata application and user-facing in-app notifications are still pending.
+Status transitions record reviewer and reviewed time. Applying a content, image metadata, or owner suggestion updates explicit item fields or image metadata and creates a new `item_versions` snapshot. Admin item visibility actions require a reason and reuse `set_item_visibility`, including version capture. Telegram notification events now dedupe unseen subjects, support per-profile mute windows, and record delivery status. User-facing in-app notifications are still pending.
 
 Item creation, item updates, and admin version restore create append-only `item_versions` snapshots through `record_item_version`. Admin restore uses `restore_item_version` and records the restore reason as the newly current version.
 
@@ -55,7 +55,6 @@ The deletion request route is non-destructive. It can mark requests `reviewing` 
 
 Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 
-- image-metadata suggestion application;
 - item/image-specific moderation;
 - operator retry jobs for failed Telegram sends when manual retry planning is not enough;
 - restore drills, encrypted backup handling, and live Supabase health visibility;

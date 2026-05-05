@@ -23,8 +23,25 @@ export type OwnerSuggestionApplicationResult = {
   adminNote: string | null;
 };
 
+export type ImageSuggestionApplicationResult = {
+  ok: boolean;
+  storageBucket: string | null;
+  storagePath: string | null;
+  publicUrl: string | null;
+  caption: string | null;
+  altText: string | null;
+  isCover: boolean;
+  adminNote: string | null;
+};
+
 const ownerKinds = new Set<ItemOwnerKind>(["operator", "profile", "free_text"]);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isSafeStoragePath(value: string): boolean {
+  return Boolean(value)
+    && !value.startsWith("/")
+    && !value.split(/[\\/]+/).includes("..");
+}
 
 export function moderationReviewRequiresNote(status: AdminModerationReviewStatus): boolean {
   return status !== "reviewing";
@@ -142,6 +159,62 @@ export function buildOwnerSuggestionApplication({
     ownerKind: normalizedKind,
     ownerProfileId: null,
     ownerLabel: normalizedLabel,
+    adminNote,
+  };
+}
+
+export function buildImageSuggestionApplication({
+  storageBucket,
+  storagePath,
+  publicUrl,
+  caption,
+  altText,
+  isCover,
+  note,
+}: {
+  storageBucket: string;
+  storagePath: string;
+  publicUrl: string;
+  caption: string;
+  altText: string;
+  isCover: boolean;
+  note: string;
+}): ImageSuggestionApplicationResult {
+  const normalizedBucket = storageBucket.trim() || "items";
+  const normalizedPath = storagePath.trim();
+  const normalizedPublicUrl = publicUrl.trim() || null;
+  const normalizedCaption = caption.trim() || null;
+  const normalizedAltText = altText.trim() || null;
+  const adminNote = note.trim() || null;
+
+  if (
+    !normalizedBucket
+    || !isSafeStoragePath(normalizedPath)
+    || !normalizedAltText
+    || normalizedAltText.length < 3
+    || !adminNote
+    || adminNote.length < 3
+  ) {
+    return {
+      ok: false,
+      storageBucket: null,
+      storagePath: null,
+      publicUrl: null,
+      caption: null,
+      altText: null,
+      isCover: false,
+      adminNote: null,
+    };
+  }
+
+  return {
+    ok: true,
+    storageBucket: normalizedBucket,
+    storagePath: normalizedPath,
+    publicUrl: normalizedPublicUrl,
+    caption: normalizedCaption,
+    altText: normalizedAltText,
+    isCover,
     adminNote,
   };
 }

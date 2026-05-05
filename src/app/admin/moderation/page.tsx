@@ -14,6 +14,7 @@ import { ItemDb, ItemFlag, ItemFlagStatus, ItemSuggestion, ItemSuggestionStatus,
 import {
     buildAcceptedSuggestionApplication,
     buildAdminModerationReviewNote,
+    buildImageSuggestionApplication,
     buildOwnerSuggestionApplication,
     moderationReviewRequiresNote,
     type AdminModerationReviewStatus,
@@ -290,6 +291,64 @@ export default function AdminModerationPage() {
         }
     }
 
+    const applyImageSuggestion = async (event: React.FormEvent<HTMLFormElement>, suggestion: SuggestionQueueRow) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+        const application = buildImageSuggestionApplication({
+            storageBucket: String(formData.get("storageBucket") || ""),
+            storagePath: String(formData.get("storagePath") || ""),
+            publicUrl: String(formData.get("publicUrl") || ""),
+            caption: String(formData.get("caption") || ""),
+            altText: String(formData.get("altText") || ""),
+            isCover: formData.get("isCover") === "on",
+            note: reviewNote,
+        })
+
+        if (!application.ok) {
+            setActionError("Add a safe Storage path, alt text, and a short admin note before applying this image suggestion.")
+            return
+        }
+
+        const actionId = `suggestion-${suggestion.id}-apply-image`
+        setProcessingAction(actionId)
+        setActionError(null)
+        try {
+            const { data, error } = await supabase.rpc("apply_item_image_suggestion", {
+                suggestion_id_input: suggestion.id,
+                storage_bucket_input: application.storageBucket,
+                storage_path_input: application.storagePath,
+                public_url_input: application.publicUrl,
+                caption_input: application.caption,
+                alt_text_input: application.altText,
+                is_cover_input: application.isCover,
+                admin_note_input: application.adminNote,
+            })
+
+            if (error) throw error
+            if (!data) throw new Error("Image suggestion application rejected")
+
+            const reviewedAt = new Date().toISOString()
+            setSuggestions((rows) => rows.map((row) => {
+                if (row.id !== suggestion.id) return row
+                const item = relationOne(row.item)
+                return {
+                    ...row,
+                    status: "accepted",
+                    admin_note: application.adminNote,
+                    reviewed_at: reviewedAt,
+                    item: item && application.isCover && application.publicUrl
+                        ? { ...item, image_url: application.publicUrl }
+                        : row.item,
+                }
+            }))
+            setReviewNote("")
+        } catch {
+            setActionError("Could not apply the image suggestion to item image metadata.")
+        } finally {
+            setProcessingAction(null)
+        }
+    }
+
     const reviewFlag = async (flagId: string, status: Exclude<ItemFlagStatus, "pending">) => {
         const review = buildAdminModerationReviewNote({ status, note: reviewNote })
         if (!review.ok) {
@@ -538,7 +597,12 @@ export default function AdminModerationPage() {
                                 const profile = relationOne(suggestion.suggested_by_profile)
                                 const canApplySuggestion = Boolean(
                                     item
-                                    && (suggestion.suggestion_type === "content" || suggestion.suggestion_type === "image")
+                                    && suggestion.suggestion_type === "content"
+                                    && (suggestion.status === "pending" || suggestion.status === "reviewing")
+                                )
+                                const canApplyImageSuggestion = Boolean(
+                                    item
+                                    && suggestion.suggestion_type === "image"
                                     && (suggestion.status === "pending" || suggestion.status === "reviewing")
                                 )
                                 const canApplyOwnerSuggestion = Boolean(
@@ -644,6 +708,45 @@ export default function AdminModerationPage() {
                                                             </div>
                                                         </form>
                                                     )}
+                                                    {canApplyImageSuggestion && item && (
+                                                        <form onSubmit={(event) => applyImageSuggestion(event, suggestion)} className="mt-3 grid gap-3 rounded-md border bg-background p-3 sm:grid-cols-2">
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Storage bucket
+                                                                <Input name="storageBucket" defaultValue="items" required className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Storage path
+                                                                <Input name="storagePath" placeholder="item-photos/image.webp" required className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground sm:col-span-2">
+                                                                Public URL
+                                                                <Input name="publicUrl" defaultValue={suggestion.suggestion.startsWith("http") ? suggestion.suggestion : item.image_url || ""} className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Caption
+                                                                <Input name="caption" className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+                                                                Alt text
+                                                                <Input name="altText" defaultValue={item.name} required className="text-sm font-normal text-foreground" />
+                                                            </label>
+                                                            <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:col-span-2">
+                                                                <input name="isCover" type="checkbox" defaultChecked={!item.image_url} className="h-4 w-4 rounded border" />
+                                                                Set as cover image
+                                                            </label>
+                                                            <div className="flex justify-end sm:col-span-2">
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="secondary"
+                                                                    size="sm"
+                                                                    disabled={processingAction !== null || reviewNote.trim().length < 3}
+                                                                >
+                                                                    {processingAction === `suggestion-${suggestion.id}-apply-image` ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                                    Apply image metadata
+                                                                </Button>
+                                                            </div>
+                                                        </form>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex flex-wrap gap-2 sm:max-w-56 sm:justify-end">
@@ -670,7 +773,7 @@ export default function AdminModerationPage() {
                                                     {processingAction === `suggestion-${suggestion.id}-reviewing` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                                                     Reviewing
                                                 </Button>
-                                                {!canApplySuggestion && !canApplyOwnerSuggestion && (
+                                                {!canApplySuggestion && !canApplyOwnerSuggestion && !canApplyImageSuggestion && (
                                                     <Button
                                                         type="button"
                                                         variant="outline"

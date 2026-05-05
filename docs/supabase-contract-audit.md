@@ -116,11 +116,11 @@ Current model:
 - Users create both through `create_item_suggestion` and `create_item_flag`; direct browser inserts, updates, and deletes are blocked by RLS.
 - Admins inspect and transition queue status in `/admin/moderation` through `review_item_suggestion`, `review_item_flag`, and `set_item_visibility`.
 - Admins can also change item visibility from `/admin/user-items` through `set_item_visibility` with a required reason.
-- Admins can apply content/image suggestions through `apply_item_suggestion` and owner suggestions through `apply_owner_item_suggestion`; both update explicit item fields, mark the suggestion accepted, and record a new item version.
+- Admins can apply content suggestions through `apply_item_suggestion`, image metadata suggestions through `apply_item_image_suggestion`, and owner suggestions through `apply_owner_item_suggestion`. Application RPCs update explicit item fields or image metadata, mark the suggestion accepted, and record a new item version.
 
 Risk:
 
-- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions. Content/image and owner suggestion application updates current item fields and versions the item, but image metadata application, user notifications, and Telegram dedupe remain incomplete.
+- Admin processing records status, reviewer, reviewed time, and admin notes for final app decisions. Content, image metadata, and owner suggestion application update current item fields or image metadata and version the item. User-facing in-app notifications remain incomplete.
 - Live projects must apply the moderation migration before enabling the user-facing queue controls.
 
 Target:
@@ -152,7 +152,7 @@ Target:
 
 - Define bucket creation, MIME allowlist, size limits, ownership paths, public/private access, cleanup, and export behavior in one place.
 - Keep create/edit upload validation aligned with resolved deployment config.
-- Move browser metadata writes for multiple images behind a narrow RPC before enabling the table in UI.
+- Keep browser metadata writes for item images behind narrow RPCs; full multiple-image create/edit UI is still pending.
 
 ### Edge Functions And Telegram
 
@@ -238,6 +238,7 @@ Target:
 - `create_item_flag(...)`
 - `review_item_suggestion(...)`
 - `apply_item_suggestion(...)`
+- `apply_item_image_suggestion(...)`
 - `apply_owner_item_suggestion(...)`
 - `review_item_flag(...)`
 - `mark_moderation_seen(...)`
