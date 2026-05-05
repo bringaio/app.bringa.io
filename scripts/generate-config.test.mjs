@@ -47,6 +47,7 @@ const completeBaseConfig = {
     sourcePath: "content/default",
     deploymentPath: "content/deployments",
     publicPath: "/content/generated",
+    issuePromptPath: "/content/generated/issues/en.md",
     requiredFiles: ["legal/en.md", "onboarding/en.md"],
   },
   legal: {
@@ -99,6 +100,7 @@ async function createConfigProject({ deployment = {}, local = undefined, deploym
     "icon.svg",
     "logo.svg",
     "content/generated/legal/en.md",
+    "content/generated/issues/en.md",
     "content/local/legal/en.md",
   ];
 
@@ -174,6 +176,7 @@ test("builds generated public content from default and deployment content profil
   const config = JSON.parse(artifacts.configJson);
 
   assert.equal(config.legal.termsContentPath, "/content/generated/legal/en.md");
+  assert.equal(config.content.issuePromptPath, "/content/generated/issues/en.md");
   assert.deepEqual(artifacts.contentFiles.map((file) => file.publicPath).sort(), [
     "/content/generated/legal/en.md",
     "/content/generated/onboarding/en.md",

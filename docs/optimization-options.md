@@ -49,7 +49,6 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 - Moderation follow-through: build on suggestion/flag creation, review RPCs, and content/image/owner suggestion application with image-metadata queues, seen-state, history, and Telegram dedupe/mute policy. Impact: community quality without broad browser writes. Uncertainty/research: notification privacy and review-state semantics need live-project and operator review.
 - Invite and onboarding: decide whether display name comes before invite code and refine pending-approval messaging now that admins can validate profiles directly. Impact: smoother onboarding and moderation. Side effect: auth/profile routes and RPCs need alignment.
 - User data export and deletion processing: build on the prepared user JSON export, deletion-request RPC, and non-destructive admin review queue with approved execution, Auth deletion, Storage cleanup/export, suggestions/flags, and image metadata. Impact: trust and portability. Uncertainty/research: requires Supabase Auth/Storage policy review and legal/operator retention decisions.
-- Settings copy source: move the AI issue prompt text behind shared content/config if more settings copy is added. Impact: avoids drift between `docs/issue-prompt-template.md` and the app settings prompt.
 
 ## App Experience
 

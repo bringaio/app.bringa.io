@@ -281,6 +281,7 @@ function validateConfig(config) {
   assertRelativeContentPath(config.content?.sourcePath, "content.sourcePath");
   assertRelativeContentPath(config.content?.deploymentPath, "content.deploymentPath");
   assertPublicDirectoryPath(config.content?.publicPath, "content.publicPath");
+  assertPublicPath(config.content?.issuePromptPath, "content.issuePromptPath");
   assertStringArray(config.content?.requiredFiles, "content.requiredFiles");
   for (const [index, requiredFile] of config.content.requiredFiles.entries()) {
     assertRelativeContentPath(requiredFile, `content.requiredFiles[${index}]`);
@@ -333,6 +334,7 @@ async function validateReferencedPublicFiles(root, config, { skipLegalContent = 
 
   if (!skipLegalContent) {
     files.push(assertPublicFileExists(root, config.legal.termsContentPath, "legal.termsContentPath"));
+    files.push(assertPublicFileExists(root, config.content.issuePromptPath, "content.issuePromptPath"));
   }
 
   await Promise.all(files);
@@ -472,6 +474,7 @@ export async function buildConfigArtifacts(options = {}) {
 async function validateReferencedGeneratedFiles(root, config) {
   await Promise.all([
     assertPublicFileExists(root, config.legal.termsContentPath, "legal.termsContentPath"),
+    assertPublicFileExists(root, config.content.issuePromptPath, "content.issuePromptPath"),
   ]);
 }
 

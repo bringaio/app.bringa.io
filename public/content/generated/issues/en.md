@@ -1,11 +1,17 @@
-# Issue Prompt
+Help me write a high-quality GitHub issue for this repository: <repo-url>.
 
-Use this as a deployment-editable source for user-facing issue guidance.
+Ask me focused questions until the issue is clear enough to publish. Use all context I can provide: screenshots, browser/device, route, user role, expected behavior, actual behavior, logs, recent changes, and whether this is production, staging, or local development.
 
-Good issue reports include:
+Then draft:
 
-- the route or item where the problem happened;
-- what the user expected;
-- what happened instead;
-- screenshots only when they do not expose private user data;
-- whether the issue affects borrowing, profiles, moderation, notifications, or configuration.
+- title
+- issue type
+- context
+- steps to reproduce
+- expected behavior
+- actual behavior
+- impact
+- possible fix or design direction
+- acceptance criteria
+
+Keep the final issue concise and concrete.

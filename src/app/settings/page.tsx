@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import {
     Check,
@@ -18,29 +18,8 @@ import {
 import ProtectedRoute from "@/components/auth/protected-route"
 import { Button } from "@/components/ui/button"
 import { appConfig } from "@/lib/app-config"
+import { renderIssuePrompt } from "@/lib/issue-prompt"
 import { supabase } from "@/lib/supabaseclient"
-
-function buildIssuePrompt() {
-    // Keep this mirrored with docs/issue-prompt-template.md.
-    return [
-        `Help me write a high-quality GitHub issue for this repository: ${appConfig.repository.url}.`,
-        "",
-        "Ask me focused questions until the issue is clear enough to publish. Use all context I can provide: screenshots, browser/device, route, user role, expected behavior, actual behavior, logs, recent changes, and whether this is production, staging, or local development.",
-        "",
-        "Then draft:",
-        "- title",
-        "- issue type",
-        "- context",
-        "- steps to reproduce",
-        "- expected behavior",
-        "- actual behavior",
-        "- impact",
-        "- possible fix or design direction",
-        "- acceptance criteria",
-        "",
-        "Keep the final issue concise and concrete.",
-    ].join("\n")
-}
 
 export default function SettingsPage() {
     const [copied, setCopied] = useState(false)
@@ -48,9 +27,35 @@ export default function SettingsPage() {
     const [requestingDeletion, setRequestingDeletion] = useState(false)
     const [dataMessage, setDataMessage] = useState<string | null>(null)
     const [dataError, setDataError] = useState<string | null>(null)
-    const issuePrompt = useMemo(() => buildIssuePrompt(), [])
+    const [issuePrompt, setIssuePrompt] = useState("")
+    const [issuePromptError, setIssuePromptError] = useState<string | null>(null)
+
+    useEffect(() => {
+        let active = true
+
+        fetch(appConfig.content.issuePromptPath)
+            .then((response) => {
+                if (!response.ok) throw new Error("Issue prompt unavailable")
+                return response.text()
+            })
+            .then((template) => {
+                if (active) {
+                    setIssuePrompt(renderIssuePrompt(template, appConfig.repository.url))
+                    setIssuePromptError(null)
+                }
+            })
+            .catch((error) => {
+                console.error("Failed to load issue prompt", error)
+                if (active) setIssuePromptError("Issue prompt is unavailable.")
+            })
+
+        return () => {
+            active = false
+        }
+    }, [])
 
     const copyIssuePrompt = async () => {
+        if (!issuePrompt) return
         try {
             await navigator.clipboard.writeText(issuePrompt)
             setCopied(true)
@@ -216,11 +221,16 @@ export default function SettingsPage() {
                 <section className="rounded-lg border bg-card">
                     <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
                         <h2 className="text-sm font-medium">Issue prompt</h2>
-                        <Button type="button" variant="secondary" size="sm" onClick={copyIssuePrompt}>
+                        <Button type="button" variant="secondary" size="sm" onClick={copyIssuePrompt} disabled={!issuePrompt}>
                             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                             {copied ? "Copied" : "Copy"}
                         </Button>
                     </div>
+                    {issuePromptError && (
+                        <p className="border-b px-4 py-3 text-sm text-destructive" role="alert">
+                            {issuePromptError}
+                        </p>
+                    )}
                     <textarea
                         aria-label="Issue prompt"
                         readOnly

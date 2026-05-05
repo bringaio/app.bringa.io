@@ -41,6 +41,7 @@
     "sourcePath": "content/default",
     "deploymentPath": "content/deployments",
     "publicPath": "/content/generated",
+    "issuePromptPath": "/content/generated/issues/en.md",
     "requiredFiles": [
       "legal/en.md",
       "onboarding/en.md",

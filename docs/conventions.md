@@ -54,6 +54,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:docs-index`
 - `pnpm test:dashboard-query`
 - `pnpm test:item-visibility-request`
+- `pnpm test:issue-prompt`
 - `pnpm test:admin-notification-settings`
 - `pnpm test:admin-deletion-requests`
 - `pnpm test:admin-moderation-review`

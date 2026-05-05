@@ -48,6 +48,9 @@ jobs:
       - name: Test user item visibility requests
         run: pnpm test:item-visibility-request
 
+      - name: Test issue prompt rendering
+        run: pnpm test:issue-prompt
+
       - name: Test admin notification settings
         run: pnpm test:admin-notification-settings
 
