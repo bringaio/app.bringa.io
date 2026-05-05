@@ -1,13 +1,11 @@
 import generatedConfig from "@/config/bringa.config.generated.json";
+import { buildPageTitle } from "./app-config-format";
 
 export type AppConfig = typeof generatedConfig;
 
 export const appConfig: AppConfig = generatedConfig;
+export { buildPageTitle };
 
 export function formatPageTitle(pageTitle?: string) {
-  if (!pageTitle) {
-    return appConfig.app.name;
-  }
-
-  return appConfig.app.titleTemplate.replace("%s", pageTitle);
+  return buildPageTitle(appConfig, pageTitle);
 }

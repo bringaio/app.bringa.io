@@ -36,6 +36,9 @@ jobs:
       - name: Test config layering
         run: pnpm test:config
 
+      - name: Test app config helpers
+        run: pnpm test:app-config
+
       - name: Test env example checker
         run: pnpm test:env-example
 

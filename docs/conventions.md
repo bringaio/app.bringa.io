@@ -69,6 +69,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm install --frozen-lockfile`
 - `pnpm check:config`
 - `pnpm test:config`
+- `pnpm test:app-config`
 - `pnpm test:env-example`
 - `pnpm test:agents`
 - `pnpm test:naming-conventions`
