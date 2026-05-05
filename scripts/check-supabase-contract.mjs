@@ -45,10 +45,7 @@ function requireNoPolicyCreate(content, policyName) {
   }
 }
 
-async function main() {
-  const config = await loadConfigObject({ root });
-  const schema = await readFile(schemaPath, "utf8");
-
+export function checkSupabaseContract({ schema, config }) {
   const requiredFunctions = [
     "verify_and_apply_invite",
     "create_item",
@@ -426,10 +423,19 @@ async function main() {
     );
   }
 
+}
+
+export async function main() {
+  const config = await loadConfigObject({ root });
+  const schema = await readFile(schemaPath, "utf8");
+
+  checkSupabaseContract({ schema, config });
   console.log("Supabase contract check passed.");
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}

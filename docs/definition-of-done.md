@@ -53,6 +53,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:production-readiness-audit` and `pnpm check:production-readiness-audit` when prompt-to-artifact evidence, release blockers, or goal-completion criteria change
 - `pnpm test:release-checklist` and `pnpm check:release-checklist` when package scripts, manual CI, release checklist, or CI/CD docs change
 - `pnpm test:github-workflows` and `pnpm check:github-workflows` when GitHub workflow files or CI/CD docs change
+- `pnpm test:supabase-contract` and `pnpm check:supabase-contract` when Supabase schema, migrations, RPCs, RLS policies, Storage limits, or Supabase contract checker behavior change
 - `pnpm test:static-export` and `pnpm check:static-export` when Next.js routing, config, or app architecture changes
 - `pnpm lint`
 - `pnpm exec tsc --noEmit`

@@ -106,6 +106,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm test:observability`
 - [ ] `pnpm test:production-readiness-audit`
 - [ ] `pnpm test:release-checklist`
+- [ ] `pnpm test:supabase-contract`
 - [ ] `pnpm test:admin-notification-settings`
 - [ ] `pnpm test:admin-deletion-requests`
 - [ ] `pnpm test:account-deletion-cleanup`

@@ -25,7 +25,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm check:config` | Covered |
 | Secret-free manual CI/CD | `.github/workflows/ci.yml`, `.github/workflows/docs.yml`, `docs/conventions.md`, `docs/repository-settings.md`, `pnpm check:github-workflows` | Covered |
 | GitHub Pages docs | `docs/index.md`, `docs/_layouts/default.html`, `docs/_config.yml`, `pnpm check:docs-index` | Covered locally |
-| Supabase contract and privacy | `supabase/schema.sql`, `supabase/migrations/`, `supabase/README.md`, `docs/supabase.md`, `docs/supabase-contract-audit.md`, `pnpm check:supabase-contract` | Partial until live review |
+| Supabase contract and privacy | `supabase/schema.sql`, `supabase/migrations/`, `supabase/README.md`, `docs/supabase.md`, `docs/supabase-contract-audit.md`, `pnpm test:supabase-contract`, `pnpm check:supabase-contract` | Partial until live review |
 | Supabase development branch setup | `docs/supabase-branching.md`, `pnpm check:supabase-branching` | Blocked until approved project refs and access |
 | Product model and admin operations | `docs/admin-operations.md`, `docs/readiness-checklist.md`, `scripts/admin-system-health.test.mjs`, admin route tests in `scripts/admin-*.test.mjs` | Partial until browser and live backend evidence |
 | Media upload and Storage contract | `src/lib/media.ts`, create/edit item routes, `supabase/schema.sql`, `pnpm check:supabase-contract` | Partial until live Storage bucket review |

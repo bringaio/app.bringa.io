@@ -34,6 +34,7 @@ const requiredPhrases = [
   "`supabase/schema.sql`",
   "`supabase/migrations/`",
   "`docs/supabase-contract-audit.md`",
+  "`pnpm test:supabase-contract`",
   "`pnpm check:supabase-contract`",
   "`docs/admin-operations.md`",
   "`docs/browser-testing.md`",

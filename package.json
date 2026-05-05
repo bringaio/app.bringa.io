@@ -28,6 +28,7 @@
     "test:item-visibility-request": "node --test scripts/item-visibility-request.test.mjs",
     "test:issue-prompt": "node --test scripts/issue-prompt.test.mjs",
     "test:github-workflows": "node --test scripts/check-github-workflows.test.mjs",
+    "test:supabase-contract": "node --test scripts/check-supabase-contract.test.mjs",
     "test:admin-notification-settings": "node --test scripts/admin-notification-settings.test.mjs",
     "test:admin-deletion-requests": "node --test scripts/admin-deletion-requests.test.mjs",
     "test:account-deletion-cleanup": "node --test scripts/cleanup-account-deletion.test.mjs",

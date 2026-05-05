@@ -81,6 +81,9 @@ jobs:
       - name: Test GitHub workflow checker
         run: pnpm test:github-workflows
 
+      - name: Test Supabase contract checker
+        run: pnpm test:supabase-contract
+
       - name: Test dashboard item query filters
         run: pnpm test:dashboard-query
 

@@ -23,7 +23,7 @@ function validAuditContent() {
 | Naming conventions and developer experience | \`docs/conventions.md\`, \`pnpm test:naming-conventions\`, \`pnpm check:naming-conventions\` | Covered |
 | Forkability and configuration | \`config/base.config.jsonc\`, \`config/deployments/app.bringa.io.jsonc\`, \`docs/configuration.md\`, \`docs/forking.md\` | Covered |
 | Secret-free manual CI/CD | \`.github/workflows/ci.yml\`, \`docs/conventions.md\`, \`pnpm check:github-workflows\` | Covered |
-| Supabase contract and privacy | \`supabase/schema.sql\`, \`supabase/migrations/\`, \`docs/supabase-contract-audit.md\`, \`pnpm check:supabase-contract\` | Partial |
+| Supabase contract and privacy | \`supabase/schema.sql\`, \`supabase/migrations/\`, \`docs/supabase-contract-audit.md\`, \`pnpm test:supabase-contract\`, \`pnpm check:supabase-contract\` | Partial |
 | Product model and admin operations | \`docs/admin-operations.md\`, \`docs/readiness-checklist.md\`, \`scripts/admin-system-health.test.mjs\` | Partial |
 | Browser, accessibility, and PWA QA | \`docs/browser-testing.md\`, \`.agents/skills/agentic-browser-testing/SKILL.md\`, \`pnpm test:pwa-manifest\` | Blocked |
 | Backups, restore, and deletion cleanup | \`docs/maintenance.md\`, \`docs/restore-drills.md\`, \`pnpm test:account-deletion-cleanup\`, \`pnpm check:restore-drills\` | Partial |

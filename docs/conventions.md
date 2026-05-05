@@ -84,6 +84,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:production-readiness-audit`
 - `pnpm test:release-checklist`
 - `pnpm test:github-workflows`
+- `pnpm test:supabase-contract`
 - `pnpm test:dashboard-query`
 - `pnpm test:item-visibility-request`
 - `pnpm test:issue-prompt`
