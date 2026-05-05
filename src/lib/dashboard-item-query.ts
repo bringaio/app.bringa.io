@@ -9,6 +9,19 @@ export type DashboardItemFilterPlan = {
   filters: DashboardItemFilter[];
 };
 
+export type DashboardInitialViewState = {
+  hasBorrowedItems: boolean;
+  view: DashboardView;
+};
+
+export function buildDashboardInitialViewState(borrowedItemCount: number | null | undefined): DashboardInitialViewState {
+  const hasBorrowedItems = Boolean(borrowedItemCount && borrowedItemCount > 0);
+  return {
+    hasBorrowedItems,
+    view: hasBorrowedItems ? "borrowed" : "available",
+  };
+}
+
 export function buildDashboardItemFilters({
   userId,
   query,

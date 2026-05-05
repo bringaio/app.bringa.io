@@ -12,7 +12,7 @@ import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { Package } from "lucide-react";
 import { AppImage } from "@/components/ui/app-image";
-import { buildDashboardItemFilters, type DashboardView } from "@/lib/dashboard-item-query";
+import { buildDashboardInitialViewState, buildDashboardItemFilters, type DashboardView } from "@/lib/dashboard-item-query";
 
 export default function DashboardPage() {
     const [query, setQuery] = useState("")
@@ -72,9 +72,9 @@ export default function DashboardPage() {
 
                     if (error) throw error;
 
-                    const userHasBorrowedItems = Boolean(count && count > 0);
-                    setHasBorrowedItems(userHasBorrowedItems);
-                    setView(userHasBorrowedItems ? "borrowed" : "available");
+                    const initialViewState = buildDashboardInitialViewState(count);
+                    setHasBorrowedItems(initialViewState.hasBorrowedItems);
+                    setView(initialViewState.view);
                 }
             } catch (err) {
                 console.error(err);

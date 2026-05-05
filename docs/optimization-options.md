@@ -44,7 +44,6 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 ## User And Admin Workflows
 
-- Dashboard default: show borrowed items first only when the user currently has borrowed items; otherwise show available items. Impact: first screen matches real user need. Status: implemented in the current UI, but keep covered by browser-test skill scenarios.
 - Search actions: revisit buttons above the search field as compact icon/segmented controls with accessible labels and stable responsive dimensions. Impact: mobile scanning and repeated use. Uncertainty/research: needs browser testing across viewport sizes.
 - Moderation follow-through: build on suggestion/flag creation, review RPCs, content/image/owner suggestion application, and the Telegram notification state contract with item/image-specific moderation, user-facing notification history, and operator retry jobs if needed. Impact: community quality without broad browser writes. Uncertainty/research: full image moderation semantics and live notification delivery need operator review.
 - Invite and onboarding: decide whether display name comes before invite code and refine pending-approval messaging now that admins can validate profiles directly. Impact: smoother onboarding and moderation. Side effect: auth/profile routes and RPCs need alignment.

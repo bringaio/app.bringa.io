@@ -1,7 +1,24 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildDashboardItemFilters } from "../src/lib/dashboard-item-query.ts";
+import { buildDashboardInitialViewState, buildDashboardItemFilters } from "../src/lib/dashboard-item-query.ts";
+
+test("defaults to borrowed view only when the user has current borrowed items", () => {
+  assert.deepEqual(buildDashboardInitialViewState(2), {
+    hasBorrowedItems: true,
+    view: "borrowed",
+  });
+
+  assert.deepEqual(buildDashboardInitialViewState(0), {
+    hasBorrowedItems: false,
+    view: "available",
+  });
+
+  assert.deepEqual(buildDashboardInitialViewState(null), {
+    hasBorrowedItems: false,
+    view: "available",
+  });
+});
 
 test("shows visible available items by default", () => {
   assert.deepEqual(buildDashboardItemFilters({ userId: "user-1", query: "", view: "available" }), {
