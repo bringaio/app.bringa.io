@@ -22,6 +22,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm check:config`
 - `pnpm test:config` when config generation, config layering, or generated public config behavior changes
 - `pnpm test:app-config` when typed app-config helpers or page-title formatting change
+- `pnpm test:media-policy` when upload MIME validation, upload size copy, byte formatting, or image compression options change
 - `pnpm test:env-example` and `pnpm check:env-example` when `.env.example`, backup defaults, or operational env docs change
 - `pnpm test:agents` and `pnpm check:agents` when `AGENTS.md`, `.agents/`, agent workflows, or agent skills change
 - `pnpm test:naming-conventions` and `pnpm check:naming-conventions` when source, script, route, config, Supabase, branch, or commit naming conventions change

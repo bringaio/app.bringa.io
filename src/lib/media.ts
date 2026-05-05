@@ -1,31 +1,19 @@
 import { appConfig } from "@/lib/app-config"
+import {
+  buildImageCompressionOptions,
+  buildImageUploadAccept,
+  formatBytes,
+  validateImageFileAgainstConfig,
+} from "@/lib/media-policy"
 
-export const imageUploadAccept = appConfig.media.acceptedImageMimeTypes.join(",")
+export const imageUploadAccept = buildImageUploadAccept(appConfig.media)
 
 export function validateImageFile(file: File) {
-  if (!appConfig.media.acceptedImageMimeTypes.includes(file.type)) {
-    return `Please upload one of these image types: ${appConfig.media.acceptedImageMimeTypes.join(", ")}`
-  }
-
-  if (file.size > appConfig.media.maxUploadBytes) {
-    return `Image is too large. Maximum size is ${formatBytes(appConfig.media.maxUploadBytes)}.`
-  }
-
-  return null
+  return validateImageFileAgainstConfig(file, appConfig.media)
 }
 
 export function getImageCompressionOptions() {
-  return {
-    maxSizeMB: appConfig.media.compressionMaxSizeMb,
-    maxWidthOrHeight: appConfig.media.compressionMaxWidthOrHeight,
-    useWebWorker: true,
-    fileType: "image/webp" as const,
-    initialQuality: 0.85,
-  }
+  return buildImageCompressionOptions(appConfig.media)
 }
 
-export function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
+export { formatBytes }
