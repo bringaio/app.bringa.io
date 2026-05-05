@@ -14,7 +14,7 @@ const allowedNonScriptCommands = new Set([
 
 const manualOnlyReadinessCommands = new Set([
   "pnpm outdated",
-  "Manual GitHub Pages docs build",
+  "Manual GitHub Pages app deploy",
   "Agentic browser testing for user, admin, uninvited, mobile, desktop, and PWA flows",
 ]);
 

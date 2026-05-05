@@ -294,8 +294,8 @@ function validateConfig(config) {
   assertString(config.legal?.contentContributionLabel, "legal.contentContributionLabel");
   assertString(config.legal?.itemGiftLabel, "legal.itemGiftLabel");
   assertBoolean(config.legal?.publicDomainIntent, "legal.publicDomainIntent");
-  assertString(config.supabase?.url, "supabase.url", { allowEmpty: true });
-  assertString(config.supabase?.publishableKey, "supabase.publishableKey", { allowEmpty: true });
+  assertString(config.supabase?.url, "supabase.url");
+  assertString(config.supabase?.publishableKey, "supabase.publishableKey");
   assertString(config.supabase?.authRedirectPath, "supabase.authRedirectPath");
   assertBoolean(config.invites?.allowSignupWithoutInvite, "invites.allowSignupWithoutInvite");
   assertBoolean(config.invites?.collectDisplayNameBeforeInvite, "invites.collectDisplayNameBeforeInvite");

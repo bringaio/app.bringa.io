@@ -214,7 +214,7 @@ export async function main(argv = process.argv.slice(2)) {
 
   const args = parseAccountDeletionCleanupArgs(argv);
   const storageObjects = parseStorageObjectSpecs(args.storageSpecs);
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || requiredEnv("SUPABASE_URL");
+  const supabaseUrl = requiredEnv("SUPABASE_URL");
   const serviceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: {

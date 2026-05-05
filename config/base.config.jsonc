@@ -60,8 +60,10 @@
     "publicDomainIntent": true
   },
   "supabase": {
-    "url": "",
-    "publishableKey": "",
+    // Public browser client defaults for local/demo builds. Forks and production
+    // deployments should override these with their own public Supabase API values.
+    "url": "http://127.0.0.1:54321",
+    "publishableKey": "local-development-publishable-key",
     "authRedirectPath": "/dashboard"
   },
   "invites": {

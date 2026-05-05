@@ -49,6 +49,8 @@ This verifies the config-layering behavior itself.
 
 Use `.env.local` for secrets and deployment-specific values that must not be public. Service role keys never belong in JSONC config.
 
+Browser-visible Supabase values are not secrets. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config or an explicitly enabled `config/local.config.jsonc`. They are included in the static app bundle and should match the Supabase project or local CLI stack that the deployment uses.
+
 ## Layering Rules
 
 Later layers override earlier layers:
@@ -85,5 +87,7 @@ Default content is copied first, then `content/deployments/<slug>` overrides mat
 - `legal.termsPath`: app route that displays terms.
 - `legal.termsContentPath`: public Markdown file fetched by the terms route.
 - `legal.publicDomainIntent`: contribution intent flag for UI and docs.
+- `supabase.url`, `supabase.publishableKey`: public browser client values for the Supabase API.
+- `supabase.authRedirectPath`: app-relative redirect path used by OAuth buttons.
 - `media.*`: accepted image types and upload/compression limits.
 - `features.*`: public feature switches.

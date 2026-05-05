@@ -60,8 +60,8 @@
     "publicDomainIntent": true
   },
   "supabase": {
-    "url": "",
-    "publishableKey": "",
+    "url": "http://127.0.0.1:54321",
+    "publishableKey": "local-development-publishable-key",
     "authRedirectPath": "/dashboard"
   },
   "invites": {

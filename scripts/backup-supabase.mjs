@@ -278,7 +278,7 @@ export async function main() {
   await loadEnvFile(".env.local");
   await loadEnvFile(".env");
 
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || requiredEnv("SUPABASE_URL");
+  const supabaseUrl = requiredEnv("SUPABASE_URL");
   const serviceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
   const tableList = parseCsvList(process.env.SUPABASE_BACKUP_TABLES, defaultTables);
   const storageBuckets = parseCsvList(process.env.SUPABASE_BACKUP_STORAGE_BUCKETS, defaultStorageBuckets);

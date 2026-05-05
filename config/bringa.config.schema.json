@@ -289,10 +289,10 @@
       "additionalProperties": false,
       "properties": {
         "url": {
-          "$ref": "#/$defs/optionalString"
+          "$ref": "#/$defs/nonEmptyString"
         },
         "publishableKey": {
-          "$ref": "#/$defs/optionalString"
+          "$ref": "#/$defs/nonEmptyString"
         },
         "authRedirectPath": {
           "$ref": "#/$defs/nonEmptyString"

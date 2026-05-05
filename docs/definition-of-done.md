@@ -70,14 +70,14 @@ This is the current definition of done for upstream work. It is intentionally pr
 ## Required For Docs And Agent Changes
 
 - `git diff --check`
-- GitHub Pages docs build is expected to pass for `docs/` changes.
+- The in-app docs build path is expected to pass for `docs/` changes.
 - ASCII or intentional Unicode check for new durable project files
 - Links point to the current source of truth where possible
 - Docs avoid repeating long content already maintained elsewhere
 
 ## Required Before Merging To Main
 
-- Run the manual CI and Docs workflows when the change needs remote verification, release confidence, or docs deployment.
+- Run the manual CI and Pages workflows when the change needs remote verification, release confidence, or app deployment.
 - PR describes user-facing and fork-facing impact.
 - Fork customization surfaces were preserved or migration notes were added.
 - Security/privacy impact is explicitly considered.

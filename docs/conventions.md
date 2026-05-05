@@ -127,10 +127,9 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:supabase-contract`
 - `pnpm lint`
 - `pnpm exec tsc --noEmit`
-- `pnpm build` with safe public dummy Supabase values when needed
-- GitHub Pages docs build when the manual Docs workflow is run
-- The Docs workflow deploys Pages only when manually run on `main`.
-- `docs/_config.yml` declares the expected project Pages `url` and `baseurl` so manual branch builds can validate Jekyll output without requiring deployment access to Pages settings.
+- `pnpm build`
+- The manual Pages workflow builds the static app artifact from `out/` and deploys it only when run on `main`.
+- Public Supabase browser values come from deployment config, not `NEXT_PUBLIC_*` CI environment variables.
 
 Lint should be quiet. Treat new warnings as work to resolve or as explicit technical debt that belongs in `docs/optimization-options.md`.
 
@@ -151,9 +150,9 @@ Documentation should be compact, practical, and link to the source of truth.
 - Put conventions that affect contributors in `docs/`.
 - Put agent-only operating details in `.agents/`.
 - Keep `AGENTS.md` short and navigational.
-- Develop docs in this repository so they can later publish cleanly to GitHub Pages.
+- Develop docs in this repository and expose them through the app, not through a separate GitHub Pages docs site.
 - Keep English documentation in English; `pnpm check:copy` blocks configured German organization terms in English docs/source-of-truth files.
-- Keep `docs/index.md` and the GitHub Pages sidebar navigation linked to every top-level docs page; `pnpm check:docs-index` enforces both.
+- Keep `docs/index.md` linked to every top-level docs page; `pnpm check:docs-index` enforces this.
 
 ## Static Export
 

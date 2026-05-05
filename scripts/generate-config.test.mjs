@@ -61,8 +61,8 @@ const completeBaseConfig = {
     publicDomainIntent: true,
   },
   supabase: {
-    url: "",
-    publishableKey: "",
+    url: "http://127.0.0.1:54321",
+    publishableKey: "local-development-publishable-key",
     authRedirectPath: "/dashboard",
   },
   invites: {
@@ -227,6 +227,23 @@ test("applies local overrides only when explicitly enabled", async (t) => {
   assert.equal(defaultConfig.legal.termsContentPath, "/content/generated/legal/en.md");
   assert.equal(localConfig.app.name, "Local Portal");
   assert.equal(localConfig.legal.termsContentPath, "/content/local/legal/en.md");
+});
+
+test("rejects missing public Supabase browser config", async (t) => {
+  const root = await createConfigProject({
+    deployment: {
+      supabase: {
+        url: "",
+        publishableKey: "",
+      },
+    },
+  });
+  t.after(() => rm(root, { recursive: true, force: true }));
+
+  await assert.rejects(
+    () => loadConfigObject({ root, deploymentSlug: "app.bringa.io" }),
+    /supabase\.url/,
+  );
 });
 
 test("rejects unsafe deployment profile names", () => {

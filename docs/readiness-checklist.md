@@ -143,8 +143,8 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [ ] `pnpm outdated`
 - [ ] `pnpm lint`
 - [ ] `pnpm exec tsc --noEmit`
-- [ ] `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dummy-anon-key pnpm build`
-- [ ] Manual GitHub Pages docs build
+- [ ] `pnpm build`
+- [ ] Manual GitHub Pages app deploy
 - [ ] Agentic browser testing for user, admin, uninvited, mobile, desktop, and PWA flows
 
 Keep unresolved items in [Optimization Options](optimization-options.md) until implementation, docs, tests, or live verification become the source of truth.

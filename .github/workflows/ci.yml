@@ -10,9 +10,6 @@ jobs:
   quality:
     name: Secret-free quality checks
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: dummy-anon-key
     steps:
       - name: Checkout
         uses: actions/checkout@v6

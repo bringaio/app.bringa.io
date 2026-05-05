@@ -21,7 +21,7 @@ test("builds compact admin health items from public config", () => {
       ["storage", "Storage contract", "10 MB, 3 types"],
       ["devBranch", "Development branch", "Task list"],
       ["backups", "Backup freshness", "Checking"],
-      ["docs", "Docs", "Manual workflow"],
+      ["docs", "Docs", "In-app"],
       ["telegram", "Telegram", "Configured"],
     ],
   );

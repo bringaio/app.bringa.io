@@ -28,6 +28,7 @@ Use config for short, structured values:
 - canonical URL and home route;
 - logo text and simple brand labels;
 - repository, issue, and discussion links;
+- public Supabase API URL and publishable key;
 - operator name and contact placeholders;
 - media limits and accepted MIME types;
 - feature switches.
@@ -149,13 +150,13 @@ Optional deployment checks:
 
 Forks should add repository variables and secrets for optional deployment jobs without editing shared checks where possible.
 
-## GitHub Pages Docs
+## In-App Docs
 
-Docs live in `docs/` and should remain publishable through GitHub Pages.
+Docs live in `docs/` and are published through the static app itself.
 
 Forks can:
 
-- publish upstream docs as-is;
+- expose upstream docs as-is through the app;
 - add local setup pages;
 - link local legal pages;
 - keep the upstream roadmap and optimization register visible while adding fork-specific notes.

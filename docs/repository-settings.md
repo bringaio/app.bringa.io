@@ -21,7 +21,7 @@ Protect `main` after the manual CI process is stable.
 Manual checks to run before important merges or releases:
 
 - `Secret-free quality checks`
-- `Build GitHub Pages docs`
+- `Deploy GitHub Pages app`
 
 Recommended rules:
 
@@ -36,7 +36,7 @@ Recommended rules:
 - Set GitHub Pages source to GitHub Actions.
 - Use the `github-pages` environment.
 - Protect the `github-pages` environment if deployments should require approval.
-- Keep docs deployment secret-free and run it manually from `main` when deployment is needed.
+- Keep app deployment secret-free and run it manually from `main` when deployment is needed.
 
 ## Forks
 

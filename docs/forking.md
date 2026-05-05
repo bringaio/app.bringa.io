@@ -43,6 +43,7 @@ To create a fork profile:
 - Terms, privacy notes, and legal contact
 - Languages
 - Supabase project and Auth providers
+- Public Supabase API URL and publishable key in deployment config
 - Repository, issue, and support links
 - Operator default owner label
 - Theme and brand assets
@@ -68,7 +69,7 @@ Fork CI should not require upstream secrets. The upstream workflows are manual-o
 
 Recommended split:
 
-- Secret-free: install, config generation, config validation, typecheck, static build, docs build.
+- Secret-free: install, config generation, config validation, typecheck, static build, Pages artifact build.
 - Secret-required: deployment, Supabase backup, remote migrations, Edge Function deploy.
 
 Fork operators can keep upstream workflows if they configure their own repository variables and secrets.

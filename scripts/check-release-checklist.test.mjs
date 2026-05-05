@@ -22,12 +22,12 @@ steps:
 test("extracts pnpm commands from markdown code spans", () => {
   const commands = extractMarkdownPnpmCommands(`
 - \`pnpm check:config\`
-- \`NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dummy-anon-key pnpm build\`
+- \`pnpm build\`
 `);
 
   assert.deepEqual([...commands], [
     "pnpm check:config",
-    "NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dummy-anon-key pnpm build",
+    "pnpm build",
   ]);
 });
 
@@ -41,7 +41,7 @@ test("accepts aligned release checklist sources", () => {
     }),
     ciYaml: "run: pnpm test:config\nrun: pnpm check:config\nrun: pnpm build\n",
     conventionsMarkdown: "- `pnpm test:config`\n- `pnpm check:config`\n- `pnpm build`\n",
-    readinessMarkdown: "- [ ] `pnpm test:config`\n- [ ] `pnpm check:config`\n- [ ] `NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=dummy-anon-key pnpm build`\n",
+    readinessMarkdown: "- [ ] `pnpm test:config`\n- [ ] `pnpm check:config`\n- [ ] `pnpm build`\n",
   }));
 });
 

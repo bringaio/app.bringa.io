@@ -153,8 +153,8 @@ export function buildAdminSystemHealthItems(input: AdminSystemHealthInput): Admi
     {
       key: "docs",
       label: "Docs",
-      value: "Manual workflow",
-      detail: "Run the Docs workflow manually when branch or release docs need remote verification.",
+      value: "In-app",
+      detail: "Docs are published inside the static app; run the Pages workflow manually when app deployment needs remote verification.",
       href: docHref(input.repositoryUrl, "docs/index.md"),
     },
     {

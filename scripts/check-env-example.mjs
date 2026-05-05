@@ -8,8 +8,6 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const envExamplePath = path.join(root, ".env.example");
 
 const requiredKeys = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_PROJECT_REF",
@@ -29,8 +27,6 @@ const requiredKeys = [
 ];
 
 const blankExampleKeys = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_PROJECT_REF",
@@ -38,6 +34,11 @@ const blankExampleKeys = [
   "TELEGRAM_CHAT_ID",
   "TELEGRAM_BOT_TOKEN_USER",
   "TELEGRAM_CHAT_ID_USER",
+];
+
+const forbiddenKeys = [
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
 ];
 
 function parseCsv(value) {
@@ -89,6 +90,12 @@ export function checkEnvExampleContent(content) {
   for (const key of requiredKeys) {
     if (!env.has(key)) {
       throw new Error(`.env.example is missing ${key}`);
+    }
+  }
+
+  for (const key of forbiddenKeys) {
+    if (env.has(key)) {
+      throw new Error(`${key} belongs in deployment config, not .env.example.`);
     }
   }
 

@@ -6,8 +6,6 @@ import { checkEnvExampleContent, parseEnvExample } from "./check-env-example.mjs
 
 function validEnvExampleContent(overrides = {}) {
   const values = {
-    NEXT_PUBLIC_SUPABASE_URL: "",
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
     SUPABASE_URL: "",
     SUPABASE_SERVICE_ROLE_KEY: "",
     SUPABASE_PROJECT_REF: "",
@@ -41,6 +39,13 @@ QUOTED="value"
   assert.equal(env.get("SUPABASE_URL"), "https://example.supabase.co");
   assert.equal(env.get("EMPTY"), "");
   assert.equal(env.get("QUOTED"), "value");
+});
+
+test("rejects browser-visible Supabase config in env example", () => {
+  assert.throws(
+    () => checkEnvExampleContent(validEnvExampleContent({ NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co" })),
+    /NEXT_PUBLIC_SUPABASE_URL/,
+  );
 });
 
 test("requires backup defaults to match backup script source of truth", () => {
