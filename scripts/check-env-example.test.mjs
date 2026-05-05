@@ -4,6 +4,32 @@ import test from "node:test";
 import { defaultStorageBuckets, defaultTables } from "./backup-supabase.mjs";
 import { checkEnvExampleContent, parseEnvExample } from "./check-env-example.mjs";
 
+function validEnvExampleContent(overrides = {}) {
+  const values = {
+    NEXT_PUBLIC_SUPABASE_URL: "",
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
+    SUPABASE_URL: "",
+    SUPABASE_SERVICE_ROLE_KEY: "",
+    SUPABASE_PROJECT_REF: "",
+    SUPABASE_BACKUP_TABLES: defaultTables.join(","),
+    SUPABASE_BACKUP_STORAGE_BUCKETS: defaultStorageBuckets.join(","),
+    SUPABASE_BACKUP_DIR: "backups/supabase",
+    SUPABASE_BACKUP_PAGE_SIZE: "1000",
+    SUPABASE_BACKUP_STORAGE_PAGE_SIZE: "1000",
+    SUPABASE_BACKUP_AUTH_PAGE_SIZE: "1000",
+    SUPABASE_BACKUP_AUTH_USERS: "0",
+    SUPABASE_BACKUP_RECORD_RUN: "1",
+    APP_URL: "http://localhost:3000",
+    TELEGRAM_BOT_TOKEN: "",
+    TELEGRAM_CHAT_ID: "",
+    TELEGRAM_BOT_TOKEN_USER: "",
+    TELEGRAM_CHAT_ID_USER: "",
+    ...overrides,
+  };
+
+  return `${Object.entries(values).map(([key, value]) => `${key}=${value}`).join("\n")}\n`;
+}
+
 test("parses example env assignments without comments", () => {
   const env = parseEnvExample(`
 # comment
@@ -18,52 +44,23 @@ QUOTED="value"
 });
 
 test("requires backup defaults to match backup script source of truth", () => {
-  const content = `
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-SUPABASE_PROJECT_REF=
-SUPABASE_BACKUP_TABLES=${defaultTables.join(",")}
-SUPABASE_BACKUP_STORAGE_BUCKETS=${defaultStorageBuckets.join(",")}
-SUPABASE_BACKUP_DIR=backups/supabase
-SUPABASE_BACKUP_PAGE_SIZE=1000
-SUPABASE_BACKUP_STORAGE_PAGE_SIZE=1000
-SUPABASE_BACKUP_AUTH_PAGE_SIZE=1000
-SUPABASE_BACKUP_AUTH_USERS=0
-SUPABASE_BACKUP_RECORD_RUN=1
-APP_URL=http://localhost:3000
-TELEGRAM_BOT_TOKEN=
-TELEGRAM_CHAT_ID=
-TELEGRAM_BOT_TOKEN_USER=
-TELEGRAM_CHAT_ID_USER=
-`;
-
-  assert.doesNotThrow(() => checkEnvExampleContent(content));
+  assert.doesNotThrow(() => checkEnvExampleContent(validEnvExampleContent()));
 });
 
 test("rejects stale backup table lists", () => {
   assert.throws(
-    () => checkEnvExampleContent(`
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-SUPABASE_PROJECT_REF=
-SUPABASE_BACKUP_TABLES=profiles,items
-SUPABASE_BACKUP_STORAGE_BUCKETS=${defaultStorageBuckets.join(",")}
-SUPABASE_BACKUP_DIR=backups/supabase
-SUPABASE_BACKUP_PAGE_SIZE=1000
-SUPABASE_BACKUP_STORAGE_PAGE_SIZE=1000
-SUPABASE_BACKUP_AUTH_PAGE_SIZE=1000
-SUPABASE_BACKUP_AUTH_USERS=0
-SUPABASE_BACKUP_RECORD_RUN=1
-APP_URL=http://localhost:3000
-TELEGRAM_BOT_TOKEN=
-TELEGRAM_CHAT_ID=
-TELEGRAM_BOT_TOKEN_USER=
-TELEGRAM_CHAT_ID_USER=
-`),
+    () => checkEnvExampleContent(validEnvExampleContent({ SUPABASE_BACKUP_TABLES: "profiles,items" })),
     /SUPABASE_BACKUP_TABLES/,
+  );
+});
+
+test("rejects real service and notification values in the example env", () => {
+  assert.throws(
+    () => checkEnvExampleContent(validEnvExampleContent({ SUPABASE_SERVICE_ROLE_KEY: "not-for-example" })),
+    /SUPABASE_SERVICE_ROLE_KEY.*blank/,
+  );
+  assert.throws(
+    () => checkEnvExampleContent(validEnvExampleContent({ TELEGRAM_BOT_TOKEN: "123:abc" })),
+    /TELEGRAM_BOT_TOKEN.*blank/,
   );
 });

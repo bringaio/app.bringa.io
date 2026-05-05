@@ -28,6 +28,18 @@ const requiredKeys = [
   "TELEGRAM_CHAT_ID_USER",
 ];
 
+const blankExampleKeys = [
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  "SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+  "SUPABASE_PROJECT_REF",
+  "TELEGRAM_BOT_TOKEN",
+  "TELEGRAM_CHAT_ID",
+  "TELEGRAM_BOT_TOKEN_USER",
+  "TELEGRAM_CHAT_ID_USER",
+];
+
 function parseCsv(value) {
   return String(value || "")
     .split(",")
@@ -45,6 +57,12 @@ function assertExactCsv(env, key, expected) {
 function assertValue(env, key, expected) {
   if (env.get(key) !== expected) {
     throw new Error(`${key} must be ${expected}`);
+  }
+}
+
+function assertBlank(env, key) {
+  if (env.get(key) !== "") {
+    throw new Error(`${key} must stay blank in .env.example.`);
   }
 }
 
@@ -72,6 +90,10 @@ export function checkEnvExampleContent(content) {
     if (!env.has(key)) {
       throw new Error(`.env.example is missing ${key}`);
     }
+  }
+
+  for (const key of blankExampleKeys) {
+    assertBlank(env, key);
   }
 
   assertExactCsv(env, "SUPABASE_BACKUP_TABLES", defaultTables);
