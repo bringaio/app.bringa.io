@@ -23,7 +23,7 @@ Options:
   --force    Replace an existing profile
   --help     Show this help
 
-It never asks for service role keys, OAuth secrets, or provider secrets.
+It never asks for Supabase maintenance keys, OAuth secrets, or provider secrets.
 `;
 }
 
@@ -83,9 +83,10 @@ export function buildOperatorSetupChecklist({ slug, useDeployBranch }) {
     `3. Check config: BRINGA_DEPLOYMENT=${slug} pnpm check:config`,
     "4. Apply the committed Supabase schema and migrations to your Supabase project.",
     "5. Set Supabase Auth Site URL to your app URL and add the exact /dashboard redirect URL.",
-    "6. In GitHub, set Pages source to GitHub Actions and configure your custom domain if you use one.",
-    `7. Run the manual Pages workflow with deployment=${slug}.`,
-    "8. Run pnpm build before publishing changes.",
+    "6. For backups and trusted cleanup only, copy .env.example to .env.local and set SUPABASE_SECRET_KEY after confirming the target project.",
+    "7. In GitHub, set Pages source to GitHub Actions and configure your custom domain if you use one.",
+    `8. Run the manual Pages workflow with deployment=${slug}.`,
+    "9. Run pnpm build before publishing changes.",
   );
 
   return lines;

@@ -61,6 +61,7 @@ test("builds a concrete first-run checklist", () => {
   assert.match(checklist.join("\n"), /git switch -c deploy\/share\.example\.org/);
   assert.match(checklist.join("\n"), /BRINGA_DEPLOYMENT=share\.example\.org pnpm generate:config/);
   assert.match(checklist.join("\n"), /Supabase Auth Site URL/);
+  assert.match(checklist.join("\n"), /SUPABASE_SECRET_KEY/);
   assert.doesNotMatch(checklist.join("\n"), /service role/i);
 });
 

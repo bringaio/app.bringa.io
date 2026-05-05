@@ -48,7 +48,8 @@ For first deployment, the normal operator flow is:
 3. set `app.canonicalUrl`, repository links, `supabase.url`, and `supabase.publishableKey`;
 4. generate config;
 5. configure Supabase Auth redirect URLs for the final app domain;
-6. run the manual Pages workflow from `main` or `deploy/<slug>`.
+6. copy `.env.example` to `.env.local` and set `SUPABASE_SECRET_KEY` only for trusted local maintenance after confirming the target project;
+7. run the manual Pages workflow from `main` or `deploy/<slug>`.
 
 This writes:
 
@@ -73,7 +74,7 @@ pnpm test:config
 
 This verifies the config-layering behavior itself.
 
-Use `.env.local` for secrets and deployment-specific values that must not be public. Service role keys never belong in JSONC config.
+Use `.env.local` for secrets and deployment-specific values that must not be public. Supabase secret keys and service role keys never belong in JSONC config.
 
 Browser-visible Supabase values are not secrets. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config or an explicitly enabled `config/local.config.jsonc`. They are included in the static app bundle and should match the Supabase project or local CLI stack that the deployment uses.
 

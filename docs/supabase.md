@@ -25,7 +25,8 @@ For a fork that wants to run the app:
 5. Set the Supabase Site URL to the final app URL, for example `https://share.example.org`.
 6. Add the exact app redirect URL used by `supabase.authRedirectPath`, for example `https://share.example.org/dashboard`.
 7. Copy the public project URL and publishable key into `config/deployments/<slug>.jsonc`.
-8. Keep Supabase secret keys, service role keys, OAuth secrets, and provider secrets outside Git.
+8. Copy `.env.example` to `.env.local` and set `SUPABASE_SECRET_KEY` only for trusted local maintenance after confirming the target project.
+9. Keep Supabase secret keys, service role keys, OAuth secrets, and provider secrets outside Git.
 
 The public project URL and publishable key are expected to reach the browser. They are safe only when Row Level Security, Storage policies, and RPC boundaries are correct. Run `pnpm check:supabase-contract` after schema or policy changes.
 
