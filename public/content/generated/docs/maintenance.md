@@ -4,7 +4,7 @@
 
 - Run `pnpm backup:supabase` before production database work when `SUPABASE_SECRET_KEY`, `SUPABASE_SECRET_KEYS`, or legacy `SUPABASE_SERVICE_ROLE_KEY` is configured.
 - Keep Supabase free-tier projects active, or document the paid/self-hosted plan for deployments that must not pause.
-- Run `pnpm check:config`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
+- Run `pnpm check:config`, `pnpm check:edge-functions`, `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm build` before releases.
 - Review dependencies and security advisories regularly.
 - Run `pnpm outdated` before dependency upgrade work and record major-version deferrals in `docs/dependency-audit.md`.
 - Verify Auth providers, redirect URLs, Edge Function secrets, Telegram chat IDs, and Storage bucket policies after deployment changes.
@@ -35,7 +35,12 @@ Use `pnpm cleanup:account-deletion` only after the deletion request is completed
 ## Local Verification Notes
 
 - `pnpm lint` is expected to pass without warnings.
+- `pnpm check:edge-functions` type-checks Supabase Edge Functions with Deno and disables root lockfile discovery so local checks do not create a repository-level `deno.lock`.
 - In Codex Desktop, `pnpm build` can fail inside the sandbox when Turbopack attempts to bind a local helper port. Rerun with approved escalation before treating that as an application build failure.
+
+## Agent-Assisted Security Maintenance
+
+After dependency upgrades, Supabase migrations, RLS policy changes, Edge Function changes, Auth changes, or deployment workflow changes, agents should use `.agents/skills/security-maintenance/`. The skill keeps the evidence workflow explicit: secret scan, config freshness, Supabase contract, Edge Function Deno typecheck, lint, TypeScript, static build, manual CI, and live Supabase advisor or backup evidence when the claim depends on it.
 
 ## Current Known Gaps
 

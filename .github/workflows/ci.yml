@@ -24,6 +24,11 @@ jobs:
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -227,6 +232,9 @@ jobs:
 
       - name: Check Supabase contract
         run: pnpm check:supabase-contract
+
+      - name: Check Edge Functions
+        run: pnpm check:edge-functions
 
       - name: Lint
         run: pnpm lint

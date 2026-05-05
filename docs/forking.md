@@ -119,3 +119,13 @@ BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 
 Use `config/local.config.jsonc` for ignored local overrides, including `"development": { "localDemoMode": false }` and local public Supabase values.
+
+## Agent-Assisted Setup
+
+Fork operators can ask an agent to set up the fork directly. A good prompt is:
+
+```text
+Set up this bringa fork for https://share.example.org using GitHub owner <owner>, repository <repo>, and a fresh Supabase project. Keep secrets out of Git and leave local demo mode available until Supabase is verified.
+```
+
+Agents should use `.agents/skills/fork-operator-onboarding/` for this workflow. The expected result is a deployment profile, generated public config, optional deployment content or brand placeholders when requested, and a checked list of remaining Supabase, GitHub Pages, Auth redirect, and secret setup items. Agents should not paste service-role keys, Supabase secret keys, OAuth secrets, Telegram tokens, or real user data into docs, commits, issues, screenshots, or chat.

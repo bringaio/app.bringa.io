@@ -89,6 +89,15 @@ export function checkWorkflowContent(filePath, content) {
     throw new Error(`${filePath} must stay manual-only. Remove automatic trigger(s): ${disallowed.join(", ")}.`);
   }
 
+  if (filePath === ".github/workflows/ci.yml") {
+    if (!content.includes("denoland/setup-deno")) {
+      throw new Error(`${filePath} must set up Deno before checking Supabase Edge Functions.`);
+    }
+    if (!content.includes("pnpm check:edge-functions")) {
+      throw new Error(`${filePath} must run pnpm check:edge-functions so Edge Functions are checked in CI.`);
+    }
+  }
+
   return triggers;
 }
 
