@@ -14,11 +14,30 @@ export type DashboardInitialViewState = {
   view: DashboardView;
 };
 
+export type DashboardViewControlState = {
+  ariaPressed: boolean;
+  variant: "default" | "secondary";
+};
+
 export function buildDashboardInitialViewState(borrowedItemCount: number | null | undefined): DashboardInitialViewState {
   const hasBorrowedItems = Boolean(borrowedItemCount && borrowedItemCount > 0);
   return {
     hasBorrowedItems,
     view: hasBorrowedItems ? "borrowed" : "available",
+  };
+}
+
+export function buildDashboardViewControlState({
+  currentView,
+  controlView,
+}: {
+  currentView: DashboardView;
+  controlView: DashboardView;
+}): DashboardViewControlState {
+  const active = currentView === controlView;
+  return {
+    ariaPressed: active,
+    variant: active ? "default" : "secondary",
   };
 }
 

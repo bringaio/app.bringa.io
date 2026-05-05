@@ -12,7 +12,12 @@ import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
 import { Package } from "lucide-react";
 import { AppImage } from "@/components/ui/app-image";
-import { buildDashboardInitialViewState, buildDashboardItemFilters, type DashboardView } from "@/lib/dashboard-item-query";
+import {
+    buildDashboardInitialViewState,
+    buildDashboardItemFilters,
+    buildDashboardViewControlState,
+    type DashboardView,
+} from "@/lib/dashboard-item-query";
 
 export default function DashboardPage() {
     const [query, setQuery] = useState("")
@@ -26,6 +31,9 @@ export default function DashboardPage() {
     const [isDragging, setIsDragging] = useState(false);
     const [startY, setStartY] = useState(0);
     const [scrollTop, setScrollTop] = useState(0);
+    const borrowedControlState = buildDashboardViewControlState({ currentView: view, controlView: "borrowed" });
+    const availableControlState = buildDashboardViewControlState({ currentView: view, controlView: "available" });
+    const allControlState = buildDashboardViewControlState({ currentView: view, controlView: "all" });
 
     const fetchItems = useCallback(async (currentUser: User | null, searchQuery: string, selectedView: DashboardView) => {
         try {
@@ -189,7 +197,8 @@ export default function DashboardPage() {
                         <div className="grid grid-cols-2 gap-2">
                             {hasBorrowedItems && (
                                 <Button
-                                    variant={view === "borrowed" ? "default" : "secondary"}
+                                    aria-pressed={borrowedControlState.ariaPressed}
+                                    variant={borrowedControlState.variant}
                                     onClick={() => setView("borrowed")}
                                     className="w-full shadow-lg cursor-pointer"
                                 >
@@ -197,14 +206,16 @@ export default function DashboardPage() {
                                 </Button>
                             )}
                             <Button
-                                variant={view === "available" ? "default" : "secondary"}
+                                aria-pressed={availableControlState.ariaPressed}
+                                variant={availableControlState.variant}
                                 onClick={() => setView("available")}
                                 className="w-full shadow-lg cursor-pointer"
                             >
                                 Available
                             </Button>
                             <Button
-                                variant={view === "all" ? "default" : "secondary"}
+                                aria-pressed={allControlState.ariaPressed}
+                                variant={allControlState.variant}
                                 onClick={() => setView("all")}
                                 className="w-full shadow-lg cursor-pointer"
                             >
@@ -226,6 +237,7 @@ export default function DashboardPage() {
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
                             type="text"
+                            aria-label="Search items"
                             placeholder="Search items..."
                             className="flex-1 border-none focus-visible:ring-0"
                         />
