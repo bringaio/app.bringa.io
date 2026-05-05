@@ -91,6 +91,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:dashboard-query`
 - `pnpm test:item-visibility-request`
 - `pnpm test:issue-prompt`
+- `pnpm test:settings-data-actions`
 - `pnpm test:admin-notification-settings`
 - `pnpm test:admin-deletion-requests`
 - `pnpm test:account-deletion-cleanup`

@@ -102,6 +102,9 @@ jobs:
       - name: Test issue prompt rendering
         run: pnpm test:issue-prompt
 
+      - name: Test settings data actions
+        run: pnpm test:settings-data-actions
+
       - name: Test admin notification settings
         run: pnpm test:admin-notification-settings
 

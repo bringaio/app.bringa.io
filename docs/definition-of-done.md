@@ -33,6 +33,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:dashboard-query` when dashboard item list filtering, search, or default view behavior changes
 - `pnpm test:item-visibility-request` when user-facing item visibility actions change
 - `pnpm test:issue-prompt` when issue prompt content paths or rendering changes
+- `pnpm test:settings-data-actions` when settings data export filenames, account deletion request messages, or data action status presentation changes
 - `pnpm test:admin-notification-settings` when admin notification settings or planned notification controls change
 - `pnpm test:admin-deletion-requests` when admin deletion request summaries or review queues change
 - `pnpm test:account-deletion-cleanup` when trusted account deletion cleanup arguments, safety gates, Storage cleanup, or Auth deletion behavior changes

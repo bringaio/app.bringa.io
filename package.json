@@ -30,6 +30,7 @@
     "test:dashboard-query": "node --test scripts/dashboard-item-query.test.mjs",
     "test:item-visibility-request": "node --test scripts/item-visibility-request.test.mjs",
     "test:issue-prompt": "node --test scripts/issue-prompt.test.mjs",
+    "test:settings-data-actions": "node --test scripts/settings-data-actions.test.mjs",
     "test:github-workflows": "node --test scripts/check-github-workflows.test.mjs",
     "test:supabase-contract": "node --test scripts/check-supabase-contract.test.mjs",
     "test:admin-notification-settings": "node --test scripts/admin-notification-settings.test.mjs",

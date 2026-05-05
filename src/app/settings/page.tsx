@@ -19,6 +19,11 @@ import ProtectedRoute from "@/components/auth/protected-route"
 import { Button } from "@/components/ui/button"
 import { appConfig } from "@/lib/app-config"
 import { renderIssuePrompt } from "@/lib/issue-prompt"
+import {
+    buildDataExportFilename,
+    buildSettingsDataActionMessage,
+    buildSettingsDataStatus,
+} from "@/lib/settings-data-actions"
 import { supabase } from "@/lib/supabaseclient"
 
 export default function SettingsPage() {
@@ -29,6 +34,7 @@ export default function SettingsPage() {
     const [dataError, setDataError] = useState<string | null>(null)
     const [issuePrompt, setIssuePrompt] = useState("")
     const [issuePromptError, setIssuePromptError] = useState<string | null>(null)
+    const dataStatus = buildSettingsDataStatus({ message: dataMessage, error: dataError })
 
     useEffect(() => {
         let active = true
@@ -79,18 +85,17 @@ export default function SettingsPage() {
             const blob = new Blob([`${exportJson}\n`], { type: "application/json" })
             const url = URL.createObjectURL(blob)
             const link = document.createElement("a")
-            const date = new Date().toISOString().slice(0, 10)
 
             link.href = url
-            link.download = `${appConfig.app.shortName}-data-export-${date}.json`
+            link.download = buildDataExportFilename({ appShortName: appConfig.app.shortName })
             document.body.appendChild(link)
             link.click()
             link.remove()
             URL.revokeObjectURL(url)
-            setDataMessage("Data export downloaded.")
+            setDataMessage(buildSettingsDataActionMessage({ action: "dataExport", outcome: "success" }))
         } catch (error) {
             console.error("Failed to export user data", error)
-            setDataError("Data export failed.")
+            setDataError(buildSettingsDataActionMessage({ action: "dataExport", outcome: "error" }))
         } finally {
             setExporting(false)
         }
@@ -108,10 +113,10 @@ export default function SettingsPage() {
             if (error) throw error
             if (!data) throw new Error("No deletion request returned.")
 
-            setDataMessage("Account deletion request recorded.")
+            setDataMessage(buildSettingsDataActionMessage({ action: "accountDeletion", outcome: "success" }))
         } catch (error) {
             console.error("Failed to request account deletion", error)
-            setDataError("Account deletion request failed.")
+            setDataError(buildSettingsDataActionMessage({ action: "accountDeletion", outcome: "error" }))
         } finally {
             setRequestingDeletion(false)
         }
@@ -208,12 +213,12 @@ export default function SettingsPage() {
                             Request account deletion
                         </Button>
                     </div>
-                    {(dataMessage || dataError) && (
+                    {dataStatus && (
                         <div
-                            className={`border-t px-4 py-3 text-sm ${dataError ? "text-destructive" : "text-muted-foreground"}`}
-                            role="status"
+                            className={`border-t px-4 py-3 text-sm ${dataStatus.tone === "destructive" ? "text-destructive" : "text-muted-foreground"}`}
+                            role={dataStatus.role}
                         >
-                            {dataError || dataMessage}
+                            {dataStatus.text}
                         </div>
                     )}
                 </section>
