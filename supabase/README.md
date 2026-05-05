@@ -79,9 +79,11 @@ Borrow history reads are admin-only by default.
 - admin-only content/image suggestion application with item version capture;
 - prepared account deletion request table and non-destructive admin review RPC;
 - prepared item suggestion and item flag tables;
+- admin-visible `backup_runs` metadata for backup freshness;
 - blocked direct browser writes to item versions and item image metadata;
 - blocked direct browser writes to account deletion request state;
 - blocked direct browser writes to moderation queue state;
+- blocked direct browser writes to backup run status;
 - `borrow_history.item_id` and `item_sharing.item_id` foreign keys to `items.id`;
 - unique admin invite codes.
 

@@ -52,6 +52,7 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 - [x] Admin dashboard shows pending suggestions, flags, account deletion requests, and unvalidated users.
 - [x] Admin dashboard shows recent borrow/return activity and recent image uploads.
 - [x] Admin dashboard links config, Supabase contract, Storage contract, backups, docs, and Telegram health to source-of-truth docs.
+- [x] Admin dashboard shows latest backup run freshness when the `backup_runs` migration is present.
 - [x] Admin users route supports user validation, access revocation with self-protection, admin promotion, and admin demotion with self-demotion protection.
 - [x] Admin moderation route lists pending visibility requests, suggestions, and flags, and reviews status through RPCs with notes for final decisions.
 - [x] Admin moderation can apply content/image and owner suggestions through admin-only RPCs with item version capture.
@@ -64,9 +65,10 @@ As of 2026-05-05, GitHub API checks show the repository is private, `has_pages` 
 ## Operations
 
 - [x] `pnpm backup:supabase` exports configured public tables and Storage buckets with a service role key.
+- [x] `pnpm backup:supabase` records compact admin-visible backup run metadata after the `backup_runs` migration.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
-- [ ] Restore drills, encrypted backup handling, and backup freshness UI are complete.
+- [ ] Restore drills and encrypted backup handling are complete.
 - [ ] Telegram notification dedupe, mute windows, retry state, and privacy review are complete.
 
 ## Verification Before Release

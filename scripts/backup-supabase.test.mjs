@@ -6,10 +6,12 @@ import test from "node:test";
 
 import {
   backupStorageBucket,
+  buildBackupRunRecord,
   fetchAuthUsers,
   listStorageFiles,
   parseBoolean,
   parseCsvList,
+  recordBackupRun,
   safeBackupPath,
 } from "./backup-supabase.mjs";
 
@@ -107,4 +109,68 @@ test("fetches Auth users with explicit pagination", async () => {
   const users = await fetchAuthUsers(authAdmin, 1);
   assert.deepEqual(users, [{ id: "user-1" }]);
   assert.deepEqual(pages, [{ page: 1, perPage: 1 }, { page: 2, perPage: 1 }]);
+});
+
+test("builds compact backup run metadata from a manifest", () => {
+  const record = buildBackupRunRecord({
+    manifest: {
+      tables: {
+        profiles: 2,
+        items: 3,
+      },
+      storage: {
+        items: { objects: 4, bytes: 12 },
+        avatars: { objects: 1, bytes: 5 },
+      },
+      authUsers: {
+        exported: true,
+        users: 6,
+      },
+    },
+    startedAt: "2026-05-05T10:00:00Z",
+    finishedAt: "2026-05-05T10:01:00Z",
+    status: "completed",
+  });
+
+  assert.deepEqual(record, {
+    started_at: "2026-05-05T10:00:00Z",
+    finished_at: "2026-05-05T10:01:00Z",
+    status: "completed",
+    table_count: 2,
+    table_rows: 5,
+    storage_bucket_count: 2,
+    storage_object_count: 5,
+    storage_bytes: 17,
+    auth_users_exported: true,
+    auth_user_count: 6,
+  });
+});
+
+test("records backup run metadata through the Supabase client", async () => {
+  const inserts = [];
+  const supabase = {
+    from(tableName) {
+      assert.equal(tableName, "backup_runs");
+      return {
+        async insert(payload) {
+          inserts.push(payload);
+          return { data: null, error: null };
+        },
+      };
+    },
+  };
+
+  await recordBackupRun(supabase, {
+    manifest: {
+      tables: { profiles: 1 },
+      storage: {},
+      authUsers: { exported: false, users: null },
+    },
+    startedAt: "2026-05-05T10:00:00Z",
+    finishedAt: "2026-05-05T10:01:00Z",
+  });
+
+  assert.equal(inserts.length, 1);
+  assert.equal(inserts[0].table_count, 1);
+  assert.equal(inserts[0].status, "completed");
 });

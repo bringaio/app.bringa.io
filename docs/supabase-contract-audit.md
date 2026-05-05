@@ -202,6 +202,7 @@ Current script:
 
 - `scripts/backup-supabase.mjs` backs up configured public tables and configured Storage buckets.
 - It can optionally export Supabase Auth user metadata with `SUPABASE_BACKUP_AUTH_USERS=1`, but it does not export passwords, provider secrets, or a full Auth restore package.
+- After the `backup_runs` migration is present, the backup script records compact run metadata by default. The admin dashboard reads the latest admin-visible row for backup freshness.
 - User-facing `export_my_data` returns profile, created items, currently borrowed items, borrow history, deletion request history, item suggestions, and item flags for the authenticated user.
 - `request_account_deletion` records one active operator-reviewed request while a request is `pending` or `reviewing`.
 - `review_account_deletion_request` lets admins mark requests `reviewing` or `cancelled` and record review metadata, but does not delete Auth users, Storage objects, item rows, image metadata, or profile rows.
@@ -213,7 +214,7 @@ Risk:
 
 Target:
 
-- Add restore drills, encrypted backup handling, and backup freshness UI before claiming operational readiness.
+- Add restore drills and encrypted backup handling before claiming operational readiness.
 - Add approved destructive execution for account deletion requests, including item visibility/owner reassignment, Auth deletion, and Storage cleanup policy.
 
 ## Required RPC Candidates

@@ -8,7 +8,7 @@ This page describes the current upstream admin surfaces. Keep operational detail
 
 ## Current Surfaces
 
-- `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, pending queue counts, recent activity, recent uploads, and system-readiness links for config, Supabase, Storage, backups, docs, and Telegram.
+- `/admin/dashboard`: item counts, visibility signals, borrowed-first item list, pending queue counts, recent activity, recent uploads, latest backup run status when `backup_runs` exists, and system-readiness links for config, Supabase, Storage, backups, docs, and Telegram.
 - `/admin/users`: profile list, user validation, access revocation with self-protection, admin promotion, admin demotion, and self-demotion protection.
 - `/admin/user-items?id=<profile-id>`: admin-only item view grouped by current borrower, owner, and creator relationship for one profile, with visibility actions routed through `set_item_visibility`.
 - `/admin/item-versions?itemId=<item-id>`: admin-only item version timeline with restore-by-republish through the Supabase RPC contract.
@@ -58,5 +58,5 @@ Keep the roadmap in [Optimization Options](optimization-options.md) current for:
 - image-metadata suggestion application;
 - item/image-specific moderation;
 - Telegram dedupe, mute windows, and seen-state;
-- backup freshness and Supabase health visibility;
+- restore drills, encrypted backup handling, and live Supabase health visibility;
 - approved account deletion execution, Auth deletion, and Storage cleanup.

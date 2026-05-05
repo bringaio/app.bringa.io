@@ -29,7 +29,7 @@ import { useRouter } from "next/navigation";
 import { AppImage } from "@/components/ui/app-image";
 import { buildAdminRecentActivity, type AdminRecentActivity } from "@/lib/admin-recent-activity";
 import { buildAdminQueueCounts } from "@/lib/admin-queue-counts";
-import { buildAdminSystemHealthItems, type AdminSystemHealthItemKey } from "@/lib/admin-system-health";
+import { buildAdminSystemHealthItems, type AdminBackupRun, type AdminSystemHealthItemKey } from "@/lib/admin-system-health";
 import { appConfig } from "@/lib/app-config";
 
 export default function AdminDashboardPage() {
@@ -42,6 +42,7 @@ export default function AdminDashboardPage() {
 
     const [items, setItems] = useState<AdminItem[]>([]);
     const [recentActivity, setRecentActivity] = useState<AdminRecentActivity | null>(null);
+    const [latestBackupRun, setLatestBackupRun] = useState<AdminBackupRun | null | undefined>(undefined);
     const [queueCounts, setQueueCounts] = useState<{
         pendingSuggestions: number | null;
         pendingFlags: number | null;
@@ -92,6 +93,7 @@ export default function AdminDashboardPage() {
         telegramAdminNotifications: appConfig.features.telegramAdminNotifications,
         maxUploadBytes: appConfig.media.maxUploadBytes,
         acceptedImageMimeTypes: appConfig.media.acceptedImageMimeTypes,
+        latestBackupRun,
     });
 
     const healthIcons: Record<AdminSystemHealthItemKey, typeof Settings> = {
@@ -227,6 +229,27 @@ export default function AdminDashboardPage() {
 
         if (isAdmin) {
             fetchQueueCounts();
+        }
+    }, [isAdmin]);
+
+    useEffect(() => {
+        const fetchLatestBackupRun = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("backup_runs")
+                    .select("status,finished_at,table_count,table_rows,storage_bucket_count,storage_object_count,storage_bytes,auth_users_exported,auth_user_count")
+                    .order("finished_at", { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                setLatestBackupRun(error ? null : (data as AdminBackupRun | null));
+            } catch {
+                setLatestBackupRun(null);
+            }
+        };
+
+        if (isAdmin) {
+            fetchLatestBackupRun();
         }
     }, [isAdmin]);
 

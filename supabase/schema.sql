@@ -176,6 +176,24 @@ CREATE TABLE IF NOT EXISTS public.item_flags (
     CONSTRAINT item_flags_pkey PRIMARY KEY (id)
 );
 
+-- Table: backup_runs
+CREATE TABLE IF NOT EXISTS public.backup_runs (
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
+    started_at timestamp with time zone NOT NULL DEFAULT now(),
+    finished_at timestamp with time zone NOT NULL DEFAULT now(),
+    status text NOT NULL DEFAULT 'completed'::text CHECK (status = ANY (ARRAY['completed'::text, 'failed'::text])),
+    table_count integer NOT NULL DEFAULT 0 CHECK (table_count >= 0),
+    table_rows integer NOT NULL DEFAULT 0 CHECK (table_rows >= 0),
+    storage_bucket_count integer NOT NULL DEFAULT 0 CHECK (storage_bucket_count >= 0),
+    storage_object_count integer NOT NULL DEFAULT 0 CHECK (storage_object_count >= 0),
+    storage_bytes bigint NOT NULL DEFAULT 0 CHECK (storage_bytes >= 0),
+    auth_users_exported boolean NOT NULL DEFAULT false,
+    auth_user_count integer CHECK (auth_user_count IS NULL OR auth_user_count >= 0),
+    created_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT backup_runs_pkey PRIMARY KEY (id),
+    CONSTRAINT backup_runs_time_order CHECK (finished_at >= started_at)
+);
+
 -- Storage bucket for item images.
 -- Keep limits aligned with resolved deployment config media settings.
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -1468,6 +1486,7 @@ CREATE INDEX IF NOT EXISTS idx_item_flags_item_id ON public.item_flags(item_id);
 CREATE INDEX IF NOT EXISTS idx_item_flags_status_created_at ON public.item_flags(status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_item_flags_flagged_by ON public.item_flags(flagged_by);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_item_flags_one_pending_reason_per_user ON public.item_flags(item_id, flagged_by, reason) WHERE status = 'pending' AND flagged_by IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_backup_runs_finished_at ON public.backup_runs(finished_at DESC);
 
 -- 6. RLS POLICIES
 -- profiles
@@ -1585,6 +1604,17 @@ DROP POLICY IF EXISTS "No direct item flag updates" ON public.item_flags;
 CREATE POLICY "No direct item flag updates" ON public.item_flags FOR UPDATE USING (false);
 DROP POLICY IF EXISTS "No direct item flag deletes" ON public.item_flags;
 CREATE POLICY "No direct item flag deletes" ON public.item_flags FOR DELETE USING (false);
+
+-- backup_runs
+ALTER TABLE public.backup_runs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view backup runs" ON public.backup_runs;
+CREATE POLICY "Admins can view backup runs" ON public.backup_runs FOR SELECT USING (public.is_admin());
+DROP POLICY IF EXISTS "No direct backup run inserts" ON public.backup_runs;
+CREATE POLICY "No direct backup run inserts" ON public.backup_runs FOR INSERT WITH CHECK (false);
+DROP POLICY IF EXISTS "No direct backup run updates" ON public.backup_runs;
+CREATE POLICY "No direct backup run updates" ON public.backup_runs FOR UPDATE USING (false);
+DROP POLICY IF EXISTS "No direct backup run deletes" ON public.backup_runs;
+CREATE POLICY "No direct backup run deletes" ON public.backup_runs FOR DELETE USING (false);
 
 -- storage.objects
 DROP POLICY IF EXISTS "Validated users can upload item images" ON storage.objects;

@@ -201,6 +201,15 @@ async function main() {
       "item_flags status",
       "status text NOT NULL DEFAULT 'pending'::text CHECK (status = ANY (ARRAY['pending'::text, 'reviewing'::text, 'resolved'::text, 'dismissed'::text]))",
     ],
+    ["backup_runs table", "CREATE TABLE IF NOT EXISTS public.backup_runs ("],
+    [
+      "backup_runs status",
+      "status text NOT NULL DEFAULT 'completed'::text CHECK (status = ANY (ARRAY['completed'::text, 'failed'::text]))",
+    ],
+    [
+      "backup_runs time order",
+      "CONSTRAINT backup_runs_time_order CHECK (finished_at >= started_at)",
+    ],
   ];
 
   for (const [label, expectedSql] of requiredProductModelSql) {
@@ -312,6 +321,10 @@ async function main() {
     "No direct item flag inserts",
     "No direct item flag updates",
     "No direct item flag deletes",
+    "Admins can view backup runs",
+    "No direct backup run inserts",
+    "No direct backup run updates",
+    "No direct backup run deletes",
   ];
 
   for (const policyName of requiredProductPolicies) {

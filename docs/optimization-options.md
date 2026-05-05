@@ -63,8 +63,8 @@ This file is the living roadmap and anti-roadmap for ideas discovered by users a
 
 - Telegram anti-spam: send only the first unseen notification for a user's new request until an admin has viewed the latest request; support per-user mute durations. Impact: admin attention and abuse resistance. Uncertainty/research: requires event queue or notification state, plus privacy review for message contents.
 - Telegram privacy: avoid sending personal emails or sensitive details to Telegram by default. Impact: protects users. Side effect: admins may need to click into the app for details.
-- Backups: table and Storage backup script exists with optional Auth metadata export; add restore drills, encrypted retention policy, and backup freshness UI. Impact: recovery confidence. Uncertainty/research: service role scope, Supabase Auth restore limits, and Storage reconciliation details need live-project verification after setup.
-- Observability: add privacy-preserving error reporting, edge-function logs guidance, admin health checks, and backup/notification status visibility. Impact: diagnose failures without exposing user data. Uncertainty/research: choose minimal tools and avoid unnecessary tracking.
+- Backups: table and Storage backup script exists with optional Auth metadata export and admin-visible freshness metadata; add restore drills and encrypted retention policy. Impact: recovery confidence. Uncertainty/research: service role scope, Supabase Auth restore limits, and Storage reconciliation details need live-project verification after setup.
+- Observability: add privacy-preserving error reporting, edge-function logs guidance, live Supabase health checks, and notification status visibility. Impact: diagnose failures without exposing user data. Uncertainty/research: choose minimal tools and avoid unnecessary tracking.
 - Maintenance tasks: keep reminders for Supabase free-tier activity, dependency updates, config schema checks, docs review, browser-test skill updates, and fork sync research. Impact: operations stay humane.
 
 ## Developer Experience

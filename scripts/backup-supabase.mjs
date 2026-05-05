@@ -16,6 +16,7 @@ export const defaultTables = [
   "account_deletion_requests",
   "item_suggestions",
   "item_flags",
+  "backup_runs",
 ];
 export const defaultStorageBuckets = ["items"];
 
@@ -236,6 +237,41 @@ export async function fetchAuthUsers(authAdmin, pageSize) {
   }
 }
 
+export function buildBackupRunRecord({ manifest, startedAt, finishedAt, status = "completed" }) {
+  const tableRows = Object.values(manifest.tables || {}).reduce((total, value) => total + Number(value || 0), 0);
+  const storageSummaries = Object.values(manifest.storage || {});
+  const storageObjectCount = storageSummaries.reduce((total, value) => total + Number(value?.objects || 0), 0);
+  const storageBytes = storageSummaries.reduce((total, value) => total + Number(value?.bytes || 0), 0);
+  const authUsersExported = Boolean(manifest.authUsers?.exported);
+  const authUserCount = authUsersExported && typeof manifest.authUsers?.users === "number"
+    ? manifest.authUsers.users
+    : null;
+
+  return {
+    started_at: startedAt,
+    finished_at: finishedAt,
+    status,
+    table_count: Object.keys(manifest.tables || {}).length,
+    table_rows: tableRows,
+    storage_bucket_count: storageSummaries.length,
+    storage_object_count: storageObjectCount,
+    storage_bytes: storageBytes,
+    auth_users_exported: authUsersExported,
+    auth_user_count: authUserCount,
+  };
+}
+
+export async function recordBackupRun(supabase, { manifest, startedAt, finishedAt, status = "completed" }) {
+  const record = buildBackupRunRecord({ manifest, startedAt, finishedAt, status });
+  const { error } = await supabase.from("backup_runs").insert(record);
+
+  if (error) {
+    throw new Error(`backup_runs: ${error.message}`);
+  }
+
+  return record;
+}
+
 export async function main() {
   await loadEnvFile(".env.local");
   await loadEnvFile(".env");
@@ -248,9 +284,13 @@ export async function main() {
   const storagePageSize = parsePositiveInteger(process.env.SUPABASE_BACKUP_STORAGE_PAGE_SIZE, 1000, "SUPABASE_BACKUP_STORAGE_PAGE_SIZE");
   const authPageSize = parsePositiveInteger(process.env.SUPABASE_BACKUP_AUTH_PAGE_SIZE, 1000, "SUPABASE_BACKUP_AUTH_PAGE_SIZE");
   const includeAuthUsers = parseBoolean(process.env.SUPABASE_BACKUP_AUTH_USERS);
+  const recordRun = process.env.SUPABASE_BACKUP_RECORD_RUN === undefined
+    ? true
+    : parseBoolean(process.env.SUPABASE_BACKUP_RECORD_RUN);
   const backupRoot = process.env.SUPABASE_BACKUP_DIR
     ? path.resolve(root, process.env.SUPABASE_BACKUP_DIR)
     : path.join(root, "backups", "supabase");
+  const startedAt = new Date().toISOString();
   const outputDir = path.join(backupRoot, backupTimestamp());
 
   await mkdir(outputDir, { recursive: true });
@@ -263,7 +303,8 @@ export async function main() {
   });
 
   const manifest = {
-    createdAt: new Date().toISOString(),
+    createdAt: startedAt,
+    finishedAt: null,
     supabaseUrl,
     tables: {},
     storage: {},
@@ -304,7 +345,19 @@ export async function main() {
     };
   }
 
+  const finishedAt = new Date().toISOString();
+  manifest.finishedAt = finishedAt;
+
   await writeFile(path.join(outputDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+
+  if (recordRun) {
+    try {
+      await recordBackupRun(supabase, { manifest, startedAt, finishedAt });
+    } catch (error) {
+      console.warn(`Backup files were written, but backup run status was not recorded: ${error.message}`);
+    }
+  }
+
   console.log(`Supabase backup written to ${path.relative(root, outputDir)}`);
 }
 

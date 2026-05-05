@@ -20,6 +20,10 @@ title: Maintenance
 
 Set `SUPABASE_BACKUP_AUTH_USERS=1` to export Supabase Auth user metadata through the Admin API to `auth-users.json`. This does not export passwords, provider secrets, or a complete Auth restore package; treat it as operator metadata for reconciliation. Keep backup directories encrypted at rest and test restore procedures before relying on them operationally.
 
+After `backup_runs` has been migrated, the backup script records compact run metadata in Supabase by default. The admin dashboard reads the latest admin-visible row to show backup freshness without exposing backup files or project secrets in public assets. Set `SUPABASE_BACKUP_RECORD_RUN=0` to skip this status write for a one-off run.
+
+Supabase database backups do not restore Storage object bytes, and Auth exports are not complete account restore packages. Treat table JSON, Storage object downloads, optional Auth metadata, and Supabase platform backups as separate recovery surfaces that need their own restore drill.
+
 User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed and do not remove Auth users or Storage objects by themselves.
 
 ## Local Verification Notes
@@ -30,5 +34,5 @@ User-facing data export is separate from operator backups. It is provided throug
 ## Current Known Gaps
 
 - Supabase MCP/service-role review is pending.
-- Restore drills, encrypted backup retention policy, and backup freshness UI are pending.
+- Restore drills and encrypted backup retention policy are pending.
 - Maskable PNG icons and complete homescreen testing are pending.
