@@ -27,7 +27,7 @@ Bringa starts as a focused sharing and borrowing app for communities. The long-t
 
 - Keep sensitive Supabase mutations behind RPCs and enforce RLS as the primary data boundary.
 - Review live schema, RLS, functions, triggers, Storage, and Edge Functions with approved access before production-readiness claims.
-- Complete live backup restore drills, encrypted retention policy, account deletion cleanup rehearsal, and privacy-preserving observability setup.
+- Complete live backup restore drills, project-specific encrypted retention approval, account deletion cleanup rehearsal, live notification delivery evidence, and any deployment-specific observability setup.
 - Keep contribution terms deployment-specific, with public-domain intent where possible and a reviewed fallback operator license where required.
 
 ## Longer Direction

@@ -14,6 +14,12 @@ This runbook is the source of truth for privacy-preserving observability in the 
 - Choose a privacy-preserving error reporting tool only after explicit decision.
 - Record retention, access, region, consent, and sampling behavior outside committed secrets before enabling it.
 
+## Default Error Reporting Decision
+
+For the first open-source release, no external error-reporting service is necessary in the upstream default. This keeps fork setup simple, avoids surprise tracking, and preserves the current static-host plus Supabase quick-start path.
+
+Deployment-specific error reporting remains opt-in. Before production use, operators that enable a provider must document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements outside committed secrets. They must also verify browser payloads and server logs with redacted evidence before claiming the deployment is production-ready.
+
 ## Privacy Boundaries
 
 - Do not log Supabase secret keys, service-role keys, access tokens, provider secrets, private URLs, personal data, or real row contents.
@@ -49,7 +55,7 @@ This runbook is the source of truth for privacy-preserving observability in the 
 
 ## Live Setup Tasks
 
-- [ ] Choose whether any external error-reporting service is necessary.
+- [x] Decide the upstream default for external error reporting: none for the first open-source release.
 - [ ] Define retention and access rules for logs and screenshots.
 - [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
@@ -63,5 +69,5 @@ This runbook is the source of truth for privacy-preserving observability in the 
 - Auth logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06 without app auth failures in the redacted review. The known Supabase-managed GoTrue default/admin group deprecation warnings remain and should be rechecked after Auth provider setup.
 - API and Storage logs on 2026-05-06 showed successful management health and bucket metadata requests. Postgres logs showed routine connection and checkpoint messages in the redacted review. This is service-health evidence, not connected browser-auth or Telegram-delivery evidence.
 - Live schema/key/API health checks passed on 2026-05-05; full connected-auth behavior still needs browser evidence.
-- No external error reporting is configured.
+- No external error reporting is configured by design in the upstream default. Deployment-specific tools remain opt-in and must follow the default decision checklist before production use.
 - Browser/PWA failure evidence is still pending.

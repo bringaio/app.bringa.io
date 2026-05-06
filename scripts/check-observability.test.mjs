@@ -29,7 +29,12 @@ test("accepts privacy-preserving observability runbook content", () => {
 - Observability should help maintainers diagnose failures without exposing personal data.
 - Use local checks, Admin dashboard system health, Supabase metadata, Edge Function logs, and notification status before inspecting row contents.
 - No third-party error reporting service is configured by default.
-- Choose a privacy-preserving error reporting tool only after explicit decision.
+
+## Default Error Reporting Decision
+
+- For the first open-source release, no external error-reporting service is necessary in the upstream default.
+- Deployment-specific error reporting remains opt-in.
+- Operators that enable one must document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements before production use.
 
 ## Privacy Boundaries
 
@@ -64,7 +69,7 @@ test("accepts privacy-preserving observability runbook content", () => {
 
 ## Live Setup Tasks
 
-- [ ] Choose whether any external error-reporting service is necessary.
+- [x] Decide the upstream default for external error reporting: none for the first open-source release.
 - [ ] Define retention and access rules for logs and screenshots.
 - [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
@@ -77,7 +82,7 @@ test("accepts privacy-preserving observability runbook content", () => {
 - Supabase Edge Function logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06; no Edge Function invocations were present in the latest 24-hour window.
 - Auth logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06 without app auth failures in the redacted review.
 - API and Storage logs on 2026-05-06 showed successful management health and bucket metadata requests.
-- No external error reporting is configured.
+- No external error reporting is configured by design in the upstream default.
 - Live schema/key/API health checks passed on 2026-05-05; full connected-auth behavior still needs browser evidence.
 - Browser/PWA failure evidence is still pending.
 `));
@@ -95,6 +100,9 @@ test("rejects observability runbooks that omit the privacy boundary", () => {
 ## Privacy Boundaries
 - Prefer counts.
 
+## Default Error Reporting Decision
+- For the first open-source release, no external error-reporting service is necessary in the upstream default.
+
 ## Current Signals
 - \`pnpm check:config\`
 
@@ -102,7 +110,7 @@ test("rejects observability runbooks that omit the privacy boundary", () => {
 - Run checks.
 
 ## Live Setup Tasks
-- [ ] Choose whether any external error-reporting service is necessary.
+- [x] Decide the upstream default for external error reporting: none for the first open-source release.
 
 ## Known Gaps
 - No external error reporting is configured.

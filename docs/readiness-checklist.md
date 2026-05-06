@@ -94,7 +94,8 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] Live restore drills and project-specific encrypted backup retention approval are complete with approved access and policy.
 - [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 - [x] Privacy-preserving observability runbook is documented and checked.
-- [ ] Live Supabase health checks, Edge Function log review, and any external error-reporting decision are complete with approved access and policy.
+- [x] Upstream default external error reporting decision is documented: no third-party service for the first open-source release.
+- [ ] Live notification delivery log review and any deployment-specific observability tool decision are complete with approved access and policy.
 
 ## Verification Before Release
 

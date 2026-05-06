@@ -7,6 +7,7 @@ const observabilityPath = path.join(root, "docs", "observability.md");
 
 const requiredSections = [
   "Scope",
+  "Default Error Reporting Decision",
   "Privacy Boundaries",
   "Current Signals",
   "Failure Triage",
@@ -30,7 +31,9 @@ const requiredPhrases = [
   "Supabase dashboard Invocations can show request and response data, including headers and body.",
   "Supabase Logs Explorer can query auth_logs, edge_logs, function_edge_logs, function_logs, postgres_logs, realtime_logs, and storage_logs.",
   "No third-party error reporting service is configured by default.",
-  "Choose a privacy-preserving error reporting tool only after explicit decision.",
+  "For the first open-source release, no external error-reporting service is necessary in the upstream default.",
+  "Deployment-specific error reporting remains opt-in.",
+  "document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements",
   "Supabase Edge Function logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06; no Edge Function invocations were present in the latest 24-hour window.",
   "Auth logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06 without app auth failures in the redacted review.",
   "API and Storage logs on 2026-05-06 showed successful management health and bucket metadata requests.",
@@ -39,7 +42,7 @@ const requiredPhrases = [
 ];
 
 const requiredTasks = [
-  "- [ ] Choose whether any external error-reporting service is necessary.",
+  "- [x] Decide the upstream default for external error reporting: none for the first open-source release.",
   "- [ ] Define retention and access rules for logs and screenshots.",
   "- [x] Verify Supabase Edge Function logs with approved access.",
   "- [x] Verify live Supabase schema/key/API health checks with approved project access.",

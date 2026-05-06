@@ -80,4 +80,4 @@ Use short-lived PR branches for generic upstream work. Keep optional long-lived 
 - `docs/readiness-checklist.md` names unresolved external blockers instead of implying they are solved.
 - Manual CI and Pages workflows stay secret-free and `workflow_dispatch` only.
 - Browser evidence covers local demo, connected Supabase auth, long-content states, admin routes, mobile, desktop, and PWA install where supported.
-- Live Supabase schema, RLS, Storage, Edge Functions, and an empty-baseline backup have been reviewed with approved access; Auth redirects, Edge Function secrets, Telegram webhook settings, live restore drills, project-specific backup retention approval, and observability evidence remain before any production-readiness claim.
+- Live Supabase schema, RLS, Storage, Edge Functions, an empty-baseline backup, and the no-third-party upstream observability default have been reviewed; Auth redirects, Edge Function secrets, Telegram webhook settings, live restore drills, project-specific backup retention approval, and live notification delivery evidence remain before any production-readiness claim.

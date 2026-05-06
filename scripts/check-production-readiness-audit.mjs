@@ -64,7 +64,7 @@ const requiredPhrases = [
   "GitHub branch protection, forkability, and manual Pages deployment settings require repository UI, organization policy, visibility, or plan access.",
   "GitHub Pages site creation and private-repository fork enabling currently return plan or organization-policy limitations.",
   "Live Supabase schema, RLS, functions, triggers, Storage, Edge Functions, advisor remediation, Storage bucket metadata, and an empty-baseline backup have approved evidence.",
-  "Live Supabase health checks beyond schema/key/API smoke tests and any external error-reporting decision require final operator policy.",
+  "Live Supabase health checks beyond schema/key/API smoke tests and any deployment-specific observability tool decision require final operator policy.",
   "Supabase Edge Function logs were checked on 2026-05-05 and rechecked on 2026-05-06 with no invocations in the latest 24-hour windows",
   "Auth logs still show the known Supabase-managed GoTrue default/admin group deprecation warnings after the 2026-05-06 redacted review.",
   "Local app development now defaults to the local Supabase CLI stack for free-account-oriented forks.",
