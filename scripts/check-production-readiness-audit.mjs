@@ -71,7 +71,7 @@ const requiredPhrases = [
   "Supabase Branching is optional for paid remote-preview, staging, or QA workflows",
   "Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence.",
   "Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.",
-  "Live restore drills and encrypted backup handling still need approved access and policy.",
+  "Live restore drills and project-specific encrypted backup retention approval still need approved access and policy.",
   "Do not mark the active goal complete until every blocker is either resolved with evidence or explicitly descoped by the user.",
 ];
 

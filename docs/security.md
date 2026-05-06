@@ -95,7 +95,7 @@ Important security ideas that are not ready to implement yet belong in [Optimiza
 
 - Storage upload hardening and cleanup semantics;
 - optional Supabase development branch Storage/Auth/secret isolation proof before any paid branch workflow is used;
-- restore drill and encrypted retention policy evidence;
+- restore drill evidence and project-specific encrypted retention approval beyond the starter policy template;
 - Auth diagnostics follow-up after provider setup;
 - browser evidence for auth, admin, settings, upload, responsive, and PWA flows;
 - future CSP/security-header strategy for GitHub Pages and alternative static hosts;

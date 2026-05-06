@@ -30,7 +30,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Auth and onboarding decision boundaries | `pnpm test:auth-redirect`, `pnpm test:protected-route`, `docs/supabase-branching.md` Auth redirect URL tasks | Partial until live Auth provider and browser persistence review |
 | Media upload and Storage contract | `src/lib/media.ts`, create/edit item routes, `supabase/schema.sql`, `pnpm check:supabase-contract` | Partial until browser upload evidence and optional branch Storage behavior if Branching is chosen |
 | Browser, accessibility, and PWA QA | `docs/browser-testing.md`, `.agents/skills/agentic-browser-testing/SKILL.md`, local in-app browser pass, `pnpm test:pwa-manifest` | Partial until connected auth, PWA, slow-network, and target-browser evidence |
-| Backups, restore, and deletion cleanup | `scripts/backup-supabase.mjs`, `scripts/verify-supabase-backup.mjs`, `scripts/cleanup-account-deletion.mjs`, `docs/maintenance.md`, `docs/restore-drills.md`, `pnpm test:account-deletion-cleanup`, `pnpm check:restore-drills` | Partial until live rehearsal and retention policy |
+| Backups, restore, and deletion cleanup | `scripts/backup-supabase.mjs`, `scripts/verify-supabase-backup.mjs`, `scripts/cleanup-account-deletion.mjs`, `docs/maintenance.md`, `docs/restore-drills.md`, `pnpm test:account-deletion-cleanup`, `pnpm check:restore-drills` | Partial; starter retention template covered, live rehearsal and project-specific policy approval remain |
 | Privacy-preserving observability | `docs/observability.md`, `pnpm test:observability`, `pnpm check:observability` | Partial until live log review and external error-reporting decision |
 | Dependency and tooling currency | `package.json`, `pnpm-lock.yaml`, `docs/dependency-audit.md`, `pnpm outdated` | Partial; major upgrades intentionally deferred |
 | German organization wording removed from English docs | `pnpm check:copy` and direct `rg` check | Covered |
@@ -64,7 +64,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 - Local app development now defaults to the local Supabase CLI stack for free-account-oriented forks. Supabase Branching is optional for paid remote-preview, staging, or QA workflows and is not required for the first open-source release path.
 - Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence. Connected auth and target-browser coverage remain open.
 - Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.
-- Live restore drills and encrypted backup handling still need approved access and policy.
+- Live restore drills and project-specific encrypted backup retention approval still need approved access and policy.
 
 ## Completion Rule
 

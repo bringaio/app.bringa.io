@@ -57,7 +57,7 @@ function validAuditContent() {
 - Local app development now defaults to the local Supabase CLI stack for free-account-oriented forks. Supabase Branching is optional for paid remote-preview, staging, or QA workflows and is not required for the first open-source release path.
 - Auth persistence, logout, PWA install, slow network, and long-content states still need browser evidence.
 - Trusted account deletion cleanup still needs approved rehearsal or production run with backup/export evidence and operator retention policy.
-- Live restore drills and encrypted backup handling still need approved access and policy.
+- Live restore drills and project-specific encrypted backup retention approval still need approved access and policy.
 
 ## Completion Rule
 

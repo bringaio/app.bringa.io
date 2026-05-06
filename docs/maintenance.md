@@ -30,7 +30,9 @@ Run `pnpm verify:backup <backup-directory>` after a local backup and before any 
 
 Supabase database backups do not restore Storage object bytes, and Auth exports are not complete account restore packages. Treat table JSON, Storage object downloads, optional Auth metadata, and Supabase platform backups as separate recovery surfaces that need their own restore drill.
 
-Use [Restore Drills](restore-drills.md) for the evidence checklist before claiming recovery readiness. Restore evidence must identify the non-production target, verified backup directory, database restore method, Storage restore method, Auth metadata reconciliation, encrypted-at-rest location, retention period, and cleanup decision.
+Use [Restore Drills](restore-drills.md) for the evidence checklist before claiming recovery readiness. Restore evidence must identify the non-production target, verified backup directory, database restore method, Storage restore method, Auth metadata reconciliation, encrypted-at-rest location, retention class, retention period, deletion date, deletion verification method, and cleanup decision.
+
+Until a deployment-specific retention policy exists, use the restore-drill starter policy: retain pre-change backups for 30 days, delete restore-drill targets and drill backups within 7 days after evidence is accepted, keep incident holds only with an owner and review date, and preserve durable evidence as redacted manifests, counts, hashes, and command output rather than raw user data.
 
 User-facing data export is separate from operator backups. It is provided through `export_my_data` and covers the authenticated user's profile, created items, borrowed items, borrow history, deletion request history, item suggestions, and item flags. Account deletion requests are operator-reviewed. The approved database-side completion stage anonymizes app data and hides user-owned contributions, but Supabase Auth deletion and Storage object cleanup still require a trusted server-side maintenance workflow.
 
@@ -60,5 +62,5 @@ Suggested security checks by change type:
 ## Current Known Gaps
 
 - Supabase live schema and Edge Function baseline exists; Auth provider redirects, Edge Function secrets, and restore drills are still pending.
-- Live restore drills and encrypted backup retention policy are pending.
+- Live restore drills and project-specific encrypted backup retention approval are pending beyond the starter policy template.
 - Complete homescreen, PWA install, and platform-specific icon behavior testing are pending.

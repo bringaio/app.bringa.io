@@ -90,8 +90,8 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [x] A 2026-05-05 live empty-baseline backup was written and verified after the initial schema setup.
 - [x] Maintenance docs distinguish operator table/Storage backups, optional Auth metadata export, and user-facing export.
 - [x] Data export includes profile, items, borrow history, deletion requests, suggestions, and flags.
-- [x] Restore drill and encrypted retention evidence requirements are documented and checked.
-- [ ] Live restore drills and encrypted backup handling are complete with approved access and policy.
+- [x] Restore drill evidence requirements and starter encrypted-retention policy template are documented and checked.
+- [ ] Live restore drills and project-specific encrypted backup retention approval are complete with approved access and policy.
 - [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 - [x] Privacy-preserving observability runbook is documented and checked.
 - [ ] Live Supabase health checks, Edge Function log review, and any external error-reporting decision are complete with approved access and policy.
