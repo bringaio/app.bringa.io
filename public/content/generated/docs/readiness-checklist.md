@@ -94,7 +94,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 
 ## Verification Before Release
 
-2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. A recent branch run, `25407429297` on commit `60faac216320305f5867f9a75e93416a0e821580`, passed the full secret-free workflow after adding the redacted Supabase live observability follow-up evidence and checker coverage. Keep the newest run evidence in the active pull request when the checklist itself only changes evidence wording.
+2026-05-05 manual GitHub Actions run `25392381617` on `main` passed the full secret-free quality workflow on commit `d9f842e11f20648720849852f98ce52dd49b583a`, including generated config, unit/script checks, documentation checks, committed secret scanning, lint, TypeScript, and static build. The latest branch run, `25409135823` on commit `667c2fa27d11ec3f11c2a1e5a688907cf01b7bd2`, passed the full secret-free workflow after adding production bundle fixture isolation, the production bundle checker, and the readiness-audit evidence update. Keep the newest run evidence in the active pull request when the checklist itself only changes evidence wording.
 
 - [ ] `pnpm check:config`
 - [ ] `pnpm test:config`
