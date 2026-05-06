@@ -36,6 +36,12 @@ test("accepts privacy-preserving observability runbook content", () => {
 - Deployment-specific error reporting remains opt-in.
 - Operators that enable one must document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements before production use.
 
+## Evidence Retention And Access
+
+- Keep durable observability evidence to redacted command output, counts, status fields, timestamps, hashes, and screenshots that contain no personal data.
+- Delete temporary log exports and screenshots within 14 days after the issue, review, or release decision is closed unless an incident hold records an owner and review date.
+- Raw provider logs should stay in the provider console or approved secure storage, not in Git, generated docs, issues, pull requests, screenshots, or chat.
+
 ## Privacy Boundaries
 
 - Do not log Supabase secret keys, service-role keys, access tokens, provider secrets, private URLs, personal data, or real row contents.
@@ -70,7 +76,7 @@ test("accepts privacy-preserving observability runbook content", () => {
 ## Live Setup Tasks
 
 - [x] Decide the upstream default for external error reporting: none for the first open-source release.
-- [ ] Define retention and access rules for logs and screenshots.
+- [x] Define retention and access rules for logs and screenshots.
 - [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
 - [ ] Verify live restore drill evidence.
@@ -103,6 +109,9 @@ test("rejects observability runbooks that omit the privacy boundary", () => {
 ## Default Error Reporting Decision
 - For the first open-source release, no external error-reporting service is necessary in the upstream default.
 
+## Evidence Retention And Access
+- Keep durable observability evidence to redacted command output, counts, status fields, timestamps, hashes, and screenshots that contain no personal data.
+
 ## Current Signals
 - \`pnpm check:config\`
 
@@ -111,6 +120,7 @@ test("rejects observability runbooks that omit the privacy boundary", () => {
 
 ## Live Setup Tasks
 - [x] Decide the upstream default for external error reporting: none for the first open-source release.
+- [x] Define retention and access rules for logs and screenshots.
 
 ## Known Gaps
 - No external error reporting is configured.

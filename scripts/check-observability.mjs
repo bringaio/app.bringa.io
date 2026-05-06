@@ -8,6 +8,7 @@ const observabilityPath = path.join(root, "docs", "observability.md");
 const requiredSections = [
   "Scope",
   "Default Error Reporting Decision",
+  "Evidence Retention And Access",
   "Privacy Boundaries",
   "Current Signals",
   "Failure Triage",
@@ -34,6 +35,9 @@ const requiredPhrases = [
   "For the first open-source release, no external error-reporting service is necessary in the upstream default.",
   "Deployment-specific error reporting remains opt-in.",
   "document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements",
+  "Keep durable observability evidence to redacted command output, counts, status fields, timestamps, hashes, and screenshots that contain no personal data.",
+  "Delete temporary log exports and screenshots within 14 days after the issue, review, or release decision is closed unless an incident hold records an owner and review date.",
+  "Raw provider logs should stay in the provider console or approved secure storage, not in Git, generated docs, issues, pull requests, screenshots, or chat.",
   "Supabase Edge Function logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06; no Edge Function invocations were present in the latest 24-hour window.",
   "Auth logs were checked on 2026-05-05 and rechecked through Supabase MCP on 2026-05-06 without app auth failures in the redacted review.",
   "API and Storage logs on 2026-05-06 showed successful management health and bucket metadata requests.",
@@ -43,7 +47,7 @@ const requiredPhrases = [
 
 const requiredTasks = [
   "- [x] Decide the upstream default for external error reporting: none for the first open-source release.",
-  "- [ ] Define retention and access rules for logs and screenshots.",
+  "- [x] Define retention and access rules for logs and screenshots.",
   "- [x] Verify Supabase Edge Function logs with approved access.",
   "- [x] Verify live Supabase schema/key/API health checks with approved project access.",
   "- [ ] Verify live restore drill evidence.",

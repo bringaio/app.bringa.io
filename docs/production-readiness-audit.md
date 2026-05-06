@@ -35,7 +35,7 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Media upload and Storage contract | `src/lib/media.ts`, create/edit item routes, `supabase/schema.sql`, `pnpm check:supabase-contract` | Partial until browser upload evidence and optional branch Storage behavior if Branching is chosen |
 | Browser, accessibility, and PWA QA | `docs/browser-testing.md`, `.agents/skills/agentic-browser-testing/SKILL.md`, local in-app browser pass, `pnpm test:pwa-manifest` | Partial until connected auth, PWA, slow-network, and target-browser evidence |
 | Backups, restore, and deletion cleanup | `scripts/backup-supabase.mjs`, `scripts/verify-supabase-backup.mjs`, `scripts/cleanup-account-deletion.mjs`, `docs/maintenance.md`, `docs/restore-drills.md`, `pnpm test:account-deletion-cleanup`, `pnpm check:restore-drills` | Partial; starter retention template covered, live rehearsal and project-specific policy approval remain |
-| Privacy-preserving observability | `docs/observability.md`, `pnpm test:observability`, `pnpm check:observability` | Partial; upstream no-third-party default covered, live notification delivery and deployment-specific tool evidence remain |
+| Privacy-preserving observability | `docs/observability.md`, `pnpm test:observability`, `pnpm check:observability` | Partial; upstream no-third-party default and log/screenshot retention covered, live notification delivery and deployment-specific tool evidence remain |
 | Dependency and tooling currency | `package.json`, `pnpm-lock.yaml`, `docs/dependency-audit.md`, `pnpm outdated` | Partial; major upgrades intentionally deferred |
 | German organization wording removed from English docs | `pnpm check:copy` and direct `rg` check | Covered |
 

@@ -20,6 +20,14 @@ For the first open-source release, no external error-reporting service is necess
 
 Deployment-specific error reporting remains opt-in. Before production use, operators that enable a provider must document provider, region, retention, sampling, PII scrubbing, source-map policy, access owners, and consent or notice requirements outside committed secrets. They must also verify browser payloads and server logs with redacted evidence before claiming the deployment is production-ready.
 
+## Evidence Retention And Access
+
+- Keep durable observability evidence to redacted command output, counts, status fields, timestamps, hashes, and screenshots that contain no personal data.
+- Delete temporary log exports and screenshots within 14 days after the issue, review, or release decision is closed unless an incident hold records an owner and review date.
+- Raw provider logs should stay in the provider console or approved secure storage, not in Git, generated docs, issues, pull requests, screenshots, or chat.
+- Limit raw log and screenshot access to operators or maintainers who need it for the current issue, release check, or incident.
+- Prefer local demo, local Supabase, or explicitly approved staging screenshots for public evidence. Do not publish production screenshots unless the operator has reviewed them for personal data, private URLs, tokens, and free text.
+
 ## Privacy Boundaries
 
 - Do not log Supabase secret keys, service-role keys, access tokens, provider secrets, private URLs, personal data, or real row contents.
@@ -56,7 +64,7 @@ Deployment-specific error reporting remains opt-in. Before production use, opera
 ## Live Setup Tasks
 
 - [x] Decide the upstream default for external error reporting: none for the first open-source release.
-- [ ] Define retention and access rules for logs and screenshots.
+- [x] Define retention and access rules for logs and screenshots.
 - [x] Verify Supabase Edge Function logs with approved access.
 - [x] Verify live Supabase schema/key/API health checks with approved project access.
 - [ ] Verify live restore drill evidence.

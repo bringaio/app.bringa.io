@@ -95,6 +95,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [x] Telegram notification dedupe, mute windows, retry state, and privacy review are complete in the local contract.
 - [x] Privacy-preserving observability runbook is documented and checked.
 - [x] Upstream default external error reporting decision is documented: no third-party service for the first open-source release.
+- [x] Log and screenshot retention/access defaults are documented for observability evidence.
 - [ ] Live notification delivery log review and any deployment-specific observability tool decision are complete with approved access and policy.
 
 ## Verification Before Release
