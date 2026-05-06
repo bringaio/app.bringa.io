@@ -48,6 +48,11 @@ const requiredSecurityPhrases = [
   "Edge Function log review without copying personal data",
   "Auth log review after provider and redirect configuration",
   "browser evidence",
+  "Static Hosting Headers",
+  "GitHub Pages is the default deployment path and provides HTTPS enforcement",
+  "do not treat it as a configurable security-header layer",
+  "Do not promise repository-managed CSP, Referrer-Policy, Permissions-Policy, or Cache-Control headers on GitHub Pages.",
+  "Cloudflare Pages with a `_headers` file",
 ];
 
 const requiredMaintenancePhrases = [

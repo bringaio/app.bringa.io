@@ -38,6 +38,7 @@ Recommended rules:
 - Protect the `github-pages` environment if deployments should require approval.
 - Keep app deployment secret-free and run it manually from `main` or an intentional `deploy/<slug>` branch when deployment is needed.
 - Use `.github/workflows/pages.yml` to build `out/` and deploy the artifact with GitHub Pages Actions from `main` or `deploy/*`.
+- Do not rely on GitHub Pages for repository-managed CSP, Referrer-Policy, Permissions-Policy, or Cache-Control headers. Use [Security](security.md) when deciding whether a fork needs Cloudflare Pages, Netlify, or a reverse proxy/Worker for custom HTTP security headers.
 
 ## Custom App Domain
 

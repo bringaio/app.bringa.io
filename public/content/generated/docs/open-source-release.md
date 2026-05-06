@@ -60,6 +60,8 @@ Keep production redirect URLs exact. Use localhost or documented wildcard redire
 
 The default documented deployment path is GitHub Pages plus hosted Supabase because it keeps first use simple and low-maintenance. The app is still a static Next.js export backed by Supabase, so other hosts such as Cloudflare Pages and self-hosted Supabase are technically possible. They are intentionally mentioned here without detailed runbooks until real operators need them.
 
+GitHub Pages is the simple default, not the strongest possible HTTP-header platform. If a deployment needs custom CSP, Referrer-Policy, Permissions-Policy, or cache headers, choose a capable static host or proxy and follow [Security](security.md). Keep that provider-specific path outside the default quick start until an operator actually needs it.
+
 ## Pull Requests From Forks
 
 Keep these concerns separate:

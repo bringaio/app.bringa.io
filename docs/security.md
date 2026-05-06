@@ -27,6 +27,20 @@ For vulnerability reporting, use the root `SECURITY.md`. For operational securit
 - Local demo mode, invite flow, protected routes, admin routes, profile completion, account export, and account deletion cleanup.
 - GitHub Actions workflows, repository settings, branch protection, and release process.
 
+## Static Hosting Headers
+
+2026-05-06 documentation review: GitHub Pages is the default deployment path and provides HTTPS enforcement, but do not treat it as a configurable security-header layer. Do not promise repository-managed CSP, Referrer-Policy, Permissions-Policy, or Cache-Control headers on GitHub Pages.
+
+For the GitHub Pages default, keep the static export small, secret-free, HTTPS-only, and protected by Supabase RLS, Storage policies, exact Auth redirect URLs, local-demo production guards, and production bundle checks. If an operator requires custom HTTP security headers, use a host that supports them, such as Cloudflare Pages with a `_headers` file, Netlify headers, or a reverse proxy or Worker. Document that as a deployment-provider adapter, not as a GitHub Pages feature.
+
+Potential stronger header policy for capable hosts:
+
+- `Content-Security-Policy` after measuring the app's current script, style, image, and Supabase connection needs;
+- `Referrer-Policy`, usually `strict-origin-when-cross-origin` or stricter after OAuth/provider checks;
+- `Permissions-Policy` with unused browser features disabled;
+- `X-Content-Type-Options: nosniff`;
+- cache headers that preserve static asset performance without making generated config or HTML stale.
+
 ## Security Maintenance Workflow
 
 Use `.agents/skills/security-maintenance/` after dependency upgrades, Supabase schema or policy changes, Edge Function changes, Auth changes, deployment workflow changes, or before release-readiness claims.

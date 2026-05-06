@@ -62,6 +62,12 @@ Passing local checks is not enough for a production-readiness claim unless those
 - Edge Function log review without copying personal data;
 - Auth log review after provider and redirect configuration;
 - browser evidence for auth, admin, upload, settings, responsive, and PWA flows when UI behavior changed.
+
+## Static Hosting Headers
+
+GitHub Pages is the default deployment path and provides HTTPS enforcement, but do not treat it as a configurable security-header layer.
+Do not promise repository-managed CSP, Referrer-Policy, Permissions-Policy, or Cache-Control headers on GitHub Pages.
+If an operator requires custom HTTP security headers, use a host that supports them, such as Cloudflare Pages with a \`_headers\` file, Netlify headers, or a reverse proxy or Worker.
 `;
 
 const validMaintenanceDoc = `
