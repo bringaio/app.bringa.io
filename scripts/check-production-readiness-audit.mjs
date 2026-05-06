@@ -60,6 +60,7 @@ const requiredPhrases = [
   "`pnpm check:secrets`",
   "`pnpm test:security-maintenance`",
   "`pnpm check:security-maintenance`",
+  "abuse controls",
   "`pnpm check:release-checklist`",
   "GitHub branch protection, forkability, and manual Pages deployment settings require repository UI, organization policy, visibility, or plan access.",
   "GitHub Pages site creation and private-repository fork enabling currently return plan or organization-policy limitations.",

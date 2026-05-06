@@ -12,8 +12,8 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
 - [x] `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, and the pull request template exist.
-- [x] Security maintenance, fork safety, server-only key handling, live evidence expectations, and security optimization gaps are documented.
-- [x] Security maintenance docs, skill guidance, local checks, and live-evidence caveats are aligned by `pnpm check:security-maintenance`.
+- [x] Security maintenance, fork safety, server-only key handling, live evidence expectations, abuse controls, and security optimization gaps are documented.
+- [x] Security maintenance docs, abuse-control guidance, skill guidance, local checks, and live-evidence caveats are aligned by `pnpm check:security-maintenance`.
 - [x] GitHub merge settings prefer rebase merges, disable merge and squash merges, allow pull request branch updates, and delete merged head branches automatically.
 - [x] GitHub repository description and topics are configured for open-source discovery.
 - [ ] Repository visibility or organization policy allows forks.

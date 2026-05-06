@@ -22,7 +22,7 @@ function validAuditContent() {
 | Source of truth and hyperoptimum | \`docs/hyperoptimum.md\`, \`docs/optimization-options.md\`, \`.agents/rules/source-of-truth.md\` | Covered |
 | Naming conventions and developer experience | \`docs/conventions.md\`, \`pnpm test:naming-conventions\`, \`pnpm check:naming-conventions\` | Covered |
 | Forkability and configuration | \`config/base.config.jsonc\`, \`config/deployments/app.bringa.io.jsonc\`, \`docs/configuration.md\`, \`docs/forking.md\` | Covered |
-| Security maintenance and fork safety | \`SECURITY.md\`, \`docs/security.md\`, \`docs/maintenance.md\`, \`.agents/skills/security-maintenance/SKILL.md\`, \`.agents/skills/fork-operator-onboarding/SKILL.md\`, \`pnpm test:security-maintenance\`, \`pnpm check:security-maintenance\`, \`pnpm check:secrets\`, \`pnpm check:release-checklist\` | Covered locally |
+| Security maintenance and fork safety | \`SECURITY.md\`, \`docs/security.md\`, \`docs/maintenance.md\`, \`.agents/skills/security-maintenance/SKILL.md\`, \`.agents/skills/fork-operator-onboarding/SKILL.md\`, \`pnpm test:security-maintenance\`, \`pnpm check:security-maintenance\`, abuse controls, \`pnpm check:secrets\`, \`pnpm check:release-checklist\` | Covered locally |
 | Secret-free manual CI/CD | \`.github/workflows/ci.yml\`, \`docs/conventions.md\`, \`pnpm check:github-workflows\`, \`pnpm check:edge-functions\` | Covered |
 | Supabase contract and privacy | \`supabase/schema.sql\`, \`supabase/migrations/\`, \`docs/supabase-contract-audit.md\`, \`pnpm test:supabase-contract\`, \`pnpm check:supabase-contract\`, \`pnpm check:supabase-mcp\`, \`pnpm check:edge-functions\` | Partial |
 | Local Supabase development default | \`docs/local-supabase-development.md\`, \`scripts/seed-local-supabase.mjs\`, \`pnpm test:local-supabase\`, \`pnpm check:local-supabase\`, \`pnpm test:supabase-cli\`, \`pnpm check:supabase-cli\` | Covered locally |
@@ -116,5 +116,12 @@ test("requires security maintenance checker evidence", () => {
         .replace("`pnpm check:security-maintenance`, ", ""),
     ),
     /security-maintenance/,
+  );
+});
+
+test("requires abuse-control evidence in the security audit row", () => {
+  assert.throws(
+    () => checkProductionReadinessAuditContent(validAuditContent().replace("abuse controls, ", "")),
+    /abuse controls/,
   );
 });
