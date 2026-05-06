@@ -30,6 +30,7 @@ Supabase Branching is not the default development path for free-account-oriented
 - Supabase's GitHub integration can deploy migrations, Edge Functions, and Storage buckets declared in `config.toml` when a production branch is pushed or merged. Treat that as a later trusted-environment option, not a default secret-free CI behavior.
 - This repository installs the Supabase CLI as a repo-local dev dependency. Use the repo-local Supabase CLI through `pnpm exec supabase ...` for operator commands so agents and forks do not rely on a global CLI install.
 - Remote branch commands require `supabase login` or `SUPABASE_ACCESS_TOKEN`. Keep access tokens outside Git, generated docs, screenshots, and chat.
+- 2026-05-06 Supabase MCP metadata confirmed the upstream `app.bringa.io` project is active in a Free Plan organization. `list_branches` still returned `Project reference is missing when validating permissions`, so no branch workflow is currently usable through MCP for this project.
 
 ## Target State
 

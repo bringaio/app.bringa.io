@@ -36,7 +36,7 @@ Help operators get from fork to usable app without leaking secrets or making ups
    BRINGA_DEPLOYMENT=<slug> pnpm check:config
    ```
 
-7. For development, prefer local demo mode or the local Supabase CLI stack before creating any hosted dev project or paid Supabase branch. Run `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, and `BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev` when backend behavior needs real Supabase services.
+7. For development, prefer local demo mode or the local Supabase CLI stack before creating any hosted dev project or paid Supabase branch. Run `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, `pnpm doctor:local-supabase`, and `BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev` when backend behavior needs real Supabase services.
 8. For hosted Supabase setup, prefer a fresh project, apply the committed schema/migrations, configure Auth Site URL and redirect URLs, then verify RLS, Storage, Edge Functions, and maintenance-key access before disabling local demo mode.
 9. For GitHub Pages, keep workflows manual-only and use Pages source `GitHub Actions`; use `deploy/<slug>` only for fork-owned publication branches, not upstream contribution PRs.
 10. Run the local quality gates before pushing fork setup changes.

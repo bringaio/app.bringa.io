@@ -41,10 +41,11 @@ For contributors and free-account-oriented forks, use the repo-local Supabase CL
 ```bash
 pnpm exec supabase start
 pnpm setup:local-supabase --seed
+pnpm doctor:local-supabase
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 
-The local stack is sufficient for normal schema, RLS, RPC, Auth, Storage, and Edge Function development. It does not replace final hosted checks for OAuth redirects, custom domains, live secrets, backups, advisors, logs, and Telegram delivery. See [Local Supabase Development](local-supabase-development.md).
+The local stack is sufficient for normal schema, RLS, RPC, Auth, Storage, and Edge Function development. The doctor checks the running local stack and ignored local config without printing keys. Local development does not replace final hosted checks for OAuth redirects, custom domains, live secrets, backups, advisors, logs, and Telegram delivery. See [Local Supabase Development](local-supabase-development.md).
 
 Supabase Branching is optional for paid remote preview, staging, or QA workflows. It is not the default path for forks that target free Supabase accounts.
 

@@ -7,7 +7,7 @@ This page defines what "ready for open source" means for the generic upstream re
 The first public version should be useful in three modes:
 
 - contributor mode: `pnpm dev` opens the full local demo without Supabase or OAuth;
-- local backend mode: `pnpm exec supabase start` plus `pnpm setup:local-supabase --seed` covers schema, RLS, RPC, Auth, Storage, and Edge Function work without consuming hosted Supabase quota;
+- local backend mode: `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, and `pnpm doctor:local-supabase` cover schema, RLS, RPC, Auth, Storage, and Edge Function work without consuming hosted Supabase quota;
 - fork operator mode: one deployment profile controls branding, public Supabase values, repository links, and operator defaults;
 - upstream maintainer mode: generic improvements can be reviewed without fighting fork-owned legal text or brand changes.
 

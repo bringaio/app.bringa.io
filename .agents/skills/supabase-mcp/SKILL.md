@@ -41,7 +41,7 @@ Protect privacy first. Before reading real table contents, ask the user for expl
 - Prefer project-scoped mode with `project_ref=<project-ref>` and `read_only=true` for production audits.
 - Use `app.bringa.io` as the target project name until the user changes it.
 - Do not delete or pause contekt projects without separate explicit confirmation.
-- Use local Supabase as the default development path for free-account-oriented forks; do not recommend Branching or a second hosted dev project until local development has a concrete gap.
+- Use local Supabase as the default development path for free-account-oriented forks; do not recommend Branching or a second hosted dev project until local development has a concrete gap. Use `pnpm doctor:local-supabase` after `pnpm setup:local-supabase --seed` to verify the ignored local config without printing keys.
 - Use official Supabase docs or Context7 for current MCP, custom domain, self-hosting, and Auth provider setup details.
 - Put public `supabase.url` and `supabase.publishableKey` in deployment config only after RLS, grants, and Storage policy review.
 - Supabase MCP can deploy Edge Functions, but Edge Function secrets and Auth provider redirect URLs may still require the Supabase dashboard, CLI with access token, or another approved management path.

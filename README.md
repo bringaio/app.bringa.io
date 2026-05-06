@@ -81,11 +81,12 @@ For local backend work:
 ```bash
 pnpm exec supabase start
 pnpm setup:local-supabase --seed
+pnpm doctor:local-supabase
 ```
 
 Use the local Supabase stack as the default backend path for schema, RLS, RPC, Auth, Storage, and Edge Function work. It is the preferred development path for free-account-oriented forks; Supabase Branching remains optional for paid remote preview or staging workflows.
 
-Use `pnpm exec supabase status -o env` to inspect the local API URL and anon key. `pnpm setup:local-supabase` creates the ignored local config from those public values and refuses remote URLs or secret keys. Then run:
+Use `pnpm exec supabase status -o env` to inspect the local API URL and anon key. `pnpm setup:local-supabase` creates the ignored local config from those public values and refuses remote URLs or secret keys. `pnpm doctor:local-supabase` checks the running local stack and local config without printing keys. Then run:
 
 ```bash
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev

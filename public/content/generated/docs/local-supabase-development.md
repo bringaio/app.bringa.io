@@ -38,6 +38,7 @@ Use `pnpm exec supabase ...`; do not require a global Supabase binary.
 pnpm install
 pnpm exec supabase start
 pnpm setup:local-supabase
+pnpm doctor:local-supabase
 ```
 
 The local Supabase Studio usually opens at `http://127.0.0.1:54323`, and the local API usually runs at `http://127.0.0.1:54321`.
@@ -51,6 +52,14 @@ Use one command when you also want deterministic local data:
 ```bash
 pnpm setup:local-supabase --seed
 ```
+
+Then run the doctor when an agent or developer needs a quick handoff check:
+
+```bash
+pnpm doctor:local-supabase
+```
+
+The doctor verifies that the CLI status points at a local Supabase API URL, confirms that a public key is present, checks whether `config/local.config.jsonc` matches the running local stack, and never prints Supabase keys. If the local config is missing or drifted, it points back to `pnpm setup:local-supabase --seed`.
 
 ## Point The App At Local Supabase
 

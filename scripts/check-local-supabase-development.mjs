@@ -18,6 +18,7 @@ const requiredDocsPhrases = [
   "pnpm exec supabase start",
   "pnpm exec supabase status -o env",
   "pnpm setup:local-supabase",
+  "pnpm doctor:local-supabase",
   "BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev",
   "pnpm seed:local-supabase",
   "The script only accepts localhost Supabase URLs.",
@@ -30,6 +31,7 @@ const requiredDocsPhrases = [
 const requiredReadmePhrases = [
   "Local Supabase Development",
   "pnpm setup:local-supabase",
+  "pnpm doctor:local-supabase",
   "Use the local Supabase stack as the default backend path for schema, RLS, RPC, Auth, Storage, and Edge Function work.",
 ];
 
@@ -41,6 +43,7 @@ const requiredSupabasePhrases = [
 const requiredForkingPhrases = [
   "For free-account-oriented forks, prefer the local Supabase CLI stack over Supabase Branching or a second hosted dev project.",
   "pnpm setup:local-supabase",
+  "pnpm doctor:local-supabase",
 ];
 
 const requiredBranchingPhrases = [
@@ -88,6 +91,9 @@ export function checkLocalSupabaseDevelopmentContent({
   }
   if (!scripts["setup:local-supabase"]) {
     throw new Error("package.json is missing script: setup:local-supabase");
+  }
+  if (!scripts["doctor:local-supabase"]) {
+    throw new Error("package.json is missing script: doctor:local-supabase");
   }
 }
 

@@ -115,10 +115,11 @@ For free-account-oriented forks, prefer the local Supabase CLI stack over Supaba
 ```bash
 pnpm exec supabase start
 pnpm setup:local-supabase --seed
+pnpm doctor:local-supabase
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 
-Use `config/local.config.jsonc` for ignored local overrides, including `"development": { "localDemoMode": false }` and local public Supabase values. See [Local Supabase Development](local-supabase-development.md) before creating any remote dev project or paid branch workflow.
+Use `config/local.config.jsonc` for ignored local overrides, including `"development": { "localDemoMode": false }` and local public Supabase values. The doctor checks the running local stack and config without printing keys. See [Local Supabase Development](local-supabase-development.md) before creating any remote dev project or paid branch workflow.
 
 ## Agent-Assisted Setup
 

@@ -85,6 +85,7 @@ Production builds ignore local demo mode in code and alias the demo Supabase fix
 ```bash
 pnpm exec supabase start
 pnpm setup:local-supabase --seed
+pnpm doctor:local-supabase
 BRINGA_CONFIG_INCLUDE_LOCAL=true pnpm dev
 ```
 
