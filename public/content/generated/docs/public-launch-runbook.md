@@ -15,13 +15,13 @@ As of 2026-05-12:
 - GitHub security switches: secret scanning, secret scanning push protection, vulnerability alerts, and Dependabot security updates enabled
 - GitHub Pages source: GitHub Actions
 - GitHub Pages custom domain: `app.bringa.io`
-- Latest manual Pages workflow: `25755567245`, successful on `main`
+- Manual Pages workflow evidence: initial public deploy `25755567245`, docs redeploy `25756046085`, and Node 24 actions opt-in verification `25756158964`, all successful on `main`
 - Supabase project: `app.bringa.io`, ref `bqotcfejqljfcfjhavwh`, region `eu-central-1`, status `ACTIVE_HEALTHY`
 - Supabase CLI: available through `pnpm exec supabase`, verified with CLI `2.98.2`
 - Supabase MCP: not available in this Codex session; use the CLI and dashboard until MCP tools are installed
 - Edge Functions: `notifiy-telegram` and `notifiy-telegram-user`, both active with `verify_jwt=true`
 
-GitHub now redirects the default Pages URL to `http://app.bringa.io/` because the custom domain is configured. Public DNS for `app.bringa.io` was not resolving during the 2026-05-12 verification, so Cloudflare DNS is the next required step before GitHub can issue a certificate and HTTPS can be enforced.
+GitHub now redirects the default Pages URL to `http://app.bringa.io/` because the custom domain is configured. Public DNS for `app.bringa.io` was not resolving during the 2026-05-12 verification, so Cloudflare DNS is the next required step before GitHub can issue a certificate and HTTPS can be enforced. The Pages workflow opts JavaScript actions into Node 24 with `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`; GitHub may still annotate upstream actions that target Node 20 until those actions retarget Node 24, but the launch workflow has been verified under the forced Node 24 runtime.
 
 ## Cloudflare DNS
 

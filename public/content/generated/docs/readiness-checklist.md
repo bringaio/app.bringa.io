@@ -20,7 +20,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] Manual GitHub Pages deployment settings have been confirmed.
 - [ ] GitHub branch protection has been confirmed or intentionally deferred.
 
-As of 2026-05-12, GitHub API checks confirm the merge settings above. The repository is public, `allow_forking` is `true`, the repository homepage is `https://app.bringa.io`, secret scanning and push protection are enabled, Dependabot security updates are enabled, Pages is configured for GitHub Actions, and manual Pages run `25755567245` deployed successfully from `main`. The `app.bringa.io` custom domain is set in GitHub Pages, but Cloudflare DNS still needs `app CNAME bringaio.github.io` before GitHub can provision the certificate and HTTPS can be enforced. Branch protection remains a follow-up repository setting.
+As of 2026-05-12, GitHub API checks confirm the merge settings above. The repository is public, `allow_forking` is `true`, the repository homepage is `https://app.bringa.io`, secret scanning and push protection are enabled, Dependabot security updates are enabled, Pages is configured for GitHub Actions, and manual Pages runs `25755567245`, `25756046085`, and `25756158964` deployed successfully from `main`. The Pages workflow opts JavaScript actions into Node 24 with `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`. The `app.bringa.io` custom domain is set in GitHub Pages, but Cloudflare DNS still needs `app CNAME bringaio.github.io` before GitHub can provision the certificate and HTTPS can be enforced. Branch protection remains a follow-up repository setting.
 
 ## Forkability
 
