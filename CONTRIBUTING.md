@@ -20,6 +20,7 @@ Read:
 
 ## Pull Requests
 
+- Start from a fork or short-lived branch, not from `main`.
 - Use Conventional Commits.
 - Prefer one coherent change per pull request.
 - Use short-lived branches. Agents use `codex/<type>-<topic>`; human contributors use `<type>/<topic>` such as `feat/item-images`, `fix/auth-redirect`, or `docs/fork-setup`.

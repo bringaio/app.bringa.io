@@ -20,6 +20,7 @@ Use this skill for product UI, admin UI, copy, layout, theme, and brand-facing c
 - Treat this as the generic `app.bringa.io` upstream. Operator-specific branding, legal text, links, and local copy belong in config or fork-owned content.
 - Build the actual app experience, not a marketing placeholder.
 - Keep operational surfaces quiet, dense, scannable, and accessible.
+- First-run and setup-required states should explain the next operator action and link to docs without exposing secrets or loading unavailable backend clients.
 - Prefer existing Tailwind, component, and `lucide-react` patterns.
 - Keep copy compact, direct, kind, and translatable.
 - Use stable dimensions for repeated controls, cards, counters, toolbars, and navigation.

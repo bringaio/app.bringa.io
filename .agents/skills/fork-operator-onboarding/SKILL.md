@@ -39,10 +39,11 @@ Help operators get from fork to usable app without leaking secrets or making ups
 
 7. For development, prefer local demo mode or the local Supabase CLI stack before creating any hosted dev project or paid Supabase branch. Run `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, `pnpm doctor:local-supabase`, and `pnpm dev:docker` when backend behavior needs real Supabase services.
 8. For hosted Supabase setup, prefer a fresh project, apply the committed schema/migrations, configure Auth Site URL and redirect URLs, then verify RLS, Storage, Edge Functions, and maintenance-key access before disabling local demo mode.
-9. After the intended first admin signs in once, use `pnpm bootstrap:first-admin --confirm-project-ref <ref>` for a dry run and add `--execute` only after confirming the target.
-10. For GitHub Pages, keep workflows manual-only and use Pages source `GitHub Actions`; use `deploy/<slug>` only for fork-owned publication branches, not upstream contribution PRs. Remind operators that GitHub Pages certificates can take a few minutes, and GitHub documents that **Enforce HTTPS** can take up to 24 hours to become available.
-11. Run the local quality gates before pushing fork setup changes.
-12. Record deployment-specific open items in fork docs or operator notes; add generic reusable ideas to `docs/optimization-options.md`.
+9. After the intended first admin signs in once, use `pnpm bootstrap:first-admin --confirm-project-ref <ref>` for a dry run and add `--execute` only after confirming the target. Invite codes grant app access, not admin rights; promote later admins through `/admin/users` after they sign in.
+10. If the public fork shows the setup-required login view, fix the deployment profile and regenerate config instead of bypassing the guard.
+11. For GitHub Pages, keep workflows manual-only and use Pages source `GitHub Actions`; use `deploy/<slug>` only for fork-owned publication branches, not upstream contribution PRs. Remind operators that GitHub Pages certificates can take a few minutes, and GitHub documents that **Enforce HTTPS** can take up to 24 hours to become available.
+12. Run the local quality gates before pushing fork setup changes.
+13. Record deployment-specific open items in fork docs or operator notes; add generic reusable ideas to `docs/optimization-options.md`.
 
 ## Default Answer To "Set Up This Fork"
 
@@ -53,6 +54,8 @@ If a user asks an agent to set up a fork, the agent should:
 - use the local Supabase CLI stack for backend development before recommending Supabase Branching or a second hosted dev project;
 - guide the operator through public Supabase URL/publishable-key config and server-only maintenance keys separately;
 - guide first-admin bootstrap through `pnpm bootstrap:first-admin` instead of ad hoc SQL;
+- explain that invite codes validate app access and admins are promoted separately from `/admin/users`;
+- verify or resolve the setup-required login view before inviting users;
 - remind operators to enable GitHub Pages **Enforce HTTPS** after the certificate is issued;
 - run config, secret, workflow, Supabase contract, lint, typecheck, Edge Function, and build checks;
 - push changes on an appropriate branch when the repo remote is available.

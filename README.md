@@ -58,6 +58,8 @@ Open `http://localhost:3000`, then use **Open local demo** on the login page. Th
 
 The local demo uses in-browser fixture data and is guarded so it only runs in development builds. Production builds ignore the demo flag even when it is present in public config.
 
+For repository work, use a short-lived branch or fork branch. Do not commit new features directly to `main`; keep `main` as the protected integration branch and use pull requests or explicit maintainer merge work.
+
 ## Configuration
 
 Public deployment settings are resolved from `config/base.config.jsonc` plus a deployment profile in `config/deployments/`.

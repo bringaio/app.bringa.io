@@ -96,6 +96,8 @@ Forks should keep their own legal documents in deployment-specific content paths
 
 For upstream pull requests from a fork, start a short-lived branch from upstream `main` and leave fork deployment branches out of the PR. Use `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`, `refactor/<topic>`, `test/<topic>`, or `ci/<topic>` for human branches. Agents should use `codex/<type>-<topic>`.
 
+Do not develop new features directly on `main`. Use a fork branch or short-lived branch, then merge deliberately after focused checks pass. Keep `main` as the integration branch that can be protected against force pushes and deletion.
+
 ## CI/CD For Forks
 
 Fork CI should not require upstream secrets. The upstream workflows are manual-only by default so fork operators can choose when remote checks run.
@@ -140,6 +142,7 @@ Evidence checklist for agent-assisted setup:
 - Supabase project confirmed without printing secrets;
 - OAuth providers configured or listed as dashboard tasks;
 - first admin bootstrapped through `pnpm bootstrap:first-admin`;
+- setup-required login view resolved by connected fork config when it appears;
 - Pages deployed;
 - DNS resolves to `<github-owner>.github.io`;
 - HTTPS enforced after GitHub issues the certificate;

@@ -11,7 +11,8 @@ These conventions keep the upstream repository easy to review, fork, sync, and m
 - Use Conventional Commits.
 - Prefer small, coherent commits.
 - Push after every commit unless the user explicitly asks for local-only work.
-- Work from a branch. Do not commit directly to `main` for normal development.
+- Work from a branch or fork. Do not commit directly to `main` for normal development.
+- Treat direct `main` commits as explicit maintainer release/merge operations, not everyday development.
 - Use rebase merging for pull requests.
 - Keep `main` linear and protected once CI is in place.
 - Enable GitHub's automatic deletion of head branches after pull requests are merged.

@@ -15,7 +15,7 @@ Use existing browser-agent capabilities first. Do not add Playwright or another 
 
 ## Baseline Scenarios
 
-- Login page: terms checkbox gates OAuth buttons; terms route opens correctly; logout returns to logged-out state.
+- Login page: terms checkbox gates OAuth buttons; setup-required view appears for unfinished public fork config without loading Supabase auth controls; terms route opens correctly; logout returns to logged-out state.
 - Local Supabase login: when `pnpm dev:docker` points at localhost, accept terms and use the seeded Admin or Member email/password panel before testing real Auth, RLS, RPC, or Storage flows.
 - Invite flow: invalid code shows an error; valid code redirects to dashboard; users without invite remain blocked when signup-without-invite is disabled.
 - Dashboard default: users with borrowed items see borrowed items first; users without borrowed items see available items; empty states do not hide navigation.
@@ -80,6 +80,13 @@ Use these as concrete routes through the app. Adapt only the account names and f
 2. Confirm protected app routes redirect to `/invite` or the configured pending approval flow.
 3. Enter an invalid invite code and verify the error is reachable by keyboard and screen reader.
 4. Enter a valid code and verify the profile/dashboard transition.
+
+### Fork Setup-Required Login
+
+1. Serve a production/static build whose public config still has placeholder Supabase values, a local Supabase URL, or upstream config on a different public origin.
+2. Open `/login` as an anonymous visitor.
+3. Confirm the page shows setup-required copy, links to `/docs?doc=fork-launch-runbook`, and does not show OAuth buttons.
+4. Open `/docs?doc=fork-launch-runbook` from the view and confirm the runbook loads from the static export.
 
 ### PWA Installed Flow
 

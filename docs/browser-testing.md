@@ -20,7 +20,7 @@ Record:
 
 ## Baseline Routes
 
-- `/login`: terms checkbox gates sign-in actions, terms link works, logout returns to logged-out state.
+- `/login`: terms checkbox gates sign-in actions, setup-required view appears for unfinished public fork config, terms link works, logout returns to logged-out state.
 - `/invite`: invalid invite errors are visible and accessible; valid or approved users reach the dashboard.
 - `/dashboard`: borrowed-first behavior, search, filters, empty states, long names, fixed bottom actions, and mobile layout.
 - `/items/create` and `/items/edit`: image MIME/size errors, immediate preview, replacement behavior, no-image behavior, and form error states.
@@ -86,6 +86,12 @@ When the browser supports installation, install or simulate installed mode and t
 - `next.config.ts` now keeps Turbopack explicit in development and applies the local-demo production alias only for production builds.
 - `pnpm dev --hostname 127.0.0.1 --port 4324` started successfully with Turbopack after the fix.
 - `http://127.0.0.1:4324/bringa.config.json` returned `localDemoMode=true`, `http://127.0.0.1:4324/login` contained **Open local demo**, and `/manifest.webmanifest` returned the configured `bringa.io` PWA name, start URL, and icon set.
+
+2026-05-12 Browser Use static export setup-readiness check against `out/` served on `127.0.0.1:4328`:
+
+- `http://127.0.0.1:4328/login` stayed in normal static-preview login mode, confirming local origins are not blocked by the public-fork setup guard.
+- `http://fork.localhost:4328/login` showed **Setup required**, exposed the **Fork launch guide** and **Docs** links, and did not show GitHub or Google OAuth buttons.
+- Opening **Fork launch guide** navigated to `/docs?doc=fork-launch-runbook`; the generated runbook loaded and included the GitHub Pages HTTPS and first-admin bootstrap guidance.
 
 Remaining release evidence still needs connected Supabase auth persistence, logout, PWA install behavior, slow-network review, target-browser coverage, and approved live/staging data boundaries.
 

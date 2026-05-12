@@ -20,7 +20,7 @@ As of 2026-05-12, GitHub API checks confirmed that the repository is public, for
 
 ## Branch Protection
 
-Protect `main` after the manual CI process is stable.
+Protect `main`. At minimum, block force pushes and branch deletion. This preserves the integration branch without blocking the maintainer from doing explicit release or merge work.
 
 Manual checks to run before important merges or releases:
 
@@ -32,8 +32,12 @@ Recommended rules:
 - Require linear history.
 - Block force pushes.
 - Block branch deletion for `main`.
+- Keep **Require a pull request before merging** off while one trusted maintainer still needs direct emergency or release pushes.
+- Turn **Require a pull request before merging** on when the project is ready to require every change to land through review.
 - Allow administrators to bypass only when an outage or security incident requires it.
 - Do not require automatic status checks while workflows are manual-only unless maintainers explicitly commit to running them before merge.
+
+With only force-push and deletion protection, normal direct pushes by users with write access can still work. Direct pushes stop once rules such as required pull requests, push restrictions, or required checks are enabled in a way that applies to the pusher.
 
 ## GitHub Pages
 

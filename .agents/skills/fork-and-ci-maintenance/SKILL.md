@@ -20,7 +20,9 @@ Keep upstream changes easy to adopt by forks. Do not solve fork customization by
 - Agent-created upstream branches use `codex/<type>-<topic>`.
 - Human upstream contribution branches use `<type>/<topic>`.
 - Fork-owned publishing branches may use `deploy/<deployment-slug>` and should not be used for upstream pull requests.
+- Normal feature work should happen on a fork or short-lived branch, not directly on `main`.
 - Rebase is the preferred PR merge style.
+- Protect `main` at least against force pushes and deletion. Add required pull requests/status checks when the maintainer workflow is ready for them.
 - Merged head branches should be deleted automatically where GitHub settings allow it.
 - CI should split secret-free checks from secret-required deployment work.
 - Fork-specific identity, legal text, and brand assets should move toward deployment profiles.
