@@ -143,6 +143,9 @@ jobs:
       - name: Test login terms gate
         run: pnpm test:login-terms
 
+      - name: Test setup readiness guard
+        run: pnpm test:setup-readiness
+
       - name: Test local Supabase dev login
         run: pnpm test:local-dev-login
 

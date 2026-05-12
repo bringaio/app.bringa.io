@@ -56,6 +56,8 @@ Review `config/deployments/<slug>.jsonc`:
 
 Public Supabase URL and publishable key are expected to ship to the browser. They are safe only when RLS, Storage policies, and RPC boundaries are correct. Supabase secret keys, service-role keys, OAuth secrets, Telegram tokens, and database passwords never belong in Git, docs, issues, screenshots, or chat.
 
+If a production fork is served with scaffold placeholders, a local Supabase URL, or upstream `app.bringa.io` config on a different public domain, the login page shows a setup-required view and links back to this runbook. That view is a guardrail for unfinished public forks; it is not a replacement for `pnpm check:config` or the launch checklist below.
+
 Generate and check:
 
 ```bash
@@ -123,6 +125,8 @@ pnpm bootstrap:first-admin --confirm-project-ref <project-ref> --profile-id <uui
 ```
 
 The helper prints the first admin invite code only after execution. Treat that code like an access token for your community: do not commit it, post it publicly, paste it into issues, or include it in screenshots. Admins can rotate their invite code later at `/admin/invite-code`.
+
+Invite codes validate access to the app; they do not make someone an admin. To make another user an admin immediately, ask them to sign in once, validate their profile if needed, then use `/admin/users` to promote that profile. Do not create or share a separate "admin code" for self-promotion.
 
 ## 4. Publish With GitHub Pages
 
@@ -194,6 +198,7 @@ Use this evidence checklist before inviting users:
 - Supabase Site URL and `/dashboard` redirect URL are exact.
 - Google and/or GitHub OAuth providers are enabled.
 - First admin is bootstrapped and has rotated or stored the invite code safely.
+- If the setup-required login view appears, the deployment profile is corrected and config is regenerated.
 - GitHub Pages deploy succeeded.
 - DNS resolves to `<github-owner>.github.io`.
 - HTTPS is enforced after the certificate is issued.

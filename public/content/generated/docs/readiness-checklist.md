@@ -129,6 +129,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:issue-prompt`
 - [ ] `pnpm test:settings-data-actions`
 - [ ] `pnpm test:login-terms`
+- [ ] `pnpm test:setup-readiness`
 - [ ] `pnpm test:local-demo-mode`
 - [ ] `pnpm test:local-demo-supabase`
 - [ ] `pnpm test:invite-flow`

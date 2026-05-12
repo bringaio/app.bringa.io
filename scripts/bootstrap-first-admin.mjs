@@ -134,7 +134,7 @@ async function fetchAdminCount(supabase) {
 async function fetchCandidateProfiles(supabase) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id,created_at")
+    .select("id,created_at,profile_valid,invited_by_code")
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -146,7 +146,7 @@ async function fetchCandidateProfiles(supabase) {
 async function fetchExplicitProfile(supabase, profileId) {
   const { data, error } = await supabase
     .from("profiles")
-    .select("id")
+    .select("id,profile_valid,invited_by_code")
     .eq("id", profileId)
     .maybeSingle();
 
@@ -164,6 +164,8 @@ async function resolveBootstrapProfile(supabase, profileId) {
     const profile = await fetchExplicitProfile(supabase, profileId);
     return {
       profileId: profile.id,
+      previousProfileValid: profile.profile_valid === true,
+      previousInvitedByCode: profile.invited_by_code ?? null,
       profileCount: null,
     };
   }
@@ -178,8 +180,24 @@ async function resolveBootstrapProfile(supabase, profileId) {
 
   return {
     profileId: profiles[0].id,
+    previousProfileValid: profiles[0].profile_valid === true,
+    previousInvitedByCode: profiles[0].invited_by_code ?? null,
     profileCount: profiles.length,
   };
+}
+
+async function rollbackProfileValidation(supabase, selected) {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      profile_valid: selected.previousProfileValid,
+      invited_by_code: selected.previousInvitedByCode,
+    })
+    .eq("id", selected.profileId);
+
+  if (error) {
+    throw new Error(`profile rollback: ${error.message}`);
+  }
 }
 
 export async function runBootstrapFirstAdmin(supabase, {
@@ -227,7 +245,12 @@ export async function runBootstrapFirstAdmin(supabase, {
     });
 
   if (insertError) {
-    throw new Error(`admins insert: ${insertError.message}`);
+    try {
+      await rollbackProfileValidation(supabase, selected);
+    } catch (rollbackError) {
+      throw new Error(`admins insert: ${insertError.message}. ${rollbackError.message}`);
+    }
+    throw new Error(`admins insert: ${insertError.message}. Profile validation was rolled back.`);
   }
 
   return {

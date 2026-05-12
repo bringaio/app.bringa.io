@@ -28,6 +28,10 @@ pnpm bootstrap:first-admin --confirm-project-ref <project-ref> --execute
 
 The helper validates that there are zero existing admins and either exactly one profile or an explicit `--profile-id <uuid>`. It prints only safe counts and the generated first-admin invite code after execution. Treat invite codes as access-granting values: do not commit them, post them publicly, paste them into issues, or include them in screenshots. Admins can rotate their invite code later at `/admin/invite-code`.
 
+The helper is first-admin-only. If profile validation succeeds but admin creation fails, it rolls the profile back to its prior access state and exits with a safe error.
+
+Invite codes grant app access, not admin rights. To make another user an admin, have them sign in once, validate their profile if needed, then promote them from `/admin/users`. Do not add or share a direct admin self-promotion code.
+
 ## Review Queues
 
 Moderation queue records live in Supabase:

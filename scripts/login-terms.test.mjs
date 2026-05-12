@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildOAuthSignInErrorCopy,
   buildLoginCopy,
   buildLoginOAuthGate,
   normalizeTermsAccepted,
@@ -29,4 +30,15 @@ test("builds login copy from the configured terms path", () => {
     termsLinkLabel: "Terms and Privacy Notes",
     termsPath: "/terms",
   });
+});
+
+test("builds non-secret OAuth error copy", () => {
+  assert.equal(
+    buildOAuthSignInErrorCopy("GitHub"),
+    "GitHub sign-in could not start. Check the app setup and try again.",
+  );
+  assert.equal(
+    buildOAuthSignInErrorCopy("Google"),
+    "Google sign-in could not start. Check the app setup and try again.",
+  );
 });

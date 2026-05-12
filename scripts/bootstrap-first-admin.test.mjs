@@ -15,6 +15,7 @@ function createFakeSupabase({
   adminCount = 0,
   profiles = [{ id: profileId, created_at: "2026-05-12T10:00:00Z" }],
   explicitProfile = { id: profileId },
+  insertError = null,
 } = {}) {
   const calls = [];
 
@@ -31,7 +32,7 @@ function createFakeSupabase({
           },
           insert(payload) {
             calls.push(["insert", tableName, payload]);
-            return Promise.resolve({ data: null, error: null });
+            return Promise.resolve({ data: null, error: insertError });
           },
         };
       }
@@ -99,6 +100,33 @@ test("parses first-admin bootstrap CLI arguments", () => {
   assert.throws(() => parseBootstrapFirstAdminArgs(["--profile-id", "not-a-uuid"]), /--profile-id must be a UUID/);
   assert.throws(() => parseBootstrapFirstAdminArgs(["--invite-code", "bad code"]), /--invite-code contains unsupported characters/);
   assert.throws(() => parseBootstrapFirstAdminArgs(["--unknown"]), /Unknown argument/);
+});
+
+test("execute rolls back profile validation when admin insert fails", async () => {
+  const supabase = createFakeSupabase({
+    profiles: [{
+      id: profileId,
+      created_at: "2026-05-12T10:00:00Z",
+      profile_valid: false,
+      invited_by_code: null,
+    }],
+    insertError: { message: "duplicate invite code" },
+  });
+
+  await assert.rejects(
+    () => runBootstrapFirstAdmin(supabase, {
+      execute: true,
+      profileId: null,
+      inviteCode: "BRINGA-FOUNDERS",
+    }),
+    /admins insert: duplicate invite code. Profile validation was rolled back./,
+  );
+
+  assert.deepEqual(supabase.calls.filter(([action]) => ["update", "insert"].includes(action)), [
+    ["update", "profiles", { profile_valid: true, invited_by_code: "BOOTSTRAP-FIRST-ADMIN" }],
+    ["insert", "admins", { profile_id: profileId, invite_code: "BRINGA-FOUNDERS" }],
+    ["update", "profiles", { profile_valid: false, invited_by_code: null }],
+  ]);
 });
 
 test("generates non-secret invite codes with a stable prefix", () => {
@@ -197,7 +225,7 @@ test("allows an explicit profile id when multiple profiles exist", async () => {
   assert.equal(result.executed, false);
   assert.deepEqual(supabase.calls.slice(2, 6), [
     ["from", "profiles"],
-    ["select", "profiles", "id"],
+    ["select", "profiles", "id,profile_valid,invited_by_code"],
     ["eq", "id", otherProfileId],
     ["maybeSingle"],
   ]);

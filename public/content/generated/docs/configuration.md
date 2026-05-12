@@ -80,6 +80,12 @@ Browser-visible Supabase values are not secrets. Set `supabase.url` and `supabas
 
 `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are intentionally not used. Next.js inlines `NEXT_PUBLIC_*` values into browser bundles at build time, so keeping these public values in deployment config gives forks and GitHub Pages builds one clear source of truth.
 
+## Setup Readiness Guard
+
+Production login checks the resolved public config before loading Supabase auth controls. If a public deployment still has scaffold Supabase placeholders, a local Supabase URL, or upstream `app.bringa.io` config on a different public origin, the app shows a setup-required view with links to the fork runbook and docs. This prevents unfinished forks from presenting confusing OAuth failures to visitors.
+
+The guard is intentionally narrow. Empty or invalid required config should still fail `pnpm generate:config`, `pnpm check:config`, or the build. A real Supabase project with missing Auth providers, redirect URLs, schema, or RLS still needs the launch checklist and browser verification.
+
 ## Local Demo Mode
 
 `development.localDemoMode` enables the browser-only local demo for `pnpm dev`. It is useful for first-run development, agentic browser testing, and UI review without a running Supabase stack or OAuth providers.

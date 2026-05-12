@@ -9,11 +9,20 @@ type Props = {
     auto?: boolean;
     redirectTo?: string;
     disabled?: boolean;
+    onError?: (error: unknown) => void;
+    onSignInStart?: () => void;
 };
 
-export default function GitSignInButton({ auto = false, redirectTo = appConfig.supabase.authRedirectPath, disabled = false }: Props) {
+export default function GitSignInButton({
+    auto = false,
+    redirectTo = appConfig.supabase.authRedirectPath,
+    disabled = false,
+    onError,
+    onSignInStart,
+}: Props) {
     const handleSignIn = useCallback(async () => {
         try {
+            onSignInStart?.();
             const finalRedirect = buildBrowserOAuthRedirectTo(redirectTo);
 
             const { error } = await supabase.auth.signInWithOAuth({
@@ -23,11 +32,15 @@ export default function GitSignInButton({ auto = false, redirectTo = appConfig.s
                 },
             });
 
-            if (error) console.error("Error during GitHub sign-in:", error.message);
+            if (error) {
+                console.error("Error during GitHub sign-in:", error.message);
+                onError?.(error);
+            }
         } catch (err) {
             console.error("GitSignInButton sign-in error", err);
+            onError?.(err);
         }
-    }, [redirectTo]);
+    }, [onError, onSignInStart, redirectTo]);
 
     useEffect(() => {
         if (auto) {

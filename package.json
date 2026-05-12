@@ -48,6 +48,7 @@
     "test:issue-prompt": "node --test scripts/issue-prompt.test.mjs",
     "test:settings-data-actions": "node --test scripts/settings-data-actions.test.mjs",
     "test:login-terms": "node --test scripts/login-terms.test.mjs",
+    "test:setup-readiness": "node --test scripts/setup-readiness.test.mjs",
     "test:local-dev-login": "node --test scripts/local-dev-login.test.mjs",
     "test:local-demo-mode": "node --test scripts/local-demo-mode.test.mjs",
     "test:local-demo-supabase": "node --test scripts/local-demo-supabase.test.mjs",

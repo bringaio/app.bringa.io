@@ -29,3 +29,7 @@ export function buildLoginCopy({ termsPath }: { termsPath: string }): LoginCopy 
     termsPath,
   };
 }
+
+export function buildOAuthSignInErrorCopy(providerLabel: string) {
+  return `${providerLabel} sign-in could not start. Check the app setup and try again.`;
+}

@@ -34,6 +34,8 @@ Use [Fork Launch Runbook](docs/fork-launch-runbook.md) for the full step-by-step
 
 GitHub Pages plus hosted Supabase is the default documented path because it keeps the first deployment simple. The app is a static Next.js export backed by Supabase, so other hosts such as Cloudflare Pages and self-hosted Supabase are possible too; detailed runbooks can be added when an operator actually needs them.
 
+If a public fork opens before it is connected to its own Supabase project, the login page shows a setup-required view with links back to the fork launch docs instead of starting OAuth against placeholder or upstream config.
+
 ## Status
 
 This repository is the upstream app for `app.bringa.io`. Organization-specific deployments should keep branding, legal text, repository links, and operator defaults in configuration or fork-owned docs instead of hardcoding them across the app.
@@ -79,6 +81,8 @@ BRINGA_DEPLOYMENT=share.example.org pnpm generate:config
 ```
 
 Browser-visible Supabase values are public by design. Set `supabase.url` and `supabase.publishableKey` in the selected deployment config, not in `.env.local`. Secrets stay in `.env.local` or the deployment provider. Never put service role or secret keys in public config.
+
+Invite codes grant app access, not admin rights. To make another person an admin, they sign in once, enter a valid invite code or get validated by an existing admin, then an existing admin promotes them from `/admin/users`.
 
 ## Supabase
 
