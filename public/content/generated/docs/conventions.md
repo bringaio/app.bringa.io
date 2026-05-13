@@ -6,6 +6,7 @@ These conventions keep the upstream repository easy to review, fork, sync, and m
 
 - Use Conventional Commits.
 - Prefer small, coherent commits.
+- `package.json.version` is the single app version. Every repository-changing merge to `main` must increase it; use patch by default, minor for intentional feature releases, and major for breaking changes.
 - Push after every commit unless the user explicitly asks for local-only work.
 - Work from a branch or fork. Do not commit directly to `main` for normal development.
 - Treat direct `main` commits as explicit maintainer release/merge operations, not everyday development.
@@ -45,6 +46,7 @@ Every durable fact should have one home.
 - Agent rules and workflows: `.agents/`
 - User-facing docs: `docs/`
 - Roadmap and anti-roadmap: `docs/optimization-options.md`
+- App version: `package.json.version`, exposed in generated runtime config as `release.version`
 
 When adding new text, decide whether it is a source of truth, a short summary, or a pointer. Prefer pointers over repeated prose.
 
@@ -63,6 +65,12 @@ Keep names predictable across React, scripts, config, and Supabase. Prefer match
 - Edge Function directory names use kebab-case; preserve legacy deployed names until a migration plan exists.
 - Scripts under `scripts/` use kebab-case and pair checkers with `.test.mjs` when behavior is not trivial.
 - Branches and commits follow the Git And Pull Requests section.
+
+Runtime version:
+
+- `package.json.version` is injected into generated app config as `release.version` by `pnpm generate:config`.
+- Source config files should not duplicate the app version.
+- The user menu displays the generated version for operator and support diagnosis.
 
 ## Scripts
 
@@ -119,6 +127,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm test:production-readiness-audit`
 - `pnpm test:release-checklist`
 - `pnpm test:github-workflows`
+- `pnpm test:version-bump`
 - `pnpm test:supabase-contract`
 - `pnpm test:dashboard-query`
 - `pnpm test:item-visibility-request`
@@ -163,6 +172,7 @@ The manual CI workflow runs these secret-free checks:
 - `pnpm check:production-readiness-audit`
 - `pnpm check:release-checklist`
 - `pnpm check:github-workflows`
+- `pnpm check:version-bump -- --base origin/main`
 - `pnpm test:static-export`
 - `pnpm check:static-export`
 - `pnpm check:supabase-contract`

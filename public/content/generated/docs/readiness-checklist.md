@@ -9,6 +9,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] `AGENTS.md` points agents to `.agents/`.
 - [x] Agent rules cover privacy, source of truth, implementation, quality, and finishing work.
 - [x] Conventional Commits and branch cleanup expectations are documented.
+- [x] App version source of truth is `package.json.version`, generated into runtime config, displayed in the user menu, and checked before merges.
 - [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
 - [x] `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, and the pull request template exist.
@@ -139,6 +140,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:docs-index`
 - [ ] `pnpm test:browser-testing`
 - [ ] `pnpm test:production-bundle`
+- [ ] `pnpm test:version-bump`
 - [ ] `pnpm test:local-supabase`
 - [ ] `pnpm test:supabase-mcp`
 - [ ] `pnpm test:supabase-cli`
@@ -180,6 +182,7 @@ A 2026-05-05 local in-app browser pass covered login/local demo, dashboard, long
 - [ ] `pnpm test:static-export`
 - [ ] `pnpm check:static-export`
 - [ ] `pnpm check:production-bundle`
+- [ ] `pnpm check:version-bump -- --base origin/main`
 - [ ] `pnpm check:supabase-contract`
 - [ ] `pnpm outdated`
 - [ ] `pnpm lint`

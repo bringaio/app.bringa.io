@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -263,6 +265,9 @@ jobs:
       - name: Test production bundle checker
         run: pnpm test:production-bundle
 
+      - name: Test version bump checker
+        run: pnpm test:version-bump
+
       - name: Check static export contract
         run: pnpm check:static-export
 
@@ -283,3 +288,6 @@ jobs:
 
       - name: Check production bundle
         run: pnpm check:production-bundle
+
+      - name: Check package version bump
+        run: pnpm check:version-bump -- --base origin/main

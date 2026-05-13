@@ -2,7 +2,7 @@
 
 Open source sharing and borrowing software for communities, clubs, associations, and local operators.
 
-[Fork launch](docs/fork-launch-runbook.md) | [Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Local Supabase Development](docs/local-supabase-development.md) | [Repository settings](docs/repository-settings.md) | [Roadmap](docs/roadmap.md) | [Contributing](CONTRIBUTING.md) | [Security](SECURITY.md)
+[Fork launch](docs/fork-launch-runbook.md) | [Fork upgrades](docs/fork-upgrade-runbook.md) | [Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Local Supabase Development](docs/local-supabase-development.md) | [Repository settings](docs/repository-settings.md) | [Changelog](CHANGELOG.md) | [Roadmap](docs/roadmap.md) | [Contributing](CONTRIBUTING.md) | [Security](SECURITY.md)
 
 ## Fork In 3 Steps
 
@@ -32,6 +32,8 @@ Bringa is meant to be pleasant to operate for your own community.
 
 Use [Fork Launch Runbook](docs/fork-launch-runbook.md) for the full step-by-step guide. It covers Cloudflare DNS, GitHub Pages HTTPS timing, Supabase Auth redirect URLs, Google/GitHub OAuth callbacks, first-admin bootstrap, invite-gate verification, and agent-assisted setup.
 
+When a fork wants the latest upstream version, use [Fork Upgrade Runbook](docs/fork-upgrade-runbook.md). Preserve fork-owned deployment config, legal text, brand assets, Supabase policy, and operator branches; bump `package.json.version`; regenerate config; run checks; and delete the upgrade branch after merge.
+
 GitHub Pages plus hosted Supabase is the default documented path because it keeps the first deployment simple. The app is a static Next.js export backed by Supabase, so other hosts such as Cloudflare Pages and self-hosted Supabase are possible too; detailed runbooks can be added when an operator actually needs them.
 
 If a public fork opens before it is connected to its own Supabase project, the login page shows a setup-required view with links back to the fork launch docs instead of starting OAuth against placeholder or upstream config.
@@ -59,6 +61,8 @@ Open `http://localhost:3000`, then use **Open local demo** on the login page. Th
 The local demo uses in-browser fixture data and is guarded so it only runs in development builds. Production builds ignore the demo flag even when it is present in public config.
 
 For repository work, use a short-lived branch or fork branch. Do not commit new features directly to `main`; keep `main` as the protected integration branch and use pull requests or explicit maintainer merge work.
+
+`package.json.version` is the single app version. Every merge to `main` that changes the repository must increase it, usually as a patch bump unless the change intentionally deserves a minor or major release. The generated app config exposes that version in the user menu.
 
 ## Configuration
 

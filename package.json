@@ -1,6 +1,6 @@
 {
   "name": "app.bringa.io",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.33.2",
@@ -74,6 +74,7 @@
     "test:pwa-manifest": "node --test scripts/pwa-manifest.test.mjs",
     "test:static-export": "node --test scripts/check-static-export.test.mjs",
     "test:production-bundle": "node --test scripts/check-production-bundle.test.mjs",
+    "test:version-bump": "node --test scripts/check-version-bump.test.mjs",
     "check:config": "node scripts/generate-config.mjs --check",
     "check:env-example": "node scripts/check-env-example.mjs",
     "check:secrets": "node scripts/check-secrets.mjs",
@@ -95,6 +96,7 @@
     "check:github-workflows": "node scripts/check-github-workflows.mjs",
     "check:static-export": "node scripts/check-static-export.mjs",
     "check:production-bundle": "node scripts/check-production-bundle.mjs",
+    "check:version-bump": "node scripts/check-version-bump.mjs",
     "check:supabase-contract": "node scripts/check-supabase-contract.mjs",
     "check:supabase-maintenance-key": "node scripts/check-supabase-maintenance-key.mjs",
     "cleanup:account-deletion": "node scripts/cleanup-account-deletion.mjs",

@@ -15,8 +15,13 @@ Find public forks or repositories derived from `bringaio/app.bringa.io`. For eac
 
 This upstream change may help your fork because: `<benefit>`. It may be risky because: `<migration/config/legal/security risk>`. Suggested path: `<small ordered steps>`. Before applying: back up Supabase, review fork config, and test auth/item flows.
 
+## Upgrade Execution Pattern
+
+Use `docs/fork-upgrade-runbook.md`. Confirm current fork version, target upstream version or tag, deployment slug, app URL, and Supabase project. Create a short-lived upgrade branch, fetch upstream `main` and tags, merge or rebase the target, preserve fork-owned config/content/assets/Supabase policy, bump `package.json.version` above both fork and upstream, regenerate config for the fork slug, run secret-free checks, document manual Supabase tasks, smoke-test login/settings/admin/items, and delete the upgrade branch after merge.
+
 ## Guardrails
 
 - Preserve fork-specific `config/deployments/<slug>.jsonc` and public content/brand assets.
 - Treat migrations and RLS changes as high-risk until reviewed.
+- Treat `package.json.version` as the single app version; do not invent a second fork version unless a maintainer explicitly requests it.
 - Ask before modifying legal terms, privacy text, branding, or production data behavior.

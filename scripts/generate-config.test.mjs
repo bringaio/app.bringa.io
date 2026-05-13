@@ -98,6 +98,10 @@ async function writeJsonc(filePath, value) {
 async function createConfigProject({ deployment = {}, local = undefined, deploymentContent = {} } = {}) {
   const root = await mkdtemp(path.join(os.tmpdir(), "bringa-config-test-"));
 
+  await writeJsonc(path.join(root, "package.json"), {
+    name: "test-bringa-app",
+    version: "9.8.7",
+  });
   await writeJsonc(path.join(root, "config", "base.config.jsonc"), completeBaseConfig);
   await writeJsonc(path.join(root, "config", "deployments", "app.bringa.io.jsonc"), deployment);
 
@@ -182,6 +186,7 @@ test("loads base config with deployment overrides and strips layer schemas", asy
   assert.equal(config.app.name, "Community Portal");
   assert.deepEqual(config.app.locales, ["de"]);
   assert.equal(config.app.shortName, "base");
+  assert.equal(config.release.version, "9.8.7");
   assert.equal(config.branding.logoPath, "/logo.svg");
   assert.equal(config.branding.iconPath, "/icon.svg");
   assert.equal(config.repository.templateMode, "fork");
@@ -199,6 +204,7 @@ test("builds generated public content from default and deployment content profil
   const artifacts = await buildConfigArtifacts({ root, deploymentSlug: "app.bringa.io" });
   const config = JSON.parse(artifacts.configJson);
 
+  assert.equal(config.release.version, "9.8.7");
   assert.equal(config.legal.termsContentPath, "/content/generated/legal/en.md");
   assert.equal(config.content.issuePromptPath, "/content/generated/issues/en.md");
   assert.deepEqual(artifacts.contentFiles.map((file) => file.publicPath).sort(), [

@@ -17,7 +17,7 @@ jobs:
   assert.deepEqual([...triggers], ["workflow_dispatch"]);
 });
 
-test("accepts the CI workflow when it checks Supabase CLI, local Supabase, security maintenance, Edge Functions, and production bundles", () => {
+test("accepts the CI workflow when it checks Supabase CLI, local Supabase, security maintenance, version bumps, Edge Functions, and production bundles", () => {
   const triggers = checkWorkflowContent(".github/workflows/ci.yml", `name: CI
 
 on:
@@ -27,10 +27,14 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: denoland/setup-deno@v2
       - run: pnpm check:supabase-cli
       - run: pnpm check:local-supabase
       - run: pnpm check:security-maintenance
+      - run: pnpm check:version-bump
       - run: pnpm check:edge-functions
       - run: pnpm check:production-bundle
 `);
@@ -48,6 +52,10 @@ on:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 `),
     /check:supabase-cli|check:local-supabase|Deno before checking Supabase Edge Functions|check:edge-functions/,
   );
@@ -64,6 +72,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: denoland/setup-deno@v2
       - run: pnpm check:edge-functions
 `),
@@ -82,6 +93,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: denoland/setup-deno@v2
       - run: pnpm check:supabase-cli
       - run: pnpm check:security-maintenance
@@ -102,6 +116,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: denoland/setup-deno@v2
       - run: pnpm check:supabase-cli
       - run: pnpm check:local-supabase
@@ -122,13 +139,68 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: denoland/setup-deno@v2
+      - run: pnpm check:supabase-cli
+      - run: pnpm check:local-supabase
+      - run: pnpm check:security-maintenance
+      - run: pnpm check:version-bump
+      - run: pnpm check:edge-functions
+`),
+    /check:production-bundle/,
+  );
+});
+
+test("requires the CI workflow to check version bumps", () => {
+  assert.throws(
+    () => checkWorkflowContent(".github/workflows/ci.yml", `name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: denoland/setup-deno@v2
       - run: pnpm check:supabase-cli
       - run: pnpm check:local-supabase
       - run: pnpm check:security-maintenance
       - run: pnpm check:edge-functions
+      - run: pnpm check:production-bundle
 `),
-    /check:production-bundle/,
+    /check:version-bump/,
+  );
+});
+
+test("requires the CI workflow to fetch Git history for version comparisons", () => {
+  assert.throws(
+    () => checkWorkflowContent(".github/workflows/ci.yml", `name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - uses: denoland/setup-deno@v2
+      - run: pnpm check:supabase-cli
+      - run: pnpm check:local-supabase
+      - run: pnpm check:security-maintenance
+      - run: pnpm check:version-bump
+      - run: pnpm check:edge-functions
+      - run: pnpm check:production-bundle
+`),
+    /fetch-depth: 0/,
   );
 });
 

@@ -21,6 +21,7 @@ Keep upstream changes easy to adopt by forks. Do not solve fork customization by
 - Human upstream contribution branches use `<type>/<topic>`.
 - Fork-owned publishing branches may use `deploy/<deployment-slug>` and should not be used for upstream pull requests.
 - Normal feature work should happen on a fork or short-lived branch, not directly on `main`.
+- `package.json.version` is the single app version. Bump it for every repository-changing merge to `main`, and keep generated runtime config current.
 - Rebase is the preferred PR merge style.
 - Protect `main` at least against force pushes and deletion. Add required pull requests/status checks when the maintainer workflow is ready for them.
 - Merged head branches should be deleted automatically where GitHub settings allow it.
@@ -28,9 +29,11 @@ Keep upstream changes easy to adopt by forks. Do not solve fork customization by
 - CI should split secret-free checks from secret-required deployment work.
 - Fork-specific identity, legal text, and brand assets should move toward deployment profiles.
 - Legal text is expected to diverge by operator, jurisdiction, and language. Validate structure, not upstream wording.
+- When a fork upgrades from upstream, preserve fork-owned deployment config, legal text, brand assets, Supabase policy, and operator branches; choose one semver version greater than both fork and upstream versions.
 
 ## Before Finishing
 
 - Update user-facing docs when the convention affects other developers.
 - Update `.agents/` when the convention should affect future agents.
+- Run `pnpm check:version-bump -- --base origin/main` before merge-oriented completion.
 - Add follow-up ideas to `docs/optimization-options.md` instead of expanding the task.

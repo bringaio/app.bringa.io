@@ -7,6 +7,7 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 - [Configuration](configuration.md): public app identity, branding, links, media limits, and feature switches.
 - [Open Source Release](open-source-release.md): public-release shape, fork setup, GitHub Pages hosting, and contribution boundaries.
 - [Fork Launch Runbook](fork-launch-runbook.md): step-by-step fork setup with GitHub Pages, DNS, HTTPS, Supabase OAuth, first admin, and invite verification.
+- [Fork Upgrade Runbook](fork-upgrade-runbook.md): merge newer upstream versions into forks while preserving local config, legal text, brand assets, Supabase policy, and version history.
 - [Public Launch Runbook](public-launch-runbook.md): upstream `app.bringa.io` GitHub Pages, Cloudflare DNS, Supabase Auth, and OAuth operator sequence.
 - [Forking](forking.md): keep upstream collaboration smooth while customizing legal, brand, and operator details.
 - [Fork Content Strategy](fork-content-strategy.md): layer config, legal text, brand assets, secrets, and CI for rebaseable forks.

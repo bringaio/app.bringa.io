@@ -4,12 +4,14 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseclient";
 import { appConfig } from "@/lib/app-config";
+import { formatAppVersion } from "@/lib/app-release";
 import {
     Menubar,
     MenubarMenu,
     MenubarTrigger,
     MenubarContent,
     MenubarItem,
+    MenubarSeparator,
 } from "@/components/ui/menubar";
 import { GitBranch, LogOutIcon, UserIcon, ShieldCheck } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -98,7 +100,11 @@ export default function TopBar() {
                                         <span>Feedback & Issues</span>
                                     </MenubarItem>
                                 </a>
-                                <div className="h-px bg-muted my-1" />
+                                <MenubarSeparator />
+                                <div className="px-2 py-1.5 text-[11px] leading-none text-muted-foreground">
+                                    {formatAppVersion(appConfig.release.version)}
+                                </div>
+                                <MenubarSeparator />
                                 <MenubarItem onSelect={handleLogout} className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer">
                                     <LogOutIcon className="h-4 w-4" />
                                     Logout

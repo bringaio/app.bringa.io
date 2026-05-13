@@ -91,12 +91,15 @@ Forks should keep their own legal documents in deployment-specific content paths
 
 ## Updating From Upstream
 
-1. Fetch upstream changes.
-2. Review config schema, base config, docs, migrations, and breaking changes.
-3. Rebase or merge upstream into the fork branch according to the fork's policy.
-4. Preserve fork-specific deployment config, legal text, and brand assets.
-5. Regenerate config with the fork's `BRINGA_DEPLOYMENT` and run the manual CI workflow when remote verification is needed.
-6. Resolve conflicts explicitly; do not hide legal/config conflicts with custom merge drivers.
+Use [Fork Upgrade Runbook](fork-upgrade-runbook.md) for the full path.
+
+1. Fetch upstream changes and tags.
+2. Review `CHANGELOG.md`, config schema, base config, docs, migrations, and breaking changes.
+3. Rebase or merge upstream into a short-lived fork upgrade branch according to the fork's policy.
+4. Preserve fork-specific deployment config, legal text, brand assets, Supabase settings, and operator branches.
+5. Set `package.json.version` to one semver value greater than both the old fork version and the upstream version being merged.
+6. Regenerate config with the fork's `BRINGA_DEPLOYMENT` and run the manual CI workflow when remote verification is needed.
+7. Resolve conflicts explicitly; do not hide legal/config conflicts with custom merge drivers.
 
 For upstream pull requests from a fork, start a short-lived branch from upstream `main` and leave fork deployment branches out of the PR. Use `feat/<topic>`, `fix/<topic>`, `docs/<topic>`, `chore/<topic>`, `refactor/<topic>`, `test/<topic>`, or `ci/<topic>` for human branches. Agents should use `codex/<type>-<topic>`.
 

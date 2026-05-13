@@ -40,6 +40,7 @@ BRINGA_DEPLOYMENT=share.example.org pnpm check:config
 ```
 
 Use [Fork Launch Runbook](fork-launch-runbook.md) for the complete operator path. It includes DNS, GitHub Pages HTTPS timing, Supabase Auth redirect URLs, Google/GitHub OAuth callback URLs, first-admin bootstrap, and invite-gate verification.
+Use [Fork Upgrade Runbook](fork-upgrade-runbook.md) when an existing fork wants a newer upstream version.
 
 Public Supabase URL and publishable key belong in the deployment profile. Secrets belong in ignored env files, GitHub secrets, OAuth provider dashboards, or Supabase function secrets.
 For trusted local maintenance such as backups or account cleanup, copy `.env.example` to `.env.local` after confirming the target project, set `SUPABASE_PROJECT_REF` or `SUPABASE_URL`, and set `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS` there. Legacy service-role keys remain fallback-only.
@@ -81,6 +82,8 @@ Keep these concerns separate:
 When syncing from upstream, preserve fork-owned config and content deliberately. Do not hide legal or deployment conflicts with ignored files or merge drivers.
 
 Use short-lived PR branches for generic upstream work. Keep optional long-lived `deploy/<deployment-slug>` branches for fork-owned app publication, not for upstream contribution PRs.
+
+`package.json.version` is the app version. Every repository-changing merge to `main` must increase it, and published upstream versions should be taggable as `vX.Y.Z` so forks have a stable upgrade anchor. The generated app config exposes this version in the user menu for support and upgrade diagnosis.
 
 ## Before Public Announcement
 

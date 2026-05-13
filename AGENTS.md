@@ -10,3 +10,4 @@ Finish meaningful work with `.agents/workflows/finishing-work.md` and `.agents/w
 Use `.agents/skills/hyperoptimum-stewardship/` when judging refactors, modularization, architecture, or optimization opportunities.
 
 For normal feature, fix, docs, and refactor work, start from a short-lived branch or fork branch. Do not commit directly to `main` unless the user explicitly asks for release/merge work on `main`.
+Before any repository-changing merge to `main`, bump `package.json.version` and keep generated config current.

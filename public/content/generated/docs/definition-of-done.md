@@ -8,6 +8,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - Source-of-truth rules were considered.
 - User-facing conventions are documented in `docs/` when they affect contributors, forks, setup, CI/CD, security, or operations.
 - Agent-facing conventions are documented in `.agents/` when future agents should remember or enforce them.
+- `package.json.version` is bumped for every repository-changing merge to `main`; patch is the default unless minor or major is intentional.
 - No secrets, real user data, private exports, or Supabase server-side maintenance keys are committed or pasted into docs. `pnpm check:secrets` guards committed Supabase secret-key and legacy service-role patterns.
 - Verification was run and the result is reported honestly.
 - The commit uses Conventional Commits.
@@ -62,6 +63,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - `pnpm test:production-readiness-audit` and `pnpm check:production-readiness-audit` when prompt-to-artifact evidence, release blockers, or goal-completion criteria change
 - `pnpm test:release-checklist` and `pnpm check:release-checklist` when package scripts, manual CI, release checklist, or CI/CD docs change
 - `pnpm test:github-workflows` and `pnpm check:github-workflows` when GitHub workflow files or CI/CD docs change
+- `pnpm test:version-bump` and `pnpm check:version-bump -- --base origin/main` when versioning, release metadata, fork upgrades, package scripts, or CI changes
 - `pnpm test:supabase-contract` and `pnpm check:supabase-contract` when Supabase schema, migrations, RPCs, RLS policies, Storage limits, or Supabase contract checker behavior change
 - `pnpm test:static-export` and `pnpm check:static-export` when Next.js routing, config, or app architecture changes
 - `pnpm lint`
@@ -81,6 +83,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 
 - Run the manual CI and Pages workflows when the change needs remote verification, release confidence, or app deployment.
 - PR describes user-facing and fork-facing impact.
+- PR or merge notes explain the version bump and any fork upgrade impact.
 - Fork customization surfaces were preserved or migration notes were added.
 - Security/privacy impact is explicitly considered.
 - Merged head branch can be deleted.

@@ -55,6 +55,12 @@
       "sourcePath": "docs/fork-launch-runbook.md"
     },
     {
+      "slug": "fork-upgrade-runbook",
+      "title": "Fork Upgrade Runbook",
+      "path": "/content/generated/docs/fork-upgrade-runbook.md",
+      "sourcePath": "docs/fork-upgrade-runbook.md"
+    },
+    {
       "slug": "forking",
       "title": "Forking",
       "path": "/content/generated/docs/forking.md",

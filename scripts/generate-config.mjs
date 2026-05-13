@@ -283,7 +283,14 @@ async function readConfigLayer(filePath, label, { optional = false } = {}) {
   return parsed;
 }
 
+async function readPackageVersion(root) {
+  const packageJson = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
+  assertString(packageJson.version, "package.json.version");
+  return packageJson.version;
+}
+
 function validateConfig(config) {
+  assertString(config.release?.version, "release.version");
   assertString(config.app?.name, "app.name");
   assertString(config.app?.shortName, "app.shortName");
   assertString(config.app?.description, "app.description");
@@ -652,6 +659,9 @@ export async function loadConfigObject({
   }
 
   const config = layers.reduce((merged, layer) => mergeConfigLayers(merged, layer), {});
+  config.release = {
+    version: await readPackageVersion(root),
+  };
   validateConfig(config);
   if (validatePublicFiles) {
     await validateReferencedPublicFiles(root, config);
