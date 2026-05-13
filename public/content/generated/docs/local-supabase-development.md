@@ -87,6 +87,8 @@ pnpm dev:docker
 
 Keep the local key in `config/local.config.jsonc` or `.env.local`, not in committed deployment profiles.
 
+Before starting `pnpm dev:docker`, check whether a suitable local app server is already running, for example with `lsof -nP -iTCP:3000 -sTCP:LISTEN`. Reuse an existing app server when it already points at the intended config, choose a different port when the port is occupied by another process, and stop only the server process you started for the current test.
+
 `pnpm dev:docker` regenerates config with local Docker overrides before starting Next.js. It sets `BRINGA_CONFIG_INCLUDE_LOCAL=true` for the generation step and the dev server. Because config generation writes tracked generated files, this can make `public/bringa.config.json` and `src/config/bringa.config.generated.json` point at `127.0.0.1`. Before committing or making a release claim, stop the dev server and run plain `pnpm generate:config` without local overrides, then confirm the generated files no longer contain local Supabase values.
 
 ## Sign In Locally

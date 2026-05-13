@@ -93,7 +93,7 @@ Use [Fork Upgrade Runbook](fork-upgrade-runbook.md) for the full path.
 2. Review `CHANGELOG.md`, config schema, base config, docs, migrations, and breaking changes.
 3. Rebase or merge upstream into a short-lived fork upgrade branch according to the fork's policy.
 4. Preserve fork-specific deployment config, legal text, brand assets, Supabase settings, and operator branches.
-5. Set `package.json.version` to one semver value greater than both the old fork version and the upstream version being merged.
+5. Set `package.json.version` to one [Semantic Versioning 2.0.0](https://semver.org/) `MAJOR.MINOR.PATCH` value greater than both the old fork version and the upstream version being merged.
 6. Regenerate config with the fork's `BRINGA_DEPLOYMENT` and run the manual CI workflow when remote verification is needed.
 7. Resolve conflicts explicitly; do not hide legal/config conflicts with custom merge drivers.
 

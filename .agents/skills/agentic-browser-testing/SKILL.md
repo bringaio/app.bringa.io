@@ -7,6 +7,14 @@ description: Use when manually testing this web app through an agentic browser, 
 
 Use existing browser-agent capabilities first. Do not add Playwright or another browser package unless the user asks or the current task requires repeatable CI automation. Use `docs/browser-testing.md` as the maintainer-facing evidence format.
 
+## Dev Server Startup
+
+- Before starting `pnpm dev`, `pnpm dev:docker`, `pnpm exec next dev`, or a static preview server, check whether a suitable server is already listening.
+- Check the intended port first, for example `lsof -nP -iTCP:3000 -sTCP:LISTEN`, then inspect obvious alternate local ports when prior evidence mentions one.
+- If an appropriate app server is already running, reuse it and verify the URL before launching another process.
+- If the port is occupied by an unrelated process, choose a different port, record the URL in the browser evidence, and keep the old process untouched.
+- Stop only the server process started for the current task. Do not kill a user-owned or pre-existing dev server just to clean up.
+
 ## Tool Choice
 
 - Use the Codex in-app browser or other available agentic browser for normal route, responsive, and workflow checks.

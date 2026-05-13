@@ -37,7 +37,7 @@ Help operators get from fork to usable app without leaking secrets or making ups
    BRINGA_DEPLOYMENT=<slug> pnpm check:config
    ```
 
-7. For development, prefer local demo mode or the local Supabase CLI stack before creating any hosted dev project or paid Supabase branch. Run `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, `pnpm doctor:local-supabase`, and `pnpm dev:docker` when backend behavior needs real Supabase services.
+7. For development, prefer local demo mode or the local Supabase CLI stack before creating any hosted dev project or paid Supabase branch. Run `pnpm exec supabase start`, `pnpm setup:local-supabase --seed`, and `pnpm doctor:local-supabase` when backend behavior needs real Supabase services; before `pnpm dev:docker`, check whether a suitable app server is already running and stop only the server process started for the current task.
 8. For hosted Supabase setup, prefer a fresh project, apply the committed schema/migrations, configure Auth Site URL and redirect URLs, then verify RLS, Storage, Edge Functions, and maintenance-key access before disabling local demo mode.
 9. After the intended first admin signs in once, use `pnpm bootstrap:first-admin --confirm-project-ref <ref>` for a dry run and add `--execute` only after confirming the target. Invite codes grant app access, not admin rights; promote later admins through `/admin/users` after they sign in.
 10. If the public fork shows the setup-required login view, fix the deployment profile and regenerate config instead of bypassing the guard.

@@ -62,7 +62,7 @@ The local demo uses in-browser fixture data and is guarded so it only runs in de
 
 For repository work, use a short-lived branch or fork branch. Do not commit new features directly to `main`; keep `main` as the protected integration branch and use pull requests or explicit maintainer merge work.
 
-`package.json.version` is the single app version. Every merge to `main` that changes the repository must increase it, usually as a patch bump unless the change intentionally deserves a minor or major release. The generated app config exposes that version in the user menu.
+`package.json.version` is the single app version. The repository uses [Semantic Versioning 2.0.0](https://semver.org/) in normal `MAJOR.MINOR.PATCH` form: patch for compatible fixes, docs, and tooling; minor for intentional compatible feature releases; major for breaking changes. Every merge to `main` that changes the repository must increase it, and the generated app config exposes that version in the user menu.
 
 ## Configuration
 

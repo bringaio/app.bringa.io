@@ -1,6 +1,12 @@
 # Changelog
 
-This file records human-readable upstream app versions. `package.json` is the source of truth for the current app version, and Git tags such as `v0.2.0` are the preferred stable anchors for fork upgrades.
+This file records human-readable upstream app versions. `package.json` is the source of truth for the current app version, using [Semantic Versioning 2.0.0](https://semver.org/) in normal `MAJOR.MINOR.PATCH` form. Git tags such as `v0.2.1` are the preferred stable anchors for fork upgrades.
+
+## 0.2.1 - 2026-05-13
+
+- Documented SemVer 2.0.0 as the repository's version-numbering standard.
+- Added a dev-server startup rule for browser testing so agents first check for an existing local server and only stop servers they started.
+- Updated browser-testing checks to keep the dev-server startup rule present in docs and skills.
 
 ## 0.2.0 - 2026-05-13
 

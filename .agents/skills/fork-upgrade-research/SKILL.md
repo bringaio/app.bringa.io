@@ -17,11 +17,12 @@ This upstream change may help your fork because: `<benefit>`. It may be risky be
 
 ## Upgrade Execution Pattern
 
-Use `docs/fork-upgrade-runbook.md`. Confirm current fork version, target upstream version or tag, deployment slug, app URL, and Supabase project. Create a short-lived upgrade branch, fetch upstream `main` and tags, merge or rebase the target, preserve fork-owned config/content/assets/Supabase policy, bump `package.json.version` above both fork and upstream, regenerate config for the fork slug, run secret-free checks, document manual Supabase tasks, smoke-test login/settings/admin/items, and delete the upgrade branch after merge.
+Use `docs/fork-upgrade-runbook.md`. Confirm current fork version, target upstream version or tag, deployment slug, app URL, and Supabase project. Create a short-lived upgrade branch, fetch upstream `main` and tags, merge or rebase the target, preserve fork-owned config/content/assets/Supabase policy, bump `package.json.version` above both fork and upstream using Semantic Versioning 2.0.0 in normal `MAJOR.MINOR.PATCH` form, regenerate config for the fork slug, run secret-free checks, document manual Supabase tasks, smoke-test login/settings/admin/items, and delete the upgrade branch after merge.
 
 ## Guardrails
 
 - Preserve fork-specific `config/deployments/<slug>.jsonc` and public content/brand assets.
 - Treat migrations and RLS changes as high-risk until reviewed.
 - Treat `package.json.version` as the single app version; do not invent a second fork version unless a maintainer explicitly requests it.
+- Use patch for compatible fixes, docs, and tooling; minor for intentional compatible feature releases; major for breaking changes.
 - Ask before modifying legal terms, privacy text, branding, or production data behavior.

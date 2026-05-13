@@ -87,7 +87,7 @@ When syncing from upstream, preserve fork-owned config and content deliberately.
 
 Use short-lived PR branches for generic upstream work. Keep optional long-lived `deploy/<deployment-slug>` branches for fork-owned app publication, not for upstream contribution PRs.
 
-`package.json.version` is the app version. Every repository-changing merge to `main` must increase it, and published upstream versions should be taggable as `vX.Y.Z` so forks have a stable upgrade anchor. The generated app config exposes this version in the user menu for support and upgrade diagnosis.
+`package.json.version` is the app version and uses [Semantic Versioning 2.0.0](https://semver.org/) in normal `MAJOR.MINOR.PATCH` form. Every repository-changing merge to `main` must increase it, and published upstream versions should be taggable as `vX.Y.Z` so forks have a stable upgrade anchor. The generated app config exposes this version in the user menu for support and upgrade diagnosis.
 
 ## Before Public Announcement
 

@@ -6,7 +6,7 @@ These conventions keep the upstream repository easy to review, fork, sync, and m
 
 - Use Conventional Commits.
 - Prefer small, coherent commits.
-- `package.json.version` is the single app version. Every repository-changing merge to `main` must increase it; use patch by default, minor for intentional feature releases, and major for breaking changes.
+- `package.json.version` is the single app version. Every repository-changing merge to `main` must increase it using [Semantic Versioning 2.0.0](https://semver.org/) in normal `MAJOR.MINOR.PATCH` form.
 - Push after every commit unless the user explicitly asks for local-only work.
 - Work from a branch or fork. Do not commit directly to `main` for normal development.
 - Treat direct `main` commits as explicit maintainer release/merge operations, not everyday development.
@@ -69,6 +69,8 @@ Keep names predictable across React, scripts, config, and Supabase. Prefer match
 Runtime version:
 
 - `package.json.version` is injected into generated app config as `release.version` by `pnpm generate:config`.
+- Use normal SemVer values without a leading `v`: patch for compatible fixes, docs, and tooling; minor for intentional compatible feature releases; major for breaking changes.
+- Keep release tags as `vX.Y.Z` while keeping `package.json.version` as `X.Y.Z`.
 - Source config files should not duplicate the app version.
 - The user menu displays the generated version for operator and support diagnosis.
 

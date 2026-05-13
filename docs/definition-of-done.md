@@ -12,7 +12,7 @@ This is the current definition of done for upstream work. It is intentionally pr
 - Source-of-truth rules were considered.
 - User-facing conventions are documented in `docs/` when they affect contributors, forks, setup, CI/CD, security, or operations.
 - Agent-facing conventions are documented in `.agents/` when future agents should remember or enforce them.
-- `package.json.version` is bumped for every repository-changing merge to `main`; patch is the default unless minor or major is intentional.
+- `package.json.version` is bumped for every repository-changing merge to `main` using Semantic Versioning 2.0.0; patch is the default unless minor or major is intentional.
 - No secrets, real user data, private exports, or Supabase server-side maintenance keys are committed or pasted into docs. `pnpm check:secrets` guards committed Supabase secret-key and legacy service-role patterns.
 - Verification was run and the result is reported honestly.
 - The commit uses Conventional Commits.

@@ -18,6 +18,16 @@ Record:
 - route, action, expected result, actual result, and evidence;
 - whether data was mock, local development, staging, or production metadata.
 
+## Dev Server Startup
+
+Before starting `pnpm dev`, `pnpm dev:docker`, `pnpm exec next dev`, or a static preview server, check whether a suitable server is already listening. Check the intended port first, for example:
+
+```bash
+lsof -nP -iTCP:3000 -sTCP:LISTEN
+```
+
+If the app is already running, reuse it and verify the URL before testing. If the port is occupied by another process, choose a different port and record the actual URL in the evidence. Stop only the server process started for the current task; leave user-owned or pre-existing servers running.
+
 ## Baseline Routes
 
 - `/login`: terms checkbox gates sign-in actions, setup-required view appears for unfinished public fork config, terms link works, logout returns to logged-out state.

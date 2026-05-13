@@ -178,7 +178,7 @@ Agents should propose careful upgrade PRs that:
 - identify breaking changes;
 - preserve local config and content;
 - call out manual legal or Supabase decisions;
-- bump `package.json.version` above both fork and upstream versions;
+- bump `package.json.version` above both fork and upstream versions using Semantic Versioning 2.0.0;
 - run secret-free checks before suggesting deployment.
 
 Use [Fork Upgrade Runbook](fork-upgrade-runbook.md) for the operator checklist.

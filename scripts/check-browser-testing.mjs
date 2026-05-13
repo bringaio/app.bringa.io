@@ -16,6 +16,7 @@ const skillPath = path.join(root, ".agents", "skills", "agentic-browser-testing"
 
 const requiredRunbookSections = [
   "Scope",
+  "Dev Server Startup",
   "Baseline Routes",
   "Responsive And Accessibility Pass",
   "PWA Pass",
@@ -25,6 +26,9 @@ const requiredRunbookSections = [
 const requiredRunbookPhrases = [
   ".agents/skills/agentic-browser-testing/SKILL.md",
   "Do not use production user data unless the exact scenario and data category have been approved.",
+  "Before starting `pnpm dev`, `pnpm dev:docker`, `pnpm exec next dev`, or a static preview server, check whether a suitable server is already listening.",
+  "lsof -nP -iTCP:3000 -sTCP:LISTEN",
+  "Stop only the server process started for the current task",
   "/login",
   "/invite",
   "/dashboard",
@@ -49,6 +53,7 @@ const requiredRunbookPhrases = [
 ];
 
 const requiredSkillSections = [
+  "Dev Server Startup",
   "Tool Choice",
   "Baseline Scenarios",
   "Scenario Sets",
@@ -72,6 +77,9 @@ const requiredScenarioHeadings = [
 const requiredSkillPhrases = [
   "Do not add Playwright",
   "docs/browser-testing.md",
+  "Before starting `pnpm dev`, `pnpm dev:docker`, `pnpm exec next dev`, or a static preview server, check whether a suitable server is already listening.",
+  "lsof -nP -iTCP:3000 -sTCP:LISTEN",
+  "Stop only the server process started for the current task.",
   "Do not use production user data unless the user approves the exact scenario.",
   "viewport, role, route, action, expected result, actual result",
 ];
