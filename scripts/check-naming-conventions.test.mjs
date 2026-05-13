@@ -26,7 +26,7 @@ test("accepts conventions that document source naming patterns", () => {
 ## Git And Pull Requests
 
 - Use Conventional Commits.
-- Work from a branch. Do not commit directly to \`main\` for normal development.
+- Work from a branch or fork. Do not commit directly to \`main\` for normal development.
 - \`codex/<type>-<topic>\` for agent-created upstream work.
 - \`<type>/<topic>\` for human community pull requests.
 - \`deploy/<deployment-slug>\` for optional long-lived fork deployment branches.
@@ -59,7 +59,7 @@ test("rejects conventions that omit database naming", () => {
 ## Git And Pull Requests
 
 - Use Conventional Commits.
-- Work from a branch. Do not commit directly to \`main\` for normal development.
+- Work from a branch or fork. Do not commit directly to \`main\` for normal development.
 - \`codex/<type>-<topic>\` for agent-created upstream work.
 - \`<type>/<topic>\` for human community pull requests.
 - \`deploy/<deployment-slug>\` for optional long-lived fork deployment branches.
@@ -93,7 +93,7 @@ test("rejects conventions that omit agent branch naming", () => {
 ## Git And Pull Requests
 
 - Use Conventional Commits.
-- Work from a branch. Do not commit directly to \`main\` for normal development.
+- Work from a branch or fork. Do not commit directly to \`main\` for normal development.
 - \`<type>/<topic>\` for human community pull requests.
 - \`deploy/<deployment-slug>\` for optional long-lived fork deployment branches.
 

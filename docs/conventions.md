@@ -34,6 +34,7 @@ Branch handling:
 - Rebase or otherwise sync a PR branch before review when the target branch has moved.
 - Do not open upstream pull requests from `deploy/*`; open a clean short-lived branch based on upstream `main` instead.
 - Delete merged or closed short-lived branches. Keep only durable branches such as `main` and intentional `deploy/*` branches.
+- When merging outside GitHub, delete the merged remote head branch explicitly and then delete the local branch; GitHub's automatic head-branch deletion only covers GitHub-managed PR merges.
 - Avoid force-pushing after review starts unless history cleanup is necessary; if it is necessary, mention it in the pull request.
 
 ## Source Of Truth
