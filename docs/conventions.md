@@ -64,6 +64,7 @@ Keep durable documentation facts in one place and link to that place from summar
 - `docs/configuration.md`: config schema, generated artifacts, setup-readiness guard, and locale metadata.
 - `docs/conventions.md`: contributor rules, SemVer, source-of-truth rules, and CI command lists.
 - `docs/repository-settings.md`: GitHub repository settings and GitHub Pages settings.
+- `docs/agentic-development.md`: optional code graph setup and human-to-agent workflow guidance.
 - `docs/supabase.md`: Supabase backend contract, local/hosted backend paths, and operator sequence.
 - `docs/readiness-checklist.md`: current release-readiness status and live evidence summary.
 - `docs/optimization-options.md`: living roadmap and anti-roadmap for deferred ideas.

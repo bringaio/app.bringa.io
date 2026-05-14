@@ -13,6 +13,12 @@
       "sourcePath": "docs/admin-operations.md"
     },
     {
+      "slug": "agentic-development",
+      "title": "Agentic Development",
+      "path": "/content/generated/docs/agentic-development.md",
+      "sourcePath": "docs/agentic-development.md"
+    },
+    {
       "slug": "browser-testing",
       "title": "Browser Testing",
       "path": "/content/generated/docs/browser-testing.md",
