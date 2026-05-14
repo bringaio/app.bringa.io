@@ -352,18 +352,24 @@ RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
     selected_status text;
     selected_borrower uuid;
+    selected_visibility_state text;
+    selected_deleted_at timestamp with time zone;
 BEGIN
     IF auth.uid() IS NULL OR NOT public.is_validated() THEN
         RETURN false;
     END IF;
 
-    SELECT status, borrowed_by
-    INTO selected_status, selected_borrower
+    SELECT status, borrowed_by, visibility_state, deleted_at
+    INTO selected_status, selected_borrower, selected_visibility_state, selected_deleted_at
     FROM public.items
     WHERE id = item_id_input
     FOR UPDATE;
 
-    IF NOT FOUND OR selected_status <> 'inStock' OR selected_borrower IS NOT NULL THEN
+    IF NOT FOUND
+       OR selected_status <> 'inStock'
+       OR selected_borrower IS NOT NULL
+       OR selected_visibility_state IS DISTINCT FROM 'visible'
+       OR selected_deleted_at IS NOT NULL THEN
         RETURN false;
     END IF;
 
@@ -717,16 +723,21 @@ CREATE OR REPLACE FUNCTION public.delete_item(item_id_input uuid)
 RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
     item_creator uuid;
-    deleted_count integer;
+    selected_status text;
+    selected_borrower uuid;
+    selected_deleted_at timestamp with time zone;
+    updated_count integer;
+    new_version_id uuid;
 BEGIN
     IF auth.uid() IS NULL OR NOT public.is_validated() THEN
         RETURN false;
     END IF;
 
-    SELECT created_by
-    INTO item_creator
+    SELECT created_by, status, borrowed_by, deleted_at
+    INTO item_creator, selected_status, selected_borrower, selected_deleted_at
     FROM public.items
-    WHERE id = item_id_input;
+    WHERE id = item_id_input
+    FOR UPDATE;
 
     IF NOT FOUND THEN
         RETURN false;
@@ -736,11 +747,33 @@ BEGIN
         RETURN false;
     END IF;
 
-    DELETE FROM public.items
+    IF selected_deleted_at IS NOT NULL
+       OR selected_status = 'borrowed'
+       OR selected_borrower IS NOT NULL THEN
+        RETURN false;
+    END IF;
+
+    UPDATE public.items
+    SET
+        visibility_state = 'deleted_user_hidden',
+        visibility_reason = 'Deleted by owner or admin',
+        hidden_at = now(),
+        hidden_by = auth.uid(),
+        deleted_at = now(),
+        deleted_by = auth.uid()
     WHERE id = item_id_input;
 
-    GET DIAGNOSTICS deleted_count = ROW_COUNT;
-    RETURN deleted_count = 1;
+    GET DIAGNOSTICS updated_count = ROW_COUNT;
+    IF updated_count <> 1 THEN
+        RETURN false;
+    END IF;
+
+    SELECT public.record_item_version(item_id_input, 'deleted') INTO new_version_id;
+    IF new_version_id IS NULL THEN
+        RAISE EXCEPTION 'could not record deleted item version';
+    END IF;
+
+    RETURN true;
 END;
 $$;
 
@@ -798,7 +831,9 @@ BEGIN
         visibility_state = selected_version.visibility_state,
         visibility_reason = restore_reason,
         hidden_at = CASE WHEN selected_version.visibility_state = 'visible' THEN NULL ELSE now() END,
-        hidden_by = CASE WHEN selected_version.visibility_state = 'visible' THEN NULL ELSE auth.uid() END
+        hidden_by = CASE WHEN selected_version.visibility_state = 'visible' THEN NULL ELSE auth.uid() END,
+        deleted_at = CASE WHEN selected_version.visibility_state = 'visible' THEN NULL ELSE deleted_at END,
+        deleted_by = CASE WHEN selected_version.visibility_state = 'visible' THEN NULL ELSE deleted_by END
     WHERE id = selected_item_id;
 
     GET DIAGNOSTICS updated_count = ROW_COUNT;
@@ -1250,6 +1285,7 @@ DECLARE
     deleted_mute_count integer := 0;
     anonymized_profile_count integer := 0;
     completed_count integer := 0;
+    returned_item_ids uuid[] := ARRAY[]::uuid[];
 BEGIN
     IF auth.uid() IS NULL OR NOT public.is_admin() THEN
         RETURN jsonb_build_object('ok', false, 'reason', 'unauthorized');
@@ -1275,11 +1311,22 @@ BEGIN
         RETURN jsonb_build_object('ok', false, 'reason', 'self_execution_blocked');
     END IF;
 
-    UPDATE public.items
-    SET borrowed_by = NULL,
-        status = 'inStock'
-    WHERE borrowed_by = target_user_id;
-    GET DIAGNOSTICS returned_item_count = ROW_COUNT;
+    WITH returned_items AS (
+        UPDATE public.items
+        SET borrowed_by = NULL,
+            status = 'inStock'
+        WHERE borrowed_by = target_user_id
+        RETURNING id
+    )
+    SELECT coalesce(array_agg(id), ARRAY[]::uuid[]), count(*)::integer
+    INTO returned_item_ids, returned_item_count
+    FROM returned_items;
+
+    UPDATE public.borrow_history
+    SET returned_at = now()
+    WHERE borrower_id = target_user_id
+      AND returned_at IS NULL
+      AND item_id = ANY(returned_item_ids);
 
     FOR affected_item_id IN
         SELECT id
@@ -1340,6 +1387,8 @@ BEGIN
     DELETE FROM public.notification_mutes
     WHERE subject_profile_id = target_user_id;
     GET DIAGNOSTICS deleted_mute_count = ROW_COUNT;
+
+    PERFORM set_config('app.profile_valid_update', 'trusted', true);
 
     UPDATE public.profiles
     SET
@@ -2171,10 +2220,12 @@ DECLARE
   payload jsonb;
   event_payload jsonb;
   endpoint_url text;
+  webhook_secret text;
   notification_event_id uuid;
 BEGIN
   endpoint_url := NULLIF(current_setting('app.settings.telegram_item_webhook_url', true), '');
-  IF endpoint_url IS NULL THEN
+  webhook_secret := NULLIF(current_setting('app.settings.telegram_webhook_secret', true), '');
+  IF endpoint_url IS NULL OR webhook_secret IS NULL THEN
     RETURN NEW;
   END IF;
 
@@ -2208,7 +2259,7 @@ BEGIN
 
   PERFORM net.http_post(
     url := endpoint_url,
-    headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || COALESCE(current_setting('app.settings.telegram_bot_token', true), '')),
+    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bringa-webhook-secret', webhook_secret),
     body := payload
   );
 
@@ -2222,10 +2273,12 @@ DECLARE
   payload jsonb;
   event_payload jsonb;
   endpoint_url text;
+  webhook_secret text;
   notification_event_id uuid;
 BEGIN
   endpoint_url := NULLIF(current_setting('app.settings.telegram_user_webhook_url', true), '');
-  IF endpoint_url IS NULL THEN
+  webhook_secret := NULLIF(current_setting('app.settings.telegram_webhook_secret', true), '');
+  IF endpoint_url IS NULL OR webhook_secret IS NULL THEN
     RETURN NEW;
   END IF;
 
@@ -2259,7 +2312,7 @@ BEGIN
 
   PERFORM net.http_post(
     url := endpoint_url,
-    headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', 'Bearer ' || COALESCE(current_setting('app.settings.telegram_bot_token', true), '')),
+    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bringa-webhook-secret', webhook_secret),
     body := payload
   );
 
@@ -2358,10 +2411,17 @@ CREATE POLICY "No direct history inserts" ON public.borrow_history FOR INSERT TO
 ALTER TABLE public.admins ENABLE ROW LEVEL SECURITY;
 -- Fix K2: Normal users can no longer view invite codes directly.
 DROP POLICY IF EXISTS "Anyone can select invite codes for verification" ON public.admins;
+DROP POLICY IF EXISTS "Allow authenticated users to read invite codes" ON public.admins;
+DROP POLICY IF EXISTS "Authenticated users can check admin status" ON public.admins;
 DROP POLICY IF EXISTS "Admins have full access to admins table" ON public.admins;
-CREATE POLICY "Admins have full access to admins table" ON public.admins FOR ALL TO authenticated
-USING ((select public.is_admin()))
-WITH CHECK ((select public.is_admin()));
+DROP POLICY IF EXISTS "Admins can view admins table" ON public.admins;
+CREATE POLICY "Admins can view admins table" ON public.admins FOR SELECT TO authenticated USING ((select public.is_admin()));
+DROP POLICY IF EXISTS "No direct admin inserts" ON public.admins;
+CREATE POLICY "No direct admin inserts" ON public.admins FOR INSERT TO authenticated WITH CHECK (false);
+DROP POLICY IF EXISTS "No direct admin updates" ON public.admins;
+CREATE POLICY "No direct admin updates" ON public.admins FOR UPDATE TO authenticated USING (false);
+DROP POLICY IF EXISTS "No direct admin deletes" ON public.admins;
+CREATE POLICY "No direct admin deletes" ON public.admins FOR DELETE TO authenticated USING (false);
 
 -- item_sharing
 ALTER TABLE public.item_sharing ENABLE ROW LEVEL SECURITY;
@@ -2430,7 +2490,23 @@ CREATE POLICY "No direct item version deletes" ON public.item_versions FOR DELET
 ALTER TABLE public.item_images ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Validated users can view accepted item images" ON public.item_images;
 CREATE POLICY "Validated users can view accepted item images" ON public.item_images FOR SELECT TO authenticated USING (
-    (select public.is_validated()) AND moderation_state = 'accepted'
+    (select public.is_admin()) OR (
+        (select public.is_validated())
+        AND moderation_state = 'accepted'
+        AND deleted_at IS NULL
+        AND EXISTS (
+            SELECT 1
+            FROM public.items parent_item
+            WHERE parent_item.id = item_images.item_id
+              AND parent_item.deleted_at IS NULL
+              AND (
+                  parent_item.visibility_state = 'visible'
+                  OR parent_item.created_by = (select auth.uid())
+                  OR parent_item.borrowed_by = (select auth.uid())
+                  OR parent_item.owner_profile_id = (select auth.uid())
+              )
+        )
+    )
 );
 DROP POLICY IF EXISTS "No direct item image inserts" ON public.item_images;
 CREATE POLICY "No direct item image inserts" ON public.item_images FOR INSERT TO authenticated WITH CHECK (false);
@@ -2528,7 +2604,9 @@ WITH CHECK (
     AND (select public.is_validated())
     AND storage.extension(name) = 'webp'
     AND storage.filename(name) = ANY (ARRAY['detail.webp', 'thumb.webp'])
+    AND array_length(storage.foldername(name), 1) = 2
     AND (storage.foldername(name))[1] = (select auth.uid()::text)
+    AND (storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
 );
 DROP POLICY IF EXISTS "Validated users can delete own unreferenced item uploads" ON storage.objects;
 CREATE POLICY "Validated users can delete own unreferenced item uploads" ON storage.objects

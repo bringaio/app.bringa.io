@@ -14,6 +14,7 @@ import { loadConfigObject } from "./generate-config.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const schemaPath = path.join(root, "supabase", "schema.sql");
+const supabaseConfigPath = path.join(root, "supabase", "config.toml");
 
 function requireMatch(content, pattern, message) {
   if (!pattern.test(content)) {
@@ -51,6 +52,17 @@ function requireNoPolicyCreate(content, policyName) {
   if (new RegExp(`CREATE\\s+POLICY\\s+"${escapeRegExp(policyName)}"`).test(content)) {
     throw new Error(`Forbidden legacy policy remains in supabase/schema.sql: ${policyName}`);
   }
+}
+
+function supabaseFunctionConfigSection(content, functionName) {
+  const header = `[functions.${functionName}]`;
+  const start = content.indexOf(header);
+  if (start < 0) {
+    throw new Error(`Missing Supabase function config section: ${functionName}`);
+  }
+
+  const nextSection = content.indexOf("\n[", start + header.length);
+  return content.slice(start, nextSection < 0 ? undefined : nextSection);
 }
 
 export function checkSupabaseContract({ schema, config }) {
@@ -117,6 +129,9 @@ export function checkSupabaseContract({ schema, config }) {
     "Authenticated users can upload",
     "borrow_history_insert_authenticated",
     "borrow_history_select_all",
+    "Allow authenticated users to read invite codes",
+    "Authenticated users can check admin status",
+    "Admins have full access to admins table",
   ];
 
   for (const policyName of forbiddenPolicies) {
@@ -418,6 +433,10 @@ export function checkSupabaseContract({ schema, config }) {
     "No direct notification mute inserts",
     "No direct notification mute updates",
     "No direct notification mute deletes",
+    "Admins can view admins table",
+    "No direct admin inserts",
+    "No direct admin updates",
+    "No direct admin deletes",
   ];
 
   for (const policyName of requiredProductPolicies) {
@@ -432,10 +451,35 @@ export function checkSupabaseContract({ schema, config }) {
   );
   requireIncludes(
     schema,
+    "storage.filename(name) = ANY (ARRAY['detail.webp', 'thumb.webp'])",
+    "Storage upload policy must restrict browser uploads to generated item image filenames.",
+  );
+  requireIncludes(
+    schema,
     "(storage.foldername(name))[1] = (select auth.uid()::text)",
     "Storage upload policy must restrict browser uploads to the authenticated user's folder.",
   );
+  requireIncludes(
+    schema,
+    "array_length(storage.foldername(name), 1) = 2",
+    "Storage upload policy must require the <user>/<image-id>/<file> path shape.",
+  );
+  requireIncludes(
+    schema,
+    "(storage.foldername(name))[2] ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'",
+    "Storage upload policy must restrict image IDs to UUID-shaped path segments.",
+  );
   requirePolicyCreate(schema, "Validated users can delete own unreferenced item uploads");
+  requireIncludes(
+    schema,
+    "parent_item.visibility_state = 'visible'",
+    "Item image metadata reads must inherit visible item access rules.",
+  );
+  requireIncludes(
+    schema,
+    "AND deleted_at IS NULL\n        AND EXISTS (",
+    "Item image metadata reads must exclude deleted images and check their parent item.",
+  );
   requireIncludes(
     schema,
     String(config.media.maxUploadBytes),
@@ -453,6 +497,7 @@ export function checkSupabaseContract({ schema, config }) {
 }
 
 export function checkSupabaseEdgeFunctionContent(content, label = "Edge Function") {
+  const uncommentedContent = content.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
   const requiredValues = [
     "SUPABASE_SECRET_KEY",
     "SUPABASE_SECRET_KEYS",
@@ -460,31 +505,60 @@ export function checkSupabaseEdgeFunctionContent(content, label = "Edge Function
   ];
 
   for (const value of requiredValues) {
-    requireIncludes(content, value, `${label} must support ${value}.`);
+    requireIncludes(uncommentedContent, value, `${label} must support ${value}.`);
   }
 
   requireMatch(
-    content,
+    uncommentedContent,
     /SUPABASE_SECRET_KEY[\s\S]+SUPABASE_SECRET_KEYS[\s\S]+SUPABASE_SERVICE_ROLE_KEY/,
     `${label} must prefer SUPABASE_SECRET_KEY, then SUPABASE_SECRET_KEYS, before legacy SUPABASE_SERVICE_ROLE_KEY.`,
   );
 
   requireIncludes(
-    content,
+    uncommentedContent,
     "missing Supabase admin key configuration",
     `${label} must use generic admin-key wording instead of service-role-only wording.`,
   );
+  requireIncludes(uncommentedContent, "TELEGRAM_WEBHOOK_SECRET", `${label} must require the Telegram webhook shared secret.`);
+  requireIncludes(uncommentedContent, "x-bringa-webhook-secret", `${label} must read the Telegram webhook shared-secret header.`);
+  requireIncludes(uncommentedContent, "fetchNotificationEvent", `${label} must refetch notification events instead of trusting webhook payload records.`);
+  requireIncludes(uncommentedContent, "const auth = verifyWebhookSecret(req);", `${label} must verify the webhook secret in the request handler.`);
+  requireIncludes(uncommentedContent, "const event = await fetchNotificationEvent(eventId);", `${label} must refetch the notification event by id.`);
+  requireIncludes(uncommentedContent, "text: buildMessage(event)", `${label} must render Telegram text from the refetched event.`);
+
+  const serveIndex = uncommentedContent.indexOf("Deno.serve");
+  const authIndex = uncommentedContent.indexOf("verifyWebhookSecret(req)", serveIndex);
+  const jsonIndex = uncommentedContent.indexOf("req.json()", serveIndex);
+  if (serveIndex < 0 || authIndex < 0 || jsonIndex < 0 || authIndex > jsonIndex) {
+    throw new Error(`${label} must verify the webhook secret before parsing untrusted JSON.`);
+  }
+  if (/buildMessage\((record|profile)\)/.test(uncommentedContent)) {
+    throw new Error(`${label} must not build Telegram messages from webhook payload records.`);
+  }
+}
+
+export function checkSupabaseFunctionConfig(content) {
+  for (const functionName of ["notifiy-telegram", "notifiy-telegram-user"]) {
+    const section = supabaseFunctionConfigSection(content, functionName);
+    requireMatch(
+      section,
+      /verify_jwt\s*=\s*false/,
+      `${functionName} must disable platform JWT verification and authenticate database webhook calls in the handler.`,
+    );
+  }
 }
 
 export async function main() {
   const config = await loadConfigObject({ root });
   const schema = await readFile(schemaPath, "utf8");
+  const supabaseConfig = await readFile(supabaseConfigPath, "utf8");
   const edgeFunctionPaths = [
     path.join(root, "supabase", "functions", "notifiy-telegram", "index.ts"),
     path.join(root, "supabase", "functions", "notifiy-telegram-user", "index.ts"),
   ];
 
   checkSupabaseContract({ schema, config });
+  checkSupabaseFunctionConfig(supabaseConfig);
   for (const functionPath of edgeFunctionPaths) {
     checkSupabaseEdgeFunctionContent(await readFile(functionPath, "utf8"), path.relative(root, functionPath));
   }

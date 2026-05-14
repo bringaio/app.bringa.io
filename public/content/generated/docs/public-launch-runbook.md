@@ -23,7 +23,7 @@ As of 2026-05-13:
 - Supabase project: `app.bringa.io`, ref `bqotcfejqljfcfjhavwh`, region `eu-central-1`, status `ACTIVE_HEALTHY`
 - Supabase CLI: available through `pnpm exec supabase`, verified with CLI `2.98.2`
 - Supabase MCP: not available in this Codex session; use the CLI and dashboard until MCP tools are installed
-- Edge Functions: `notifiy-telegram` and `notifiy-telegram-user`, both active with `verify_jwt=true`
+- Edge Functions: `notifiy-telegram` and `notifiy-telegram-user`, active as of 2026-05-13; current repo config deploys them with `verify_jwt=false` and protects them with `TELEGRAM_WEBHOOK_SECRET`
 - First admin: bootstrapped and validated with one admin row; the invite code is intentionally not documented
 
 GitHub now serves `https://app.bringa.io/` through Pages with enforced HTTPS. The Pages workflow opts JavaScript actions into Node 24 with `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`; GitHub may still annotate upstream actions that target Node 20 until those actions retarget Node 24, but the launch workflow has been verified under the forced Node 24 runtime.

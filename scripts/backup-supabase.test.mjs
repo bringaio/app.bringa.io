@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -8,6 +8,7 @@ import {
   backupStorageBucket,
   buildBackupRunRecord,
   defaultTables,
+  fetchTable,
   fetchAuthUsers,
   listStorageFiles,
   parseBoolean,
@@ -67,12 +68,78 @@ test("includes operational notification metadata in the default table backup sco
   assert.ok(defaultTables.includes("notification_mutes"));
 });
 
+test("fetches tables in deterministic id order", async () => {
+  const calls = [];
+  const supabase = {
+    from(tableName) {
+      assert.equal(tableName, "items");
+      return {
+        select(columns) {
+          calls.push(["select", columns]);
+          return this;
+        },
+        order(column, options) {
+          calls.push(["order", column, options]);
+          return this;
+        },
+        async range(from, to) {
+          calls.push(["range", from, to]);
+          return { data: [{ id: "item-1" }], error: null };
+        },
+      };
+    },
+  };
+
+  const rows = await fetchTable(supabase, "items", 1000);
+
+  assert.deepEqual(rows, [{ id: "item-1" }]);
+  assert.deepEqual(calls, [
+    ["select", "*"],
+    ["order", "id", { ascending: true }],
+    ["range", 0, 999],
+  ]);
+});
+
+function modeBits(stats) {
+  return stats.mode & 0o777;
+}
+
 test("keeps storage backup paths inside the bucket directory", () => {
   const root = path.join(tmpdir(), "safe-backup-root");
   assert.equal(safeBackupPath(root, "nested/file.webp"), path.join(root, "nested/file.webp"));
+  assert.throws(() => safeBackupPath(root, "./file.webp"), /Unsafe backup path/);
+  assert.throws(() => safeBackupPath(root, "nested//file.webp"), /Unsafe backup path/);
+  assert.throws(() => safeBackupPath(root, "nested/./file.webp"), /Unsafe backup path/);
   assert.throws(() => safeBackupPath(root, "../escape.webp"), /Unsafe backup path/);
   assert.throws(() => safeBackupPath(root, "nested/../collision.webp"), /Unsafe backup path/);
   assert.throws(() => safeBackupPath(root, "/absolute.webp"), /Unsafe backup path/);
+});
+
+test("refuses storage backup objects that resolve to duplicate local targets", async () => {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "bringa-storage-backup-collision-"));
+  try {
+    const bucketClient = {
+      async list() {
+        return {
+          data: [
+            { name: "Item.webp", id: "file-1", metadata: { size: 5, mimetype: "image/webp" } },
+            { name: "item.webp", id: "file-2", metadata: { size: 6, mimetype: "image/webp" } },
+          ],
+          error: null,
+        };
+      },
+      async download(filePath) {
+        return { data: new Blob([filePath]), error: null };
+      },
+    };
+
+    await assert.rejects(
+      () => backupStorageBucket(bucketClient, "items", outputDir, 1000),
+      /Duplicate backup target/,
+    );
+  } finally {
+    await rm(outputDir, { recursive: true, force: true });
+  }
 });
 
 test("lists storage files recursively with pagination", async () => {
@@ -122,14 +189,20 @@ test("downloads storage files and writes a bucket manifest", async () => {
     };
 
     const result = await backupStorageBucket(bucketClient, "items", outputDir, 1000);
-    const stored = await readFile(path.join(outputDir, "storage", "items", "item.webp"), "utf8");
-    const manifest = JSON.parse(await readFile(path.join(outputDir, "storage", "items.manifest.json"), "utf8"));
+    const objectPath = path.join(outputDir, "storage", "items", "item.webp");
+    const manifestPath = path.join(outputDir, "storage", "items.manifest.json");
+    const stored = await readFile(objectPath, "utf8");
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 
     assert.equal(stored, "image");
     assert.deepEqual(result, { objects: 1, bytes: 5 });
     assert.equal(manifest.bucket, "items");
     assert.equal(manifest.objects[0].path, "item.webp");
     assert.equal(manifest.objects[0].bytes, 5);
+    assert.equal(modeBits(await stat(path.join(outputDir, "storage"))), 0o700);
+    assert.equal(modeBits(await stat(path.join(outputDir, "storage", "items"))), 0o700);
+    assert.equal(modeBits(await stat(objectPath)), 0o600);
+    assert.equal(modeBits(await stat(manifestPath)), 0o600);
   } finally {
     await rm(outputDir, { recursive: true, force: true });
   }

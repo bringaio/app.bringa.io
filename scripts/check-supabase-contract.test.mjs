@@ -7,6 +7,7 @@ import { loadConfigObject } from "./generate-config.mjs";
 import {
   checkSupabaseContract,
   checkSupabaseEdgeFunctionContent,
+  checkSupabaseFunctionConfig,
 } from "./check-supabase-contract.mjs";
 
 async function currentContractInputs() {
@@ -54,6 +55,19 @@ test("rejects Storage limits that drift from resolved media config", async () =>
   );
 });
 
+test("rejects Storage upload policies that drift from canonical image filenames", async () => {
+  const { schema, config } = await currentContractInputs();
+  const driftedSchema = schema.replace(
+    "AND storage.filename(name) = ANY (ARRAY['detail.webp', 'thumb.webp'])",
+    "AND storage.filename(name) IS NOT NULL",
+  );
+
+  assert.throws(
+    () => checkSupabaseContract({ schema: driftedSchema, config }),
+    /generated item image filenames/,
+  );
+});
+
 test("requires Edge Functions to prefer modern Supabase secret keys", async () => {
   const root = process.cwd();
   const content = await readFile(path.join(root, "supabase", "functions", "notifiy-telegram", "index.ts"), "utf8");
@@ -66,4 +80,58 @@ test("requires Edge Functions to prefer modern Supabase secret keys", async () =
     ),
     /SUPABASE_SECRET_KEY/,
   );
+});
+
+test("requires notification Edge Functions to authenticate trigger calls and refetch events", async () => {
+  const root = process.cwd();
+  const content = await readFile(path.join(root, "supabase", "functions", "notifiy-telegram", "index.ts"), "utf8");
+
+  assert.doesNotThrow(() => checkSupabaseEdgeFunctionContent(content, "notifiy-telegram"));
+  assert.throws(
+    () => checkSupabaseEdgeFunctionContent(
+      content.replace("const auth = verifyWebhookSecret(req);", "const auth = { ok: true } as const;"),
+      "notifiy-telegram",
+    ),
+    /verify the webhook secret/,
+  );
+  assert.throws(
+    () => checkSupabaseEdgeFunctionContent(
+      content.replace(
+        `    const auth = verifyWebhookSecret(req);
+    if (!auth.ok) {
+      return jsonResponse({ error: auth.message }, auth.status);
+    }
+
+    const payload = await req.json() as WebhookPayload;`,
+        `    const payload = await req.json() as WebhookPayload;
+    const auth = verifyWebhookSecret(req);
+    if (!auth.ok) {
+      return jsonResponse({ error: auth.message }, auth.status);
+    }`,
+      ),
+      "notifiy-telegram",
+    ),
+    /before parsing untrusted JSON/,
+  );
+});
+
+test("requires notification Edge Functions to run in handler-authenticated webhook mode", async () => {
+  const root = process.cwd();
+  const content = await readFile(path.join(root, "supabase", "config.toml"), "utf8");
+
+  assert.doesNotThrow(() => checkSupabaseFunctionConfig(content));
+  assert.throws(
+    () => checkSupabaseFunctionConfig(content.replaceAll("verify_jwt = false", "verify_jwt = true")),
+    /handler-authenticated webhook mode|authenticate database webhook calls/,
+  );
+});
+
+test("requires borrow and delete RPCs to preserve visibility and audit history", async () => {
+  const { schema } = await currentContractInputs();
+
+  assert.match(schema, /selected_visibility_state/, "borrow_item should inspect item visibility state.");
+  assert.match(schema, /selected_deleted_at/, "borrow_item should inspect soft deletion state.");
+  assert.match(schema, /selected_status = 'borrowed'/, "delete_item should refuse actively borrowed items.");
+  assert.match(schema, /visibility_state = 'deleted_user_hidden'/, "delete_item should soft-delete instead of hard-delete.");
+  assert.doesNotMatch(schema, /DELETE\s+FROM\s+public\.items\s+WHERE\s+id\s*=\s*item_id_input/i);
 });

@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildAdminItemVersionTimeline, summarizeAdminItemVersions } from "../src/lib/admin-item-versions.ts";
+import {
+  buildAdminItemVersionTimeline,
+  isValidAdminItemVersionItemId,
+  summarizeAdminItemVersions,
+} from "../src/lib/admin-item-versions.ts";
 
 test("builds an admin item version timeline newest version first", () => {
   const timeline = buildAdminItemVersionTimeline([
@@ -83,4 +87,10 @@ test("summarizes version history without invalid dates breaking ordering", () =>
   assert.equal(summary.totalVersions, 2);
   assert.equal(summary.latestVersionNumber, 2);
   assert.equal(summary.latestCreatedAt, "2026-05-02T10:00:00.000Z");
+});
+
+test("accepts standard generated UUID item ids for version lookups", () => {
+  assert.equal(isValidAdminItemVersionItemId("9f81d0f2-8f69-4c7a-9fc2-3f9358ef2b3f"), true);
+  assert.equal(isValidAdminItemVersionItemId("9f81d0f2-8f69-4c7a-9fc2-3f9358ef2b3"), false);
+  assert.equal(isValidAdminItemVersionItemId("not-an-id"), false);
 });

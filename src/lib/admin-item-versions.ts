@@ -15,6 +15,12 @@ export type AdminItemVersionSummary = {
   latestCreatedAt: string | null;
 };
 
+const adminItemVersionItemIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function isValidAdminItemVersionItemId(value: string | null | undefined): value is string {
+  return typeof value === "string" && adminItemVersionItemIdPattern.test(value);
+}
+
 function dateTime(value: string | null | undefined): number {
   if (!value) return Number.NaN;
   return new Date(value).getTime();

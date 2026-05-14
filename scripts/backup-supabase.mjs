@@ -7,7 +7,7 @@
  * @module scripts/backup-supabase
  */
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { chmod, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
@@ -165,7 +165,8 @@ export function safeBackupPath(rootDir, relativePath) {
   if (!relativePath || path.isAbsolute(relativePath)) {
     throw new Error(`Unsafe backup path: ${relativePath}`);
   }
-  if (relativePath.split(/[\\/]+/).includes("..")) {
+  const segments = relativePath.split(/[\\/]/);
+  if (segments.some((segment) => !segment || segment === "." || segment === "..")) {
     throw new Error(`Unsafe backup path: ${relativePath}`);
   }
 
@@ -177,6 +178,16 @@ export function safeBackupPath(rootDir, relativePath) {
   }
 
   return target;
+}
+
+async function ensurePrivateDirectory(dirPath) {
+  await mkdir(dirPath, { recursive: true, mode: 0o700 });
+  await chmod(dirPath, 0o700);
+}
+
+async function writePrivateFile(filePath, content) {
+  await writeFile(filePath, content, { mode: 0o600 });
+  await chmod(filePath, 0o600);
 }
 
 /**
@@ -194,7 +205,11 @@ export async function fetchTable(supabase, tableName, pageSize) {
   while (true) {
     const from = page * pageSize;
     const to = from + pageSize - 1;
-    const { data, error } = await supabase.from(tableName).select("*").range(from, to);
+    const { data, error } = await supabase
+      .from(tableName)
+      .select("*")
+      .order("id", { ascending: true })
+      .range(from, to);
 
     if (error) {
       throw new Error(`${tableName}: ${error.message}`);
@@ -282,10 +297,21 @@ export async function backupStorageBucket(bucketClient, bucketName, outputDir, p
   const bucketDir = safeBackupPath(storageRoot, bucketName);
   const manifestPath = safeBackupPath(storageRoot, `${bucketName}.manifest.json`);
   const files = await listStorageFiles(bucketClient, "", pageSize);
+  const fileTargets = new Map();
   const objects = [];
   let bytes = 0;
 
-  await mkdir(bucketDir, { recursive: true });
+  await ensurePrivateDirectory(bucketDir);
+
+  for (const file of files) {
+    const target = safeBackupPath(bucketDir, file.path);
+    const targetKey = path.resolve(target).toLowerCase();
+    const previousPath = fileTargets.get(targetKey);
+    if (previousPath) {
+      throw new Error(`Duplicate backup target for ${bucketName}: ${previousPath} and ${file.path}`);
+    }
+    fileTargets.set(targetKey, file.path);
+  }
 
   for (const file of files) {
     const { data, error } = await bucketClient.download(file.path);
@@ -295,8 +321,8 @@ export async function backupStorageBucket(bucketClient, bucketName, outputDir, p
 
     const buffer = await downloadToBuffer(data);
     const target = safeBackupPath(bucketDir, file.path);
-    await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, buffer);
+    await ensurePrivateDirectory(path.dirname(target));
+    await writePrivateFile(target, buffer);
 
     const object = {
       ...file,
@@ -307,8 +333,8 @@ export async function backupStorageBucket(bucketClient, bucketName, outputDir, p
     bytes += object.bytes;
   }
 
-  await mkdir(storageRoot, { recursive: true });
-  await writeFile(
+  await ensurePrivateDirectory(storageRoot);
+  await writePrivateFile(
     manifestPath,
     `${JSON.stringify({ bucket: bucketName, objectCount: objects.length, bytes, objects }, null, 2)}\n`,
   );
@@ -414,7 +440,7 @@ export async function main() {
   const startedAt = new Date().toISOString();
   const outputDir = path.join(backupRoot, backupTimestamp());
 
-  await mkdir(outputDir, { recursive: true });
+  await ensurePrivateDirectory(outputDir);
 
   const supabase = createClient(supabaseUrl, maintenanceKey, {
     auth: {
@@ -443,7 +469,7 @@ export async function main() {
 
   for (const tableName of tableList) {
     const rows = await fetchTable(supabase, tableName, pageSize);
-    await writeFile(path.join(outputDir, `${tableName}.json`), `${JSON.stringify(rows, null, 2)}\n`);
+    await writePrivateFile(path.join(outputDir, `${tableName}.json`), `${JSON.stringify(rows, null, 2)}\n`);
     manifest.tables[tableName] = rows.length;
   }
 
@@ -458,7 +484,7 @@ export async function main() {
 
   if (includeAuthUsers) {
     const users = await fetchAuthUsers(supabase.auth.admin, authPageSize);
-    await writeFile(path.join(outputDir, "auth-users.json"), `${JSON.stringify(users, null, 2)}\n`);
+    await writePrivateFile(path.join(outputDir, "auth-users.json"), `${JSON.stringify(users, null, 2)}\n`);
     manifest.authUsers = {
       exported: true,
       users: users.length,
@@ -469,7 +495,7 @@ export async function main() {
   const finishedAt = new Date().toISOString();
   manifest.finishedAt = finishedAt;
 
-  await writeFile(path.join(outputDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+  await writePrivateFile(path.join(outputDir, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
 
   if (recordRun) {
     try {

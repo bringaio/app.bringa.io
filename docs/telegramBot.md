@@ -12,6 +12,7 @@ Telegram is implemented through Supabase Edge Functions, database webhooks, and 
 - `TELEGRAM_CHAT_ID`
 - `TELEGRAM_BOT_TOKEN_USER`
 - `TELEGRAM_CHAT_ID_USER`
+- `TELEGRAM_WEBHOOK_SECRET`
 - `APP_URL`
 - `SUPABASE_URL`
 - `SUPABASE_SECRET_KEY`
@@ -20,13 +21,15 @@ Telegram is implemented through Supabase Edge Functions, database webhooks, and 
 
 Set these as Supabase function secrets, not in public config.
 Use `SUPABASE_SECRET_KEY` for new hosted Supabase deployments. `SUPABASE_SECRET_KEYS` is also supported for Supabase's JSON secret-map style with a `default` entry. `SUPABASE_SERVICE_ROLE_KEY` remains a legacy fallback only. The Edge Functions use this server-only admin key to call `record_notification_delivery` after Telegram accepts or rejects a send attempt.
+`TELEGRAM_WEBHOOK_SECRET` must be a high-entropy shared secret. Store the same value in the database setting `app.settings.telegram_webhook_secret`; the trigger sends it in `x-bringa-webhook-secret`, and the Edge Function rejects calls without an exact match.
 
 Database trigger functions also read deployment-specific webhook URLs from database settings:
 
 - `app.settings.telegram_item_webhook_url`
 - `app.settings.telegram_user_webhook_url`
+- `app.settings.telegram_webhook_secret`
 
-If a setting is missing, the trigger returns without calling an Edge Function. This keeps the upstream schema forkable and avoids shipping project-specific URLs.
+If a webhook URL setting is missing, the trigger returns without calling an Edge Function. This keeps the upstream schema forkable and avoids shipping project-specific URLs. The webhook secret setting is required for successful delivery when a URL is configured.
 
 ## Notification State
 
@@ -54,12 +57,13 @@ The typo is part of the current deployed surface and should only be renamed with
 3. Send a test message in the group.
 4. Read updates from `https://api.telegram.org/bot<BOT_TOKEN>/getUpdates` and copy the chat id.
 5. Store secrets with the Supabase CLI or dashboard.
-6. Deploy the Edge Function.
-7. Configure the database setting for the matching webhook URL.
-8. Enable the database trigger.
+6. Store `TELEGRAM_WEBHOOK_SECRET` as a function secret.
+7. Deploy the Edge Functions with the repository `supabase/config.toml` so `verify_jwt=false` is applied for database webhook calls.
+8. Configure the database settings for the matching webhook URL and the same `app.settings.telegram_webhook_secret` value.
+9. Enable the database trigger.
 
 ## Remaining Improvements
 
-- Define the final database-setting workflow for webhook URLs and bearer tokens.
+- Define the final operator workflow for rotating webhook URLs and shared secrets.
 - Rename functions only when triggers and docs can be migrated safely.
 - Add an operator retry job if manual retry planning is not enough for a deployment.

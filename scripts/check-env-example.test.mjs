@@ -20,6 +20,7 @@ function validEnvExampleContent(overrides = {}) {
     SUPABASE_BACKUP_AUTH_USERS: "0",
     SUPABASE_BACKUP_RECORD_RUN: "1",
     APP_URL: "http://localhost:3000",
+    TELEGRAM_WEBHOOK_SECRET: "",
     TELEGRAM_BOT_TOKEN: "",
     TELEGRAM_CHAT_ID: "",
     TELEGRAM_BOT_TOKEN_USER: "",
@@ -50,6 +51,13 @@ test("rejects browser-visible Supabase config in env example", () => {
   );
 });
 
+test("rejects duplicate env keys before blank secret checks can be bypassed", () => {
+  assert.throws(
+    () => checkEnvExampleContent(`${validEnvExampleContent({ TELEGRAM_WEBHOOK_SECRET: "not-for-example" })}TELEGRAM_WEBHOOK_SECRET=\n`),
+    /duplicate key: TELEGRAM_WEBHOOK_SECRET/,
+  );
+});
+
 test("requires backup defaults to match backup script source of truth", () => {
   assert.doesNotThrow(() => checkEnvExampleContent(validEnvExampleContent()));
 });
@@ -77,5 +85,9 @@ test("rejects real service and notification values in the example env", () => {
   assert.throws(
     () => checkEnvExampleContent(validEnvExampleContent({ TELEGRAM_BOT_TOKEN: "123:abc" })),
     /TELEGRAM_BOT_TOKEN.*blank/,
+  );
+  assert.throws(
+    () => checkEnvExampleContent(validEnvExampleContent({ TELEGRAM_WEBHOOK_SECRET: "not-for-example" })),
+    /TELEGRAM_WEBHOOK_SECRET.*blank/,
   );
 });

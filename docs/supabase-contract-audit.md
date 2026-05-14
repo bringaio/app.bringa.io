@@ -171,7 +171,7 @@ Current functions:
 Risk:
 
 - Fresh forks must configure webhook URL settings before expecting Telegram delivery.
-- The upstream deployment still needs its webhook URLs and Edge Function secrets configured. Both functions are deployed with `verify_jwt=true`, but live Telegram delivery has not been exercised.
+- The upstream deployment still needs its webhook URLs, `TELEGRAM_WEBHOOK_SECRET`, and matching `app.settings.telegram_webhook_secret` configured. Current repo config deploys both functions with `verify_jwt=false` for database webhook calls, and live Telegram delivery has not been exercised.
 
 Target:
 

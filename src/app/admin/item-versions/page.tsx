@@ -8,12 +8,10 @@ import ProtectedRoute from "@/components/auth/protected-route"
 import { AppImage } from "@/components/ui/app-image"
 import { Button } from "@/components/ui/button"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
-import { buildAdminItemVersionTimeline, summarizeAdminItemVersions, type AdminItemVersion, type AdminItemVersionTimelineEntry } from "@/lib/admin-item-versions"
+import { buildAdminItemVersionTimeline, isValidAdminItemVersionItemId, summarizeAdminItemVersions, type AdminItemVersion, type AdminItemVersionTimelineEntry } from "@/lib/admin-item-versions"
 import { buildAdminRouteGate } from "@/lib/admin-route-gate"
 import { supabase } from "@/lib/supabaseclient"
 import type { ItemDb } from "@/app/model/model"
-
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i
 
 type VersionedItem = Pick<ItemDb, "id" | "name" | "description" | "image_url" | "status" | "owner_kind" | "owner_label" | "visibility_state"> & {
     created_at: string | null
@@ -145,16 +143,21 @@ function AdminItemVersionsContent() {
     }, [adminGate.redirectTo, router])
 
     const fetchVersions = useCallback(async () => {
-        if (!itemId || !uuidPattern.test(itemId)) {
+        setLoading(true)
+        setError(null)
+        setActionError(null)
+        setActionMessage(null)
+        setProcessingId(null)
+        setItem(null)
+        setVersions([])
+
+        if (!isValidAdminItemVersionItemId(itemId)) {
             setError("Choose a valid item from an admin item view.")
             setLoading(false)
             return
         }
 
         try {
-            setLoading(true)
-            setError(null)
-
             const [itemRes, versionsRes] = await Promise.all([
                 supabase
                     .from("items")

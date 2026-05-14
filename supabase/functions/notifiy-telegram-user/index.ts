@@ -1,18 +1,23 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
 type NotificationRecord = {
-  id?: string;
+  id: string;
   payload?: {
     title?: string;
     url_path?: string;
   };
-  display_name?: string | null;
-  display_surname?: string | null;
+  source_id?: string | null;
 };
 
 type WebhookPayload = {
-  record?: NotificationRecord;
+  record?: {
+    id?: string;
+  };
 };
+
+type WebhookAuthResult =
+  | { ok: true }
+  | { ok: false; status: number; message: string };
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
   return new Response(JSON.stringify(body), {
@@ -33,7 +38,7 @@ function buildMessage(record: NotificationRecord) {
 }
 
 function notificationEventId(record: NotificationRecord) {
-  return record.payload ? record.id : undefined;
+  return record.id;
 }
 
 function secretKeyFromMap() {
@@ -56,6 +61,51 @@ function supabaseAdminKey() {
   return Deno.env.get("SUPABASE_SECRET_KEY") ||
     secretKeyFromMap() ||
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+}
+
+function verifyWebhookSecret(req: Request): WebhookAuthResult {
+  const configuredSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET");
+  if (!configuredSecret) {
+    return { ok: false, status: 500, message: "Server configuration error" };
+  }
+
+  const providedSecret = req.headers.get("x-bringa-webhook-secret");
+  if (providedSecret !== configuredSecret) {
+    return { ok: false, status: 401, message: "Unauthorized" };
+  }
+
+  return { ok: true };
+}
+
+function eventIdFromPayload(payload: WebhookPayload) {
+  return typeof payload.record?.id === "string" && payload.record.id.trim()
+    ? payload.record.id
+    : undefined;
+}
+
+async function fetchNotificationEvent(eventId: string): Promise<NotificationRecord | null> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const adminKey = supabaseAdminKey();
+  if (!supabaseUrl || !adminKey) {
+    throw new Error("missing Supabase admin key configuration");
+  }
+
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/notification_events?id=eq.${encodeURIComponent(eventId)}&select=id,payload,source_id`,
+    {
+      headers: {
+        "apikey": adminKey,
+        "Authorization": `Bearer ${adminKey}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`notification event lookup failed: ${response.status}`);
+  }
+
+  const rows = await response.json() as NotificationRecord[];
+  return rows[0] ?? null;
 }
 
 async function recordDelivery(eventId: string | undefined, status: "sent" | "failed", error?: string) {
@@ -91,12 +141,23 @@ async function recordDelivery(eventId: string | undefined, status: "sent" | "fai
 
 Deno.serve(async (req) => {
   try {
-    const payload = await req.json() as WebhookPayload;
-    const profile = payload.record;
+    const auth = verifyWebhookSecret(req);
+    if (!auth.ok) {
+      return jsonResponse({ error: auth.message }, auth.status);
+    }
 
-    if (!profile || !profile.id) {
-      console.error("Invalid payload received:", payload);
+    const payload = await req.json() as WebhookPayload;
+    const eventId = eventIdFromPayload(payload);
+
+    if (!eventId) {
+      console.error("Invalid notification payload received");
       return jsonResponse({ error: "Invalid payload" }, 400);
+    }
+
+    const event = await fetchNotificationEvent(eventId);
+    if (!event) {
+      await recordDelivery(eventId, "failed", "Notification event not found");
+      return jsonResponse({ error: "Notification event not found" }, 404);
     }
 
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN_USER");
@@ -104,30 +165,37 @@ Deno.serve(async (req) => {
 
     if (!botToken || !chatId) {
       console.error("Missing environment variables: TELEGRAM_BOT_TOKEN_USER or TELEGRAM_CHAT_ID_USER");
-      await recordDelivery(notificationEventId(profile), "failed", "Server configuration error");
+      await recordDelivery(notificationEventId(event), "failed", "Server configuration error");
       return jsonResponse({ error: "Server configuration error" }, 500);
     }
 
-    const tgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: buildMessage(profile),
-      }),
-    });
+    let tgResponse: Response;
+    try {
+      tgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: buildMessage(event),
+        }),
+      });
+    } catch {
+      console.error("Telegram API request failed before receiving a response");
+      await recordDelivery(notificationEventId(event), "failed", "Telegram request failed");
+      return jsonResponse({ error: "Telegram delivery failed" }, 502);
+    }
 
     if (!tgResponse.ok) {
       const errorText = await tgResponse.text();
       console.error("Telegram API error:", errorText);
-      await recordDelivery(notificationEventId(profile), "failed", errorText);
+      await recordDelivery(notificationEventId(event), "failed", errorText);
       return jsonResponse({ error: "Telegram delivery failed" }, 502);
     }
 
-    await recordDelivery(notificationEventId(profile), "sent");
+    await recordDelivery(notificationEventId(event), "sent");
     return jsonResponse({ status: "ok" }, 200);
-  } catch (error) {
-    console.error("Internal service error:", error);
+  } catch {
+    console.error("Internal service error");
     return jsonResponse({ error: "Internal server error" }, 500);
   }
 })

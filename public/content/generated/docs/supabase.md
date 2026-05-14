@@ -90,12 +90,12 @@ As of 2026-05-05, the upstream `app.bringa.io` Supabase project in `eu-central-1
 - anon/PUBLIC execution grants were removed from SECURITY DEFINER functions;
 - RLS policies are scoped to `authenticated` and use statement-stable auth helper calls where appropriate;
 - missing foreign-key indexes were added;
-- both Telegram Edge Functions are deployed with `verify_jwt=true`;
+- both Telegram Edge Functions are deployed, with current repo config moving database webhook auth to `TELEGRAM_WEBHOOK_SECRET`;
 - `pnpm backup:supabase` and `pnpm verify:backup` completed against the empty live baseline.
 
 Known remaining live setup items are Auth provider configuration, Site URL and redirect URL confirmation, Edge Function secrets, Telegram webhook URL settings, live notification delivery log review, and restore drill evidence. Edge Function logs had no invocations in the last 24-hour windows checked through MCP on 2026-05-05 and 2026-05-06; Auth logs still show the known Supabase-managed GoTrue default/admin group deprecation warnings until provider setup is complete. Supabase Branching is no longer a release blocker for the free-account default path; it remains an optional paid remote-preview follow-up.
 
-On 2026-05-13, secret-safe Supabase CLI metadata confirmed `app.bringa.io` project ref `bqotcfejqljfcfjhavwh` is `ACTIVE_HEALTHY` in `eu-central-1`. CLI function listing confirmed `notifiy-telegram` and `notifiy-telegram-user` are active with `verify_jwt=true`. Supabase MCP availability is session-dependent; use project-scoped MCP when installed and the repo-local CLI/dashboard when it is not. Never print or commit real secret values. The Supabase custom domain add-on is not required for the GitHub Pages app domain. Use [Public Launch Runbook](public-launch-runbook.md) for the current upstream Cloudflare, Pages, and OAuth sequence.
+On 2026-05-13, secret-safe Supabase CLI metadata confirmed `app.bringa.io` project ref `bqotcfejqljfcfjhavwh` is `ACTIVE_HEALTHY` in `eu-central-1`. CLI function listing confirmed `notifiy-telegram` and `notifiy-telegram-user` were active with `verify_jwt=true` before the webhook shared-secret hardening. Current repo config deploys them with `verify_jwt=false` because database webhooks authenticate in the handler with `TELEGRAM_WEBHOOK_SECRET`. Supabase MCP availability is session-dependent; use project-scoped MCP when installed and the repo-local CLI/dashboard when it is not. Never print or commit real secret values. The Supabase custom domain add-on is not required for the GitHub Pages app domain. Use [Public Launch Runbook](public-launch-runbook.md) for the current upstream Cloudflare, Pages, and OAuth sequence.
 
 For upstream OAuth provider setup, use:
 

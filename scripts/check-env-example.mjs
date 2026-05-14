@@ -30,6 +30,7 @@ const requiredKeys = [
   "SUPABASE_BACKUP_AUTH_USERS",
   "SUPABASE_BACKUP_RECORD_RUN",
   "APP_URL",
+  "TELEGRAM_WEBHOOK_SECRET",
   "TELEGRAM_BOT_TOKEN",
   "TELEGRAM_CHAT_ID",
   "TELEGRAM_BOT_TOKEN_USER",
@@ -42,6 +43,7 @@ const blankExampleKeys = [
   "SUPABASE_SECRET_KEYS",
   "SUPABASE_SERVICE_ROLE_KEY",
   "SUPABASE_PROJECT_REF",
+  "TELEGRAM_WEBHOOK_SECRET",
   "TELEGRAM_BOT_TOKEN",
   "TELEGRAM_CHAT_ID",
   "TELEGRAM_BOT_TOKEN_USER",
@@ -90,7 +92,11 @@ export function parseEnvExample(content) {
     const key = trimmed.slice(0, separator).trim();
     const rawValue = trimmed.slice(separator + 1).trim();
     const value = rawValue.replace(/^['"]|['"]$/g, "");
-    if (key) env.set(key, value);
+    if (!key) continue;
+    if (env.has(key)) {
+      throw new Error(`.env.example contains duplicate key: ${key}`);
+    }
+    env.set(key, value);
   }
 
   return env;
