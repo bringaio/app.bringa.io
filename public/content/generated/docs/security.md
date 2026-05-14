@@ -91,6 +91,12 @@ For production-linked Supabase work, add live evidence when access is available:
 
 Passing local checks is not enough for a production-readiness claim unless those checks cover the changed security surface. Record uncovered gaps in [Optimization Options](optimization-options.md).
 
+## DeepSec Agent Scans
+
+[DeepSec](https://github.com/vercel-labs/deepsec/) is an agent-powered vulnerability scanning harness from Vercel Labs for on-demand review of large codebases. Use `.agents/skills/deep-security-check/` when a maintainer asks for a deep security check or DeepSec scan.
+
+DeepSec should be installed only for the active scan, following the current upstream README and getting-started docs. The working directory is `.deepsec/`, and future agents must remove it completely before finishing so the repository root stays clean. Use DeepSec's documented Codex or Claude subscription flow only after checking the current docs, and preserve durable results as code fixes or compact backlog entries rather than raw DeepSec run state.
+
 ## Forks
 
 Fork operators should keep secrets in local environment files, deployment provider secrets, Supabase function secrets, or an approved secret store. Fork-owned app identity, legal text, repository links, and public Supabase values belong in deployment config and deployment content.

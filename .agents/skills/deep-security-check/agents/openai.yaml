@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deep Security Check"
+  short_description: "Run DeepSec scans without leaving workspace artifacts behind."
+  default_prompt: "Run a deep security check with DeepSec, then remove the .deepsec workspace when finished."
