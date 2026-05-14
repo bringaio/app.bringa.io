@@ -50,9 +50,13 @@ The current functions are named:
 
 The typo is part of the current deployed surface and should only be renamed with a migration plan for triggers/webhooks.
 
-## Current Upstream Handoff
+## Temporary Upstream Handoff
 
-As of 2026-05-14, the upstream `app.bringa.io` Supabase project is `bqotcfejqljfcfjhavwh`.
+This subsection is only for maintainers of the upstream `app.bringa.io` deployment. Fork operators should ignore it and use the generic setup steps below with their own project ref, Edge Function URLs, bot tokens, chat ids, and webhook secret.
+
+Delete this subsection after upstream Telegram is fully configured and one live notification has been verified.
+
+As of 2026-05-14, the upstream Supabase project is `bqotcfejqljfcfjhavwh`.
 
 Already done:
 
@@ -79,13 +83,15 @@ Still required before Telegram can be considered set up:
 8. Configure the database settings for the matching webhook URL and the same `app.settings.telegram_webhook_secret` value.
 9. Enable the database trigger.
 
-For the upstream `app.bringa.io` project, the database settings SQL is:
+For any deployment, the database settings SQL template is:
 
 ```sql
-ALTER DATABASE postgres SET app.settings.telegram_item_webhook_url = 'https://bqotcfejqljfcfjhavwh.supabase.co/functions/v1/notifiy-telegram';
-ALTER DATABASE postgres SET app.settings.telegram_user_webhook_url = 'https://bqotcfejqljfcfjhavwh.supabase.co/functions/v1/notifiy-telegram-user';
+ALTER DATABASE postgres SET app.settings.telegram_item_webhook_url = 'https://<project-ref>.supabase.co/functions/v1/notifiy-telegram';
+ALTER DATABASE postgres SET app.settings.telegram_user_webhook_url = 'https://<project-ref>.supabase.co/functions/v1/notifiy-telegram-user';
 ALTER DATABASE postgres SET app.settings.telegram_webhook_secret = '<same high-entropy value set as TELEGRAM_WEBHOOK_SECRET>';
 ```
+
+Fork operators must replace `<project-ref>` and should not copy upstream `app.bringa.io` project values.
 
 After applying those settings, reconnect and verify without printing secret values:
 
