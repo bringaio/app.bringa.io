@@ -14,9 +14,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultTargets = [
   "AGENTS.md",
   "README.md",
-  "CONTRIBUTING.md",
-  "CODE_OF_CONDUCT.md",
-  "SECURITY.md",
+  ".github/CONTRIBUTING.md",
+  ".github/CODE_OF_CONDUCT.md",
+  ".github/SECURITY.md",
   "docs",
   ".agents",
 ];

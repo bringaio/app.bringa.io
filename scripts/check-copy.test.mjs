@@ -64,22 +64,22 @@ test("ignores configured documentation paths", async () => {
   );
 });
 
-test("scans root contributor docs when configured", async () => {
+test("scans contributor docs when configured", async () => {
   await withFixture(
     {
       "README.md": "Clean upstream copy.\n",
-      "CONTRIBUTING.md": `Contributor copy with ${forbiddenSingular}.\n`,
-      "CODE_OF_CONDUCT.md": "Conduct copy is clean.\n",
+      ".github/CONTRIBUTING.md": `Contributor copy with ${forbiddenSingular}.\n`,
+      ".github/CODE_OF_CONDUCT.md": "Conduct copy is clean.\n",
     },
     async (root) => {
       const matches = await findForbiddenEnglishCopyTerms({
         root,
-        targets: ["README.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md"],
+        targets: ["README.md", ".github/CONTRIBUTING.md", ".github/CODE_OF_CONDUCT.md"],
       });
 
       assert.deepEqual(
         matches.map(({ relativePath, lineNumber, term }) => ({ relativePath, lineNumber, term })),
-        [{ relativePath: "CONTRIBUTING.md", lineNumber: 1, term: forbiddenSingular }],
+        [{ relativePath: ".github/CONTRIBUTING.md", lineNumber: 1, term: forbiddenSingular }],
       );
     },
   );

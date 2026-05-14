@@ -113,6 +113,7 @@ export function checkSecurityMaintenanceContract({
   securityMarkdown,
   maintenanceMarkdown,
   optimizationMarkdown,
+  appImageSource = "",
 }) {
   requirePackageScripts(packageJson);
   requireCommands(skillMarkdown, ".agents/skills/security-maintenance/SKILL.md");
@@ -133,16 +134,21 @@ export function checkSecurityMaintenanceContract({
   for (const phrase of requiredOptimizationPhrases) {
     requireIncludes(optimizationMarkdown, phrase, "docs/optimization-options.md");
   }
+
+  requireIncludes(appImageSource, 'referrerPolicy = "no-referrer"', "src/components/ui/app-image.tsx");
+  requireIncludes(appImageSource, "referrerPolicy={referrerPolicy}", "src/components/ui/app-image.tsx");
 }
 
 export async function main() {
-  const [packageJson, skillMarkdown, securityMarkdown, maintenanceMarkdown, optimizationMarkdown] = await Promise.all([
-    readFile(path.join(root, "package.json"), "utf8"),
-    readFile(path.join(root, ".agents", "skills", "security-maintenance", "SKILL.md"), "utf8"),
-    readFile(path.join(root, "docs", "security.md"), "utf8"),
-    readFile(path.join(root, "docs", "maintenance.md"), "utf8"),
-    readFile(path.join(root, "docs", "optimization-options.md"), "utf8"),
-  ]);
+  const [packageJson, skillMarkdown, securityMarkdown, maintenanceMarkdown, optimizationMarkdown, appImageSource] =
+    await Promise.all([
+      readFile(path.join(root, "package.json"), "utf8"),
+      readFile(path.join(root, ".agents", "skills", "security-maintenance", "SKILL.md"), "utf8"),
+      readFile(path.join(root, "docs", "security.md"), "utf8"),
+      readFile(path.join(root, "docs", "maintenance.md"), "utf8"),
+      readFile(path.join(root, "docs", "optimization-options.md"), "utf8"),
+      readFile(path.join(root, "src", "components", "ui", "app-image.tsx"), "utf8"),
+    ]);
 
   checkSecurityMaintenanceContract({
     packageJson,
@@ -150,6 +156,7 @@ export async function main() {
     securityMarkdown,
     maintenanceMarkdown,
     optimizationMarkdown,
+    appImageSource,
   });
 
   console.log("Security maintenance contract check passed.");

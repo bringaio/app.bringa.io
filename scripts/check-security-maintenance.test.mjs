@@ -97,73 +97,78 @@ const validOptimizationOptions = `
 - Abuse controls: design rate limits and review loops for uploads, moderation actions, invite attempts, RPC mutations, and Telegram notification functions.
 `;
 
-test("accepts aligned security maintenance docs and scripts", () => {
-  assert.doesNotThrow(() => checkSecurityMaintenanceContract({
+const validAppImageSource =
+  'export function AppImage({ alt, referrerPolicy = "no-referrer", ...props }) { return <Image referrerPolicy={referrerPolicy} />; }';
+
+function validContract(overrides = {}) {
+  return {
     packageJson: validPackageJson,
     skillMarkdown: validSkill,
     securityMarkdown: validSecurityDoc,
     maintenanceMarkdown: validMaintenanceDoc,
     optimizationMarkdown: validOptimizationOptions,
-  }));
+    appImageSource: validAppImageSource,
+    ...overrides,
+  };
+}
+
+test("accepts aligned security maintenance docs and scripts", () => {
+  assert.doesNotThrow(() => checkSecurityMaintenanceContract(validContract()));
 });
 
 test("requires the baseline command list and package scripts", () => {
   assert.throws(
-    () => checkSecurityMaintenanceContract({
+    () => checkSecurityMaintenanceContract(validContract({
       packageJson: validPackageJson.replace('"check:supabase-cli"', '"missing:supabase-cli"'),
-      skillMarkdown: validSkill,
-      securityMarkdown: validSecurityDoc,
-      maintenanceMarkdown: validMaintenanceDoc,
-      optimizationMarkdown: validOptimizationOptions,
-    }),
+    })),
     /package.json is missing script: check:supabase-cli/,
   );
 
   assert.throws(
-    () => checkSecurityMaintenanceContract({
-      packageJson: validPackageJson,
+    () => checkSecurityMaintenanceContract(validContract({
       skillMarkdown: validSkill.replace("pnpm check:edge-functions\n", ""),
-      securityMarkdown: validSecurityDoc,
-      maintenanceMarkdown: validMaintenanceDoc,
-      optimizationMarkdown: validOptimizationOptions,
-    }),
+    })),
     /security-maintenance.*pnpm check:edge-functions/,
   );
 });
 
 test("requires local-check caveats and live evidence surfaces", () => {
   assert.throws(
-    () => checkSecurityMaintenanceContract({
-      packageJson: validPackageJson,
-      skillMarkdown: validSkill,
+    () => checkSecurityMaintenanceContract(validContract({
       securityMarkdown: validSecurityDoc.replace("Passing local checks is not enough", "Local checks are enough"),
-      maintenanceMarkdown: validMaintenanceDoc,
-      optimizationMarkdown: validOptimizationOptions,
-    }),
+    })),
     /Passing local checks is not enough/,
   );
 
   assert.throws(
-    () => checkSecurityMaintenanceContract({
-      packageJson: validPackageJson,
-      skillMarkdown: validSkill,
-      securityMarkdown: validSecurityDoc,
-      maintenanceMarkdown: validMaintenanceDoc,
+    () => checkSecurityMaintenanceContract(validContract({
       optimizationMarkdown: validOptimizationOptions.replace("green local-only proxy", "green proxy"),
-    }),
+    })),
     /green local-only proxy/,
   );
 });
 
 test("requires abuse-control guidance for public operator surfaces", () => {
   assert.throws(
-    () => checkSecurityMaintenanceContract({
-      packageJson: validPackageJson,
-      skillMarkdown: validSkill,
+    () => checkSecurityMaintenanceContract(validContract({
       securityMarkdown: validSecurityDoc.replace("## Abuse Controls", "## Abuse Control Gaps"),
-      maintenanceMarkdown: validMaintenanceDoc,
-      optimizationMarkdown: validOptimizationOptions,
-    }),
+    })),
     /Abuse Controls/,
+  );
+});
+
+test("requires user-image referrer policy defense in the shared app image wrapper", () => {
+  assert.throws(
+    () => checkSecurityMaintenanceContract(validContract({
+      appImageSource: "export function AppImage(props) { return null; }",
+    })),
+    /src\/components\/ui\/app-image\.tsx.*referrerPolicy = "no-referrer"/,
+  );
+
+  assert.throws(
+    () => checkSecurityMaintenanceContract(validContract({
+      appImageSource: 'export function AppImage({ alt, referrerPolicy = "no-referrer", ...props }) { return null; }',
+    })),
+    /src\/components\/ui\/app-image\.tsx.*referrerPolicy=\{referrerPolicy\}/,
   );
 });

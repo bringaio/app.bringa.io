@@ -2,7 +2,7 @@
 
 Open source sharing and borrowing software for communities, clubs, associations, and local operators.
 
-[Fork launch](docs/fork-launch-runbook.md) | [Fork upgrades](docs/fork-upgrade-runbook.md) | [Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Local Supabase Development](docs/local-supabase-development.md) | [Repository settings](docs/repository-settings.md) | [Changelog](CHANGELOG.md) | [Roadmap](docs/roadmap.md) | [Contributing](CONTRIBUTING.md) | [Security](SECURITY.md)
+[Fork launch](docs/fork-launch-runbook.md) | [Fork upgrades](docs/fork-upgrade-runbook.md) | [Configuration](docs/configuration.md) | [Open source release](docs/open-source-release.md) | [Supabase](docs/supabase.md) | [Local Supabase Development](docs/local-supabase-development.md) | [Repository settings](docs/repository-settings.md) | [Changelog](docs/changelog.md) | [Roadmap](docs/roadmap.md) | [Contributing](.github/CONTRIBUTING.md) | [Security](.github/SECURITY.md)
 
 ## Fork In 3 Steps
 
@@ -156,7 +156,7 @@ The app is built as a static Next.js export and can be deployed through the manu
 
 ## Contributing
 
-Use Conventional Commits and small pull requests. Preserve fork-specific config and legal/branding text when syncing from upstream. See `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
+Use Conventional Commits and small pull requests. Preserve fork-specific config and legal/branding text when syncing from upstream. See `.github/CONTRIBUTING.md` and `.github/CODE_OF_CONDUCT.md`.
 
 ## License
 

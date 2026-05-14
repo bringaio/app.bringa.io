@@ -12,7 +12,7 @@ For the prompt-to-artifact evidence map and the remaining blockers that prevent 
 - [x] App version source of truth is `package.json.version`, generated into runtime config, displayed in the user menu, and checked before merges.
 - [x] Source, script, route, config, Supabase, branch, and commit naming conventions are documented and checked.
 - [x] Manual secret-free CI checks exist for config, lint, TypeScript, build, and docs.
-- [x] `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, and the pull request template exist.
+- [x] `.github/CONTRIBUTING.md`, `.github/CODE_OF_CONDUCT.md`, `.github/SECURITY.md`, issue templates, and the pull request template exist.
 - [x] Security maintenance, fork safety, server-only key handling, live evidence expectations, abuse controls, and security optimization gaps are documented.
 - [x] Security maintenance docs, abuse-control guidance, skill guidance, local checks, and live-evidence caveats are aligned by `pnpm check:security-maintenance`.
 - [x] GitHub merge settings prefer rebase merges, disable merge and squash merges, allow pull request branch updates, and delete merged head branches automatically.

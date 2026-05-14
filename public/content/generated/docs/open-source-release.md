@@ -48,7 +48,7 @@ Use short-lived PR branches for generic upstream work. Keep optional long-lived 
 
 ## Before Public Announcement
 
-- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`, issue templates, and the pull request template are present.
+- `.github/CONTRIBUTING.md`, `.github/CODE_OF_CONDUCT.md`, `.github/SECURITY.md`, `LICENSE`, issue templates, and the pull request template are present.
 - `docs/readiness-checklist.md` names unresolved external blockers instead of implying they are solved.
 - Manual CI and Pages workflows stay secret-free and `workflow_dispatch` only.
 - Public repository visibility, forkability, Pages source, custom domain, and latest deployment evidence are verified in [Repository Settings](repository-settings.md).

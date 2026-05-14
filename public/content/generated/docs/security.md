@@ -2,7 +2,7 @@
 
 Security work in this repository should be evidence-driven and privacy-preserving. Prefer repeatable checks, documented live observations, and narrow Supabase access over broad manual inspection.
 
-For vulnerability reporting, use the root `SECURITY.md`. For operational security tasks, use [Maintenance](maintenance.md), [Supabase](supabase.md), [Supabase MCP Agent Setup](supabase-mcp.md), [Restore Drills](restore-drills.md), and [Observability](observability.md).
+For vulnerability reporting, use the GitHub security policy in `.github/SECURITY.md`. For operational security tasks, use [Maintenance](maintenance.md), [Supabase](supabase.md), [Supabase MCP Agent Setup](supabase-mcp.md), [Restore Drills](restore-drills.md), and [Observability](observability.md).
 
 ## Core Rules
 

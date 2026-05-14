@@ -19,6 +19,6 @@ This project should be practical, respectful, and safe for maintainers, contribu
 
 ## Reporting
 
-For security or privacy-sensitive reports, use `SECURITY.md`. For other conduct concerns, open a private maintainer contact path when one is available for the deployment or contact the upstream maintainers through the least public channel available.
+For security or privacy-sensitive reports, use the repository security policy in `.github/SECURITY.md`. For other conduct concerns, open a private maintainer contact path when one is available for the deployment or contact the upstream maintainers through the least public channel available.
 
 Maintainers may edit, hide, lock, or remove disruptive content and may block accounts when needed to protect the project and its users.

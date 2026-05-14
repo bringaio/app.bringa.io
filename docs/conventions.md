@@ -49,6 +49,7 @@ Every durable fact should have one home.
 - Secrets: `.env.local`, deployment secrets, or Supabase function secrets
 - Agent rules and workflows: `.agents/`
 - User-facing docs: `docs/`
+- GitHub community health files: `.github/CONTRIBUTING.md`, `.github/CODE_OF_CONDUCT.md`, and `.github/SECURITY.md`
 - Roadmap and anti-roadmap: `docs/optimization-options.md`
 - App version: `package.json.version`, exposed in generated runtime config as `release.version`
 
@@ -59,6 +60,7 @@ When adding new text, decide whether it is a source of truth, a short summary, o
 Keep durable documentation facts in one place and link to that place from summaries:
 
 - `README.md`: short fork-first entry, quick start, and maintainer pointers.
+- `docs/changelog.md`: human-readable upstream release history and fork-upgrade anchors.
 - `docs/fork-launch-runbook.md`: canonical fork launch procedure.
 - `docs/fork-upgrade-runbook.md`: canonical fork sync and update procedure.
 - `docs/configuration.md`: config schema, generated artifacts, setup-readiness guard, and locale metadata.
