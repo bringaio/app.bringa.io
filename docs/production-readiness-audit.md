@@ -23,8 +23,8 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 | Naming conventions and developer experience | `docs/conventions.md`, `pnpm test:naming-conventions`, `pnpm check:naming-conventions` | Covered |
 | Agent rules, skills, and workflows | `AGENTS.md`, `.agents/workflows/session-start.md`, `.agents/workflows/goal-mode-preflight.md`, `.agents/workflows/quality-loop.md`, `.agents/skills/*/SKILL.md`, `pnpm check:agents` | Covered |
 | Forkability and configuration | `config/base.config.jsonc`, `config/deployments/app.bringa.io.jsonc`, `config/bringa.config.schema.json`, `scripts/create-deployment-profile.mjs`, `scripts/setup-operator.mjs`, `docs/configuration.md`, `docs/forking.md`, `docs/fork-content-strategy.md`, `pnpm test:create-deployment`, `pnpm test:operator-setup`, `pnpm check:config` | Covered |
-| Open-source contribution surface | `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, pull request template, configured GitHub repository description/topics, `docs/open-source-release.md` | Covered; repository is public and forkable |
-| Security maintenance and fork safety | `SECURITY.md`, `docs/security.md`, `docs/maintenance.md`, `.agents/skills/security-maintenance/SKILL.md`, `.agents/skills/fork-operator-onboarding/SKILL.md`, abuse controls, `pnpm test:security-maintenance`, `pnpm check:security-maintenance`, `pnpm check:secrets`, `pnpm check:production-bundle`, `pnpm check:release-checklist` | Covered locally; live Auth, restore, abuse-limit evidence, and browser evidence remain blocked |
+| Open-source contribution surface | `.github/CONTRIBUTING.md`, `.github/CODE_OF_CONDUCT.md`, `.github/SECURITY.md`, issue templates, pull request template, configured GitHub repository description/topics, `docs/open-source-release.md` | Covered; repository is public and forkable |
+| Security maintenance and fork safety | `.github/SECURITY.md`, `docs/security.md`, `docs/maintenance.md`, `.agents/skills/security-maintenance/SKILL.md`, `.agents/skills/fork-operator-onboarding/SKILL.md`, abuse controls, `pnpm test:security-maintenance`, `pnpm check:security-maintenance`, `pnpm check:secrets`, `pnpm check:production-bundle`, `pnpm check:release-checklist` | Covered locally; live Auth, restore, abuse-limit evidence, and browser evidence remain blocked |
 | Secret-free manual CI/CD | `.github/workflows/ci.yml`, `.github/workflows/pages.yml`, `docs/conventions.md`, `docs/repository-settings.md`, `pnpm check:github-workflows`, `pnpm check:edge-functions`, `pnpm check:production-bundle` | Covered |
 | In-app docs | `docs/index.md`, `public/content/generated/docs/index.json`, `/docs`, `pnpm check:docs-index`, `pnpm check:docs-health` | Covered locally |
 | Supabase contract and privacy | `supabase/schema.sql`, `supabase/migrations/`, `supabase/README.md`, `docs/supabase.md`, `docs/supabase-mcp.md`, `docs/supabase-contract-audit.md`, `pnpm test:supabase-contract`, `pnpm check:supabase-contract`, `pnpm check:supabase-mcp`, `pnpm check:edge-functions` | Partial; live baseline applied, remaining Auth, secret, log, and restore blockers |
@@ -55,8 +55,8 @@ This audit maps the active goal prompt to durable repository artifacts. It is no
 - `supabase/README.md`
 - `.agents/`
 - `.github/workflows/`
-- `CONTRIBUTING.md`
-- `CODE_OF_CONDUCT.md`
+- `.github/CONTRIBUTING.md`
+- `.github/CODE_OF_CONDUCT.md`
 - `package.json`
 - `scripts/`
 

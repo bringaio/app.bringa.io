@@ -74,7 +74,7 @@ Forks should keep their own legal documents in deployment-specific content paths
 Use [Fork Upgrade Runbook](fork-upgrade-runbook.md) for the full path.
 
 1. Fetch upstream changes and tags.
-2. Review `CHANGELOG.md`, config schema, base config, docs, migrations, and breaking changes.
+2. Review `docs/changelog.md`, config schema, base config, docs, migrations, and breaking changes.
 3. Rebase or merge upstream into a short-lived fork upgrade branch according to the fork's policy.
 4. Preserve fork-specific deployment config, legal text, brand assets, Supabase settings, and operator branches.
 5. Set `package.json.version` to one [Semantic Versioning 2.0.0](https://semver.org/) `MAJOR.MINOR.PATCH` value greater than both the old fork version and the upstream version being merged.

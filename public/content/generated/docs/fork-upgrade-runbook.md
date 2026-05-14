@@ -6,7 +6,7 @@ Use this runbook when a fork wants to merge a newer upstream version without los
 
 1. Confirm the fork target: current fork branch, deployment slug, app URL, Supabase project, current `package.json` version, and target upstream version or tag.
 2. Create a short-lived upgrade branch from the fork's current integration or deployment branch.
-3. Fetch upstream `main` and tags, then review `CHANGELOG.md`, `docs/forking.md`, migrations, config schema changes, and breaking notes.
+3. Fetch upstream `main` and tags, then review `docs/changelog.md`, `docs/forking.md`, migrations, config schema changes, and breaking notes.
 4. Merge or rebase the target upstream commit into the upgrade branch. Resolve conflicts manually in fork-owned config, legal text, branding, generated docs, and Supabase files.
 5. Set `package.json.version` to one [Semantic Versioning 2.0.0](https://semver.org/) `MAJOR.MINOR.PATCH` value greater than both the previous fork version and the target upstream version.
 6. Regenerate config with `BRINGA_DEPLOYMENT=<slug> pnpm generate:config`, then run the secret-free checks and review any Supabase migrations before applying them to a hosted project.
@@ -28,7 +28,7 @@ Do not hide conflicts with merge drivers. A visible conflict in legal, deploymen
 
 - `package.json.version` is greater than the old fork version and the merged upstream version.
 - The version follows SemVer: patch for compatible fixes, docs, and tooling; minor for compatible feature releases; major for breaking changes.
-- `CHANGELOG.md` or fork release notes explain the upgrade.
+- `docs/changelog.md` or fork release notes explain the upgrade.
 - `BRINGA_DEPLOYMENT=<slug> pnpm check:config`
 - `pnpm check:version-bump -- --base <fork-main-or-upstream-ref>`
 - `pnpm check:secrets`

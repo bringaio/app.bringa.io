@@ -25,6 +25,12 @@
       "sourcePath": "docs/browser-testing.md"
     },
     {
+      "slug": "changelog",
+      "title": "Changelog",
+      "path": "/content/generated/docs/changelog.md",
+      "sourcePath": "docs/changelog.md"
+    },
+    {
       "slug": "configuration",
       "title": "Configuration",
       "path": "/content/generated/docs/configuration.md",
