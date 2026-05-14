@@ -47,6 +47,7 @@ test("accepts conventions that document source naming patterns", () => {
 - Supabase migrations use \`YYYYMMDDHHMMSS_snake_case.sql\`.
 - Edge Function directory names use kebab-case; preserve legacy deployed names until a migration plan exists.
 - Scripts under \`scripts/\` use kebab-case and pair checkers with \`.test.mjs\` when behavior is not trivial.
+- Environment templates use \`.env.example\`; developer-local secrets and maintenance keys stay in ignored \`.env.local\`.
 - Branches and commits follow the Git And Pull Requests section.
 `));
 });
@@ -79,6 +80,7 @@ test("rejects conventions that omit database naming", () => {
 - Supabase migrations use \`YYYYMMDDHHMMSS_snake_case.sql\`.
 - Edge Function directory names use kebab-case.
 - Scripts under \`scripts/\` use kebab-case.
+- Environment templates use \`.env.example\`; developer-local secrets and maintenance keys stay in ignored \`.env.local\`.
 - Branches and commits follow the Git And Pull Requests section.
 `),
     /Supabase tables, columns, enums, policies, and RPC function names use snake_case/,
@@ -113,6 +115,7 @@ test("rejects conventions that omit agent branch naming", () => {
 - Supabase migrations use \`YYYYMMDDHHMMSS_snake_case.sql\`.
 - Edge Function directory names use kebab-case; preserve legacy deployed names until a migration plan exists.
 - Scripts under \`scripts/\` use kebab-case and pair checkers with \`.test.mjs\` when behavior is not trivial.
+- Environment templates use \`.env.example\`; developer-local secrets and maintenance keys stay in ignored \`.env.local\`.
 - Branches and commits follow the Git And Pull Requests section.
 `),
     /codex\/<type>-<topic>/,

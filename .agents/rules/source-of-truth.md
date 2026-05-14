@@ -5,6 +5,7 @@
 - Public deployment settings belong in layered config, not scattered through components.
 - The app version belongs in `package.json.version` as a Semantic Versioning 2.0.0 `MAJOR.MINOR.PATCH` value; generated runtime config may expose it as `release.version`.
 - Secrets belong only in local environment files, deployment secrets, or Supabase function secrets.
+- Environment templates use `.env.example`; developer-local secrets and maintenance keys stay in ignored `.env.local`.
 - Developer-facing conventions belong in `docs/conventions.md`.
 - Hyperoptimum and ultraoptimum interpretation belongs in `docs/hyperoptimum.md`.
 - Fork customization guidance belongs in `docs/forking.md`.

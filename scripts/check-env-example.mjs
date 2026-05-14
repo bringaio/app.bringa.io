@@ -14,6 +14,7 @@ import { defaultStorageBuckets, defaultTables } from "./backup-supabase.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const envExamplePath = path.join(root, ".env.example");
+const gitignorePath = path.join(root, ".gitignore");
 
 const requiredKeys = [
   "SUPABASE_URL",
@@ -133,9 +134,27 @@ export function checkEnvExampleContent(content) {
   return env;
 }
 
+function hasGitignoreLine(lines, expectedLine) {
+  return lines.some((line) => line.trim() === expectedLine);
+}
+
+export function checkEnvGitignoreContent(content) {
+  const lines = content.split(/\r?\n/);
+
+  for (const expectedLine of [".env", ".env.*", "!.env.example"]) {
+    if (!hasGitignoreLine(lines, expectedLine)) {
+      throw new Error(`.gitignore must include ${expectedLine} for local env safety.`);
+    }
+  }
+}
+
 export async function main() {
-  const content = await readFile(envExamplePath, "utf8");
-  checkEnvExampleContent(content);
+  const [envExampleContent, gitignoreContent] = await Promise.all([
+    readFile(envExamplePath, "utf8"),
+    readFile(gitignorePath, "utf8"),
+  ]);
+  checkEnvExampleContent(envExampleContent);
+  checkEnvGitignoreContent(gitignoreContent);
   console.log(".env.example check passed.");
 }
 
