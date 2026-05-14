@@ -129,6 +129,8 @@ Backups are written to `backups/`, which is ignored by Git. Storage objects and 
 
 Agents should start with `AGENTS.md`, then read relevant rules, skills, and workflows in `.agents/`.
 
+For optional local code graph setup, supported agent tools, and prompts humans can give their coding agents, see [Agentic Development](docs/agentic-development.md).
+
 Important sources of truth:
 
 - `.agents/rules/core.md`

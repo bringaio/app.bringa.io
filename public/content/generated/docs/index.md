@@ -25,6 +25,7 @@ Forkable open source sharing and borrowing software for communities, clubs, asso
 
 ## Contributor Flow
 
+- [Agentic Development](agentic-development.md): code graph setup, agent prompts, and local MCP workflow guidance.
 - [Conventions](conventions.md): Git, CI/CD, source-of-truth, and documentation rules.
 - [Hyperoptimum](hyperoptimum.md): quality ideal for architecture, forks, users, operators, and agents.
 - [Repository Settings](repository-settings.md): branch protection, merge methods, branch cleanup, and Pages settings.
