@@ -14,11 +14,6 @@ export type DashboardInitialViewState = {
   view: DashboardView;
 };
 
-export type DashboardViewControlState = {
-  ariaPressed: boolean;
-  variant: "default" | "secondary";
-};
-
 export function buildDashboardEmptyMessage({ query, view }: { query: string; view: DashboardView }): string {
   if (query.trim()) {
     return "No items match your search.";
@@ -40,20 +35,6 @@ export function buildDashboardInitialViewState(borrowedItemCount: number | null 
   return {
     hasBorrowedItems,
     view: hasBorrowedItems ? "borrowed" : "available",
-  };
-}
-
-export function buildDashboardViewControlState({
-  currentView,
-  controlView,
-}: {
-  currentView: DashboardView;
-  controlView: DashboardView;
-}): DashboardViewControlState {
-  const active = currentView === controlView;
-  return {
-    ariaPressed: active,
-    variant: active ? "default" : "secondary",
   };
 }
 

@@ -5,7 +5,6 @@ import {
   buildDashboardEmptyMessage,
   buildDashboardInitialViewState,
   buildDashboardItemFilters,
-  buildDashboardViewControlState,
 } from "../src/lib/dashboard-item-query.ts";
 
 test("defaults to borrowed view only when the user has current borrowed items", () => {
@@ -22,18 +21,6 @@ test("defaults to borrowed view only when the user has current borrowed items", 
   assert.deepEqual(buildDashboardInitialViewState(null), {
     hasBorrowedItems: false,
     view: "available",
-  });
-});
-
-test("marks only the active dashboard view control as pressed", () => {
-  assert.deepEqual(buildDashboardViewControlState({ currentView: "available", controlView: "available" }), {
-    ariaPressed: true,
-    variant: "default",
-  });
-
-  assert.deepEqual(buildDashboardViewControlState({ currentView: "available", controlView: "all" }), {
-    ariaPressed: false,
-    variant: "secondary",
   });
 });
 
