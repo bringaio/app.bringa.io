@@ -546,7 +546,7 @@ function ItemDetailsContent() {
                                     className="mt-3 flex min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
                                 />
 
-                                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                <div className="mt-3 flex flex-col gap-3">
                                     <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
                                         Suggestion type
                                         <select
@@ -578,7 +578,7 @@ function ItemDetailsContent() {
                                     </label>
                                 </div>
 
-                                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                                <div className="mt-3 flex flex-col gap-2">
                                     <Button
                                         type="button"
                                         variant="outline"
