@@ -659,5 +659,14 @@ export function createLocalDemoSupabaseClient() {
         };
       },
     },
+    channel(name: string) {
+      return {
+        on() { return this; },
+        subscribe() { return this; }
+      };
+    },
+    removeChannel(channel: unknown) {
+      return Promise.resolve({ error: null });
+    }
   };
 }

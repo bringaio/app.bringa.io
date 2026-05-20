@@ -64,31 +64,32 @@ export default function DashboardPage() {
         }
     }, [])
 
+    const fetchCounts = useCallback(async (currentUser: User) => {
+        const { count } = await supabase
+            .from('items')
+            .select('id', { count: 'exact', head: true })
+            .eq('borrowed_by', currentUser.id);
+
+        const { count: availCount } = await supabase
+            .from('items')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'inStock')
+            .eq('visibility_state', 'visible');
+
+        setBorrowedCount(count);
+        setAvailableCount(availCount);
+        if (count !== null) setHasBorrowedItems(count > 0);
+        return { count, availCount };
+    }, []);
+
     useEffect(() => {
         const loadUserAndInitialView = async () => {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 setUser(user);
                 if (user) {
-                    const { count, error } = await supabase
-                        .from('items')
-                        .select('id', { count: 'exact', head: true })
-                        .eq('borrowed_by', user.id);
-
-                    if (error) throw error;
-                    
-                    const { count: availCount, error: availError } = await supabase
-                        .from('items')
-                        .select('id', { count: 'exact', head: true })
-                        .eq('status', 'inStock')
-                        .eq('visibility_state', 'visible');
-
-                    if (availError) throw availError;
-
-                    setBorrowedCount(count);
-                    setAvailableCount(availCount);
+                    const { count } = await fetchCounts(user);
                     const initialViewState = buildDashboardInitialViewState(count);
-                    setHasBorrowedItems(initialViewState.hasBorrowedItems);
                     setView(initialViewState.view);
                 }
             } catch (err) {
@@ -98,14 +99,34 @@ export default function DashboardPage() {
             }
         };
         loadUserAndInitialView();
-    }, [])
+    }, [fetchCounts])
 
 
     useEffect(() => {
         if (!ready) return;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- item results are loaded from Supabase after auth/view changes.
         fetchItems(user, query, view);
-    }, [fetchItems, query, ready, user, view]);
+        
+        // Setup Supabase Realtime subscription for live reload
+        const channel = supabase
+            .channel('dashboard_items_changes')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'items' },
+                () => {
+                    // Refetch list and counts on any change
+                    fetchItems(user, query, view);
+                    if (user) {
+                        fetchCounts(user);
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [fetchItems, query, ready, user, view, fetchCounts]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
