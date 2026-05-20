@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { appConfig } from "@/lib/app-config";
 import "./globals.css";
+import { PwaUpdater } from "@/components/pwa-updater";
 
 export const metadata: Metadata = {
   title: appConfig.app.name,
@@ -39,6 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <PwaUpdater />
           {children}
         </ThemeProvider>
       </body>
