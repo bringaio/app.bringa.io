@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ItemListCard } from "@/components/items/item-list-card";
 import { User } from "@supabase/supabase-js";
 import ProtectedRoute from "@/components/auth/protected-route";
+import { RefreshCw } from "lucide-react";
 import {
     buildDashboardEmptyMessage,
     buildDashboardInitialViewState,
@@ -25,6 +26,7 @@ export default function DashboardPage() {
     const [borrowedCount, setBorrowedCount] = useState<number | null>(null);
     const [availableCount, setAvailableCount] = useState<number | null>(null);
     const [hasBorrowedItems, setHasBorrowedItems] = useState(false);
+    const [hasNewUpdates, setHasNewUpdates] = useState(false);
     const [ready, setReady] = useState(false);
     const [loading, setLoading] = useState(true);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -106,19 +108,17 @@ export default function DashboardPage() {
         if (!ready) return;
         // eslint-disable-next-line react-hooks/set-state-in-effect -- item results are loaded from Supabase after auth/view changes.
         fetchItems(user, query, view);
+        setHasNewUpdates(false);
         
-        // Setup Supabase Realtime subscription for live reload
+        // Setup Supabase Realtime subscription for live updates
         const channel = supabase
             .channel('dashboard_items_changes')
             .on(
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'items' },
                 () => {
-                    // Refetch list and counts on any change
-                    fetchItems(user, query, view);
-                    if (user) {
-                        fetchCounts(user);
-                    }
+                    // Show the reload toast instead of jarring the user with instant changes
+                    setHasNewUpdates(true);
                 }
             )
             .subscribe();
@@ -126,7 +126,7 @@ export default function DashboardPage() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [fetchItems, query, ready, user, view, fetchCounts]);
+    }, [fetchItems, query, ready, user, view]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
@@ -224,6 +224,22 @@ export default function DashboardPage() {
                         )}
                     </div>
                 </div>
+
+                {hasNewUpdates && (
+                    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
+                        <Button 
+                            onClick={() => {
+                                fetchItems(user, query, view);
+                                if (user) fetchCounts(user);
+                                setHasNewUpdates(false);
+                            }}
+                            className="rounded-full shadow-2xl bg-foreground text-background hover:bg-foreground/90 font-medium px-6 py-5 flex items-center gap-2"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            New items added, Reload
+                        </Button>
+                    </div>
+                )}
             </div>
         </ProtectedRoute>
     );
