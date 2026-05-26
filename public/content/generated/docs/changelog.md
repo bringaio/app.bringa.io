@@ -2,6 +2,11 @@
 
 This file records human-readable upstream app versions. `package.json` is the source of truth for the current app version, using [Semantic Versioning 2.0.0](https://semver.org/) in normal `MAJOR.MINOR.PATCH` form. Git tags such as `v0.2.2` are the preferred stable anchors for fork upgrades.
 
+## 0.2.14 - 2026-05-26
+
+- Disclosed necessary authentication session storage in the default terms and privacy notes.
+- Clarified that the upstream default avoids cookie banners unless deployments add non-essential tracking or optional storage.
+
 ## 0.2.7 - 2026-05-14
 
 - Added optional `code-review-graph` setup, stewardship guidance, and agent-first development documentation.
