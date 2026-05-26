@@ -42,18 +42,24 @@ The platform may process:
 
 Personal data is processed to provide the platform, manage access, prevent misuse, support borrowing workflows, and comply with legal obligations.
 
-## 5. Images
+## 5. Session Storage
+
+The platform uses necessary authentication session storage to keep signed-in users authenticated, protect restricted routes, and authorize access to Supabase-backed data. This storage is not used for advertising, cross-site tracking, or analytics in the upstream default.
+
+Operators that add analytics, marketing, embedded third-party media, or other non-essential tracking must document those providers and add any consent controls required for their deployment.
+
+## 6. Images
 
 Uploaded item images may be compressed, transformed, displayed, moderated, or removed. Operators should define retention, deletion, export, and storage-backup policies before production use.
 
-## 6. User Rights
+## 7. User Rights
 
 Depending on the deployment and jurisdiction, users may have rights to access, correct, export, restrict, object to, or delete personal data. Operators must document how users can exercise those rights.
 
-## 7. Availability And Liability
+## 8. Availability And Liability
 
 The platform may change, pause, or be unavailable. Operators should define support expectations, liability limits, and maintenance procedures in their deployment-specific terms.
 
-## 8. Changes
+## 9. Changes
 
 Operators may update these terms when legal, technical, or organizational conditions change. The current version should be available through the app.

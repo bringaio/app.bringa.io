@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -41,4 +42,13 @@ test("builds non-secret OAuth error copy", () => {
     buildOAuthSignInErrorCopy("Google"),
     "Google sign-in could not start. Check the app setup and try again.",
   );
+});
+
+test("default terms disclose necessary session storage without introducing a banner requirement", async () => {
+  const terms = await readFile(new URL("../content/default/legal/en.md", import.meta.url), "utf8");
+
+  assert.match(terms, /## 5\. Session Storage/);
+  assert.match(terms, /necessary authentication session storage/);
+  assert.match(terms, /not used for advertising, cross-site tracking, or analytics/);
+  assert.match(terms, /add any consent controls required/);
 });
