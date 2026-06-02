@@ -29,6 +29,16 @@ export default function CreateItemPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            const prefillName = params.get("name");
+            if (prefillName) {
+                setName(prefillName);
+            }
+        }
+    }, [])
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0] || null
         if (!selectedFile) {

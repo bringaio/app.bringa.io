@@ -273,7 +273,7 @@ export default function DashboardPage() {
                             />
                         </div>
                         <Button asChild variant="secondary" className="shrink-0 font-medium">
-                            <Link href="/items/create">
+                            <Link href={`/items/create${query ? `?name=${encodeURIComponent(query)}` : ''}`}>
                                 + Create
                             </Link>
                         </Button>
