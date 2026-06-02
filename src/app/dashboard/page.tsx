@@ -96,8 +96,13 @@ export default function DashboardPage() {
                 setUser(user);
                 if (user) {
                     const { count } = await fetchCounts(user);
-                    const initialViewState = buildDashboardInitialViewState(count);
-                    setView(initialViewState.view);
+                    const savedView = sessionStorage.getItem("dashboardView") as DashboardView | null;
+                    if (savedView) {
+                        setView(savedView);
+                    } else {
+                        const initialViewState = buildDashboardInitialViewState(count);
+                        setView(initialViewState.view);
+                    }
                 }
             } catch (err) {
                 console.error(err);
@@ -107,6 +112,12 @@ export default function DashboardPage() {
         };
         loadUserAndInitialView();
     }, [fetchCounts])
+
+    useEffect(() => {
+        if (ready) {
+            sessionStorage.setItem("dashboardView", view);
+        }
+    }, [view, ready]);
 
 
     // Load / reload the first page whenever the user, view or debounced search changes.
