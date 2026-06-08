@@ -13,7 +13,7 @@ import {
     MenubarItem,
     MenubarSeparator,
 } from "@/components/ui/menubar";
-import { GitBranch, LogOutIcon, UserIcon, ShieldCheck } from "lucide-react";
+import { LogOutIcon, UserIcon, ShieldCheck } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle"
@@ -58,17 +58,6 @@ export default function TopBar() {
                             </Link>
                         )}
                         <ThemeToggle />
-                        {appConfig.features.githubLinkInTopbar && (
-                            <a
-                                href={appConfig.repository.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                aria-label={`${appConfig.app.name} on GitHub`}
-                                className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent transition-colors"
-                            >
-                                <GitBranch className="h-4 w-4" />
-                            </a>
-                        )}
                         <MenubarMenu>
                             <MenubarTrigger aria-label="User menu" className="rounded-full p-1">
                                 <UserIcon className="h-5 w-5" />
@@ -101,9 +90,15 @@ export default function TopBar() {
                                     </MenubarItem>
                                 </a>
                                 <MenubarSeparator />
-                                <div className="px-2 py-1.5 text-[11px] leading-none text-muted-foreground">
+                                <a
+                                    href={appConfig.repository.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    aria-label={`${appConfig.app.name} on GitHub`}
+                                    className="block px-2 py-1.5 text-[11px] leading-none text-muted-foreground transition-colors hover:text-foreground hover:underline"
+                                >
                                     {formatAppVersion(appConfig.release.version)}
-                                </div>
+                                </a>
                                 <MenubarSeparator />
                                 <MenubarItem onSelect={handleLogout} className="flex items-center gap-2 text-destructive focus:text-destructive cursor-pointer">
                                     <LogOutIcon className="h-4 w-4" />

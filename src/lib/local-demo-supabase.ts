@@ -805,6 +805,34 @@ function buildRpcHandler(tables: DemoTables) {
       return { data: true, error: null };
     }
 
+    if (name === "apply_item_change_request") {
+      const suggestion = tables.item_suggestions.find((row) => row.id === params.suggestion_id_input);
+      if (!suggestion) return { data: false, error: null };
+      const item = itemById(tables, suggestion.item_id);
+      if (item) {
+        pushVersion(tables, item, "Applied change request");
+        const nextVisibility = params.visibility_state_input ?? item.visibility_state ?? "visible";
+        Object.assign(item, {
+          name: params.name_input ?? item.name,
+          description: params.description_input ?? null,
+          image_url: params.image_url_input ?? item.image_url,
+          owner_kind: params.owner_kind_input ?? item.owner_kind,
+          owner_profile_id: params.owner_profile_id_input ?? null,
+          owner_label: params.owner_label_input ?? null,
+          visibility_state: nextVisibility,
+          hidden_at: nextVisibility === "visible" ? null : now,
+          hidden_by: nextVisibility === "visible" ? null : localDemoUser.id,
+        });
+      }
+      Object.assign(suggestion, {
+        status: "accepted",
+        admin_note: params.admin_note_input ?? suggestion.admin_note,
+        reviewed_at: now,
+        reviewed_by: localDemoUser.id,
+      });
+      return { data: true, error: null };
+    }
+
     if (name === "review_item_flag") {
       const flag = tables.item_flags.find((row) => row.id === params.flag_id_input);
       if (!flag) return { data: false, error: null };

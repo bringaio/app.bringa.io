@@ -85,8 +85,7 @@ export default function AdminDashboardPage() {
         { label: "Hidden", value: stats.hidden, icon: EyeOff },
         { label: "Pending visible", value: stats.pendingVisible, icon: Clock3 },
         { label: "With images", value: stats.withImages, icon: ImageIcon },
-        { label: "Suggestions", value: queueCounts.pendingSuggestions ?? "—", icon: Sparkles },
-        { label: "Flags", value: queueCounts.pendingFlags ?? "—", icon: Flag },
+        { label: "Change requests", value: queueCounts.pendingSuggestions ?? "—", icon: Sparkles },
         { label: "Deletion requests", value: queueCounts.openDeletionRequests ?? "—", icon: Trash2 },
         { label: "Pending users", value: queueCounts.pendingUsers ?? "—", icon: Users },
     ];
