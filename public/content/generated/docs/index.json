@@ -163,6 +163,12 @@
       "sourcePath": "docs/roadmap.md"
     },
     {
+      "slug": "security-roadmap",
+      "title": "Security Roadmap",
+      "path": "/content/generated/docs/security-roadmap.md",
+      "sourcePath": "docs/security-roadmap.md"
+    },
+    {
       "slug": "security",
       "title": "Security",
       "path": "/content/generated/docs/security.md",

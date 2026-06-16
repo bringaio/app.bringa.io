@@ -31,6 +31,15 @@ Bringa starts as a focused sharing and borrowing app for communities. The long-t
 - Complete live backup restore drills, project-specific encrypted retention approval, account deletion cleanup rehearsal, live notification delivery evidence, and any deployment-specific observability setup.
 - Keep contribution terms deployment-specific, with public-domain intent where possible and a reviewed fallback operator license where required.
 
+## Security
+
+- Keep [Security Roadmap](security-roadmap.md) visible as the fork-hosting flaw and remediation source for operators, maintainers, and agents.
+- Separate low-risk operator setup hardening from app contract hardening before implementation to avoid accidental product behavior changes.
+- Prioritize critical fork-hosting blockers: secret leakage, broken RLS/RPC/Storage boundaries, anon or PUBLIC SECURITY DEFINER execution, unsafe Auth redirect setup, and unsafe first-admin bootstrap.
+- Prioritize high-impact operational hardening: server-enforced upload limits, backup and restore proof, account deletion coverage across database/Auth/Storage, Telegram Edge Function secrets, production bundle fixture isolation, and invite or abuse controls.
+- Treat static-host security headers, branch protection, secret scanning, dependency automation, redacted live debugging, and generated config freshness as required fork readiness checks.
+- Verify security fixes with the relevant local checks, Supabase advisor evidence, redacted logs, and browser evidence before calling any fork production-ready.
+
 ## Longer Direction
 
 - Explore federation, decentralized sharing, and cross-community discovery only after the single-deployment model is reliable.
