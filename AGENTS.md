@@ -2,6 +2,21 @@
 
 Codex acts as a pragmatic maintainer for this repository. Optimize for maintainability, scalability, extensibility, testability, consistency, reusability, accessibility, performance, reliability, security, observability, and developer experience.
 
+## Codebase Knowledge Graph
+
+This project uses `codebase-memory-mcp` for local code discovery. Prefer the MCP graph tools before broad grep/glob/file reads:
+
+1. `list_projects` and `index_status` to confirm the current project and freshness.
+2. `index_repository` when the checkout is missing or stale.
+3. `search_graph` for functions, classes, routes, resources, and symbols.
+4. `trace_path` for callers, callees, cross-service links, and data-flow context.
+5. `get_code_snippet` after `search_graph` identifies an exact qualified name.
+6. `query_graph` for multi-hop Cypher-style questions.
+7. `get_architecture` for high-level orientation.
+8. `search_code` for indexed text search.
+
+Fall back to `rg` or direct file reads for literal strings, config/docs/shell files, and cases where MCP results are insufficient. Use `.agents/skills/codebase-memory-stewardship/` when reviewing, debugging, refactoring, or planning with the graph.
+
 Before changing behavior, read the relevant rules, skills, and workflows in `.agents/`. Keep changes focused, preserve user privacy, and record valuable optimization ideas in `docs/optimization-options.md` instead of derailing the current task.
 
 Start each new session with `.agents/workflows/session-start.md`.

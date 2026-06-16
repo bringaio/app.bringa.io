@@ -63,3 +63,4 @@ tasks.yaml
 next-env.d.ts
 # agent-local code graph
 /.code-review-graph/
+/.codebase-memory/
