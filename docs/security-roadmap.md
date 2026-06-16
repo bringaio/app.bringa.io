@@ -35,6 +35,20 @@ Fix:
 
 Impact category: app contract hardening. Fixing this can block flows that currently work only because policies are too permissive.
 
+### Incomplete Backup, Restore, Export, Or Deletion Coverage
+
+Risk: Supabase table rows, Auth users, Storage objects, Edge Function secrets, and generated backups are separate surfaces. A fork may believe it can recover or delete data when only part of the system is covered. For a forked self-host model this is critical, not merely high priority: account deletion that touches only database rows leaves Auth users and Storage objects orphaned, which every operator inherits as a compliance and trust failure.
+
+Fix:
+
+- Back up Postgres tables and Storage objects before production migrations or destructive work.
+- Verify backup manifests and Storage hashes.
+- Document what is and is not covered for Auth user metadata.
+- Rehearse restore drills against a non-production target before claiming production readiness.
+- For account deletion, the `cleanup-account-deletion` helper already performs database anonymization, Storage object deletion through the Storage API, and `auth.admin.deleteUser`; rehearse all three together with approved access. The live three-surface rehearsal is the release gate, and running only the database stage is a release blocker.
+
+Impact category: app contract hardening, with operator setup hardening for backup/restore procedures.
+
 ### Public Or Anon Execution Of SECURITY DEFINER Functions
 
 Risk: SECURITY DEFINER functions run with elevated database privileges. If exposed to `anon` or `PUBLIC`, they can become privilege-escalation paths.
@@ -98,20 +112,6 @@ Fix:
 - Run `pnpm check:supabase-contract` after Storage policy or media-limit changes.
 
 Impact category: app contract hardening. Users may see stricter upload rejections.
-
-### Incomplete Backup, Restore, Export, Or Deletion Coverage
-
-Risk: Supabase table rows, Auth users, Storage objects, Edge Function secrets, and generated backups are separate surfaces. A fork may believe it can recover or delete data when only part of the system is covered.
-
-Fix:
-
-- Back up Postgres tables and Storage objects before production migrations or destructive work.
-- Verify backup manifests and Storage hashes.
-- Document what is and is not covered for Auth user metadata.
-- Rehearse restore drills before claiming production readiness.
-- For account deletion, handle database rows, Auth users, and Storage objects through the documented cleanup workflow.
-
-Impact category: operator setup hardening, with possible app contract changes around deletion and retention behavior.
 
 ### Telegram Edge Function Misconfiguration
 
