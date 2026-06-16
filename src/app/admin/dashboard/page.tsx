@@ -15,6 +15,7 @@ import {
     Flag,
     GitBranch,
     ImageIcon,
+    KeyRound,
     Loader2,
     Package,
     PackageCheck,
@@ -33,6 +34,7 @@ import { buildAdminQueueCounts } from "@/lib/admin-queue-counts";
 import { buildAdminSystemHealthItems, type AdminBackupRun, type AdminSystemHealthItemKey } from "@/lib/admin-system-health";
 import { appConfig } from "@/lib/app-config";
 import { buildAdminRouteGate } from "@/lib/admin-route-gate";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDashboardPage() {
     const router = useRouter();
@@ -276,41 +278,43 @@ export default function AdminDashboardPage() {
                             <h1 className="text-2xl font-bold">Admin Dashboard</h1>
                             <p className="text-sm text-muted-foreground mt-1">Items, queues, and system readiness</p>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3">
-                            <Link href="/admin/notifications">
-                                <button className="inline-flex items-center gap-2 rounded-md border bg-card px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-accent">
+                        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-center lg:justify-end">
+                            <Button asChild variant="outline" className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/notifications">
                                     <Bell className="h-4 w-4" />
                                     Notifications
-                                </button>
-                            </Link>
-                            <Link href="/admin/moderation">
-                                <button className="inline-flex items-center gap-2 rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow transition-colors hover:bg-secondary/80">
+                                </Link>
+                            </Button>
+                            <Button asChild variant="secondary" className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/moderation">
                                     <Flag className="h-4 w-4" />
                                     Moderation Queue
-                                </button>
-                            </Link>
-                            <Link href="/admin/hidden-items">
-                                <button className="inline-flex items-center gap-2 rounded-md border bg-card px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-accent">
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/hidden-items">
                                     <EyeOff className="h-4 w-4" />
                                     Hidden Items
-                                </button>
-                            </Link>
-                            <Link href="/admin/deletion-requests">
-                                <button className="inline-flex items-center gap-2 rounded-md border bg-card px-4 py-2 text-sm font-medium shadow transition-colors hover:bg-accent">
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/deletion-requests">
                                     <Trash2 className="h-4 w-4" />
                                     Deletion Requests
-                                </button>
-                            </Link>
-                            <Link href="/admin/users">
-                                <button className="px-4 py-2 rounded-md bg-orange-600 text-white shadow hover:bg-orange-700 transition-colors text-sm font-medium">
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/users">
+                                    <Users className="h-4 w-4" />
                                     Manage Users
-                                </button>
-                            </Link>
-                            <Link href="/admin/invite-code">
-                                <button className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium">
+                                </Link>
+                            </Button>
+                            <Button asChild className="w-full justify-start lg:w-auto">
+                                <Link href="/admin/invite-code">
+                                    <KeyRound className="h-4 w-4" />
                                     Manage Invite Code
-                                </button>
-                            </Link>
+                                </Link>
+                            </Button>
                         </div>
                     </div>
 
