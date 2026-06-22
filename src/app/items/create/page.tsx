@@ -22,22 +22,16 @@ import { AppImage } from "@/components/ui/app-image"
 
 export default function CreateItemPage() {
     const router = useRouter()
-    const [name, setName] = useState("")
+    const [name, setName] = useState(() => {
+        if (typeof window === "undefined") return ""
+
+        return new URLSearchParams(window.location.search).get("name") ?? ""
+    })
     const [description, setDescription] = useState("")
     const [file, setFile] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const params = new URLSearchParams(window.location.search);
-            const prefillName = params.get("name");
-            if (prefillName) {
-                setName(prefillName);
-            }
-        }
-    }, [])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0] || null

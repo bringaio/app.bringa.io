@@ -951,13 +951,13 @@ export function createLocalDemoSupabaseClient() {
         };
       },
     },
-    channel(name: string) {
+    channel() {
       return {
         on() { return this; },
         subscribe() { return this; }
       };
     },
-    removeChannel(channel: unknown) {
+    removeChannel() {
       return Promise.resolve({ error: null });
     }
   };

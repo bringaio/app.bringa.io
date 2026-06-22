@@ -35,7 +35,7 @@ export function PwaUpdater() {
                     // Hard reload to fetch new assets
                     window.location.reload();
                 }
-            } catch (err) {
+            } catch {
                 // Ignore errors (e.g. offline)
             }
         };
