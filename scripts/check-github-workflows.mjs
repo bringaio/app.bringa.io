@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const workflowsDir = path.join(root, ".github", "workflows");
-const allowedTriggers = new Set(["workflow_dispatch", "push"]);
+const allowedTriggers = new Set(["workflow_dispatch", "push", "workflow_run"]);
 
 function stripInlineComment(line) {
   const index = line.indexOf("#");
@@ -126,6 +126,15 @@ export function checkWorkflowContent(filePath, content) {
   }
 
   if (filePath === ".github/workflows/pages.yml") {
+    if (triggers.has("push")) {
+      throw new Error(`${filePath} must run after successful CI instead of directly on push. Remove the push trigger.`);
+    }
+    if (!triggers.has("workflow_run") || !content.includes('workflows: ["CI"]') || !content.includes("types: [completed]")) {
+      throw new Error(`${filePath} must use workflow_run for the completed CI workflow.`);
+    }
+    if (!content.includes("github.event.workflow_run.conclusion == 'success'")) {
+      throw new Error(`${filePath} must gate automatic Pages builds on successful CI completion.`);
+    }
     if (!content.includes("pnpm check:production-bundle")) {
       throw new Error(`${filePath} must run pnpm check:production-bundle before uploading the Pages artifact.`);
     }

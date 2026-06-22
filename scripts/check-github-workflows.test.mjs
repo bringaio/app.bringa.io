@@ -209,15 +209,61 @@ test("requires the Pages workflow to check production bundles before artifact up
     () => checkWorkflowContent(".github/workflows/pages.yml", `name: Pages
 
 on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: \${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: pnpm build
+`),
+    /check:production-bundle/,
+  );
+});
+
+test("accepts the Pages workflow when it runs after successful CI", () => {
+  const triggers = checkWorkflowContent(".github/workflows/pages.yml", `name: Pages
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  build:
+    if: \${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: pnpm build
+      - run: pnpm check:production-bundle
+`);
+
+  assert.deepEqual([...triggers].sort(), ["workflow_dispatch", "workflow_run"]);
+});
+
+test("rejects direct push triggers on the Pages workflow", () => {
+  assert.throws(
+    () => checkWorkflowContent(".github/workflows/pages.yml", `name: Pages
+
+on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: pnpm build
+      - run: pnpm check:production-bundle
 `),
-    /check:production-bundle/,
+    /after successful CI instead of directly on push/,
   );
 });
 

@@ -1,9 +1,11 @@
 name: Pages
-run-name: "Pages · ${{ github.event.head_commit.message || format('manual: {0}', inputs.deployment || 'app.bringa.io') }}"
+run-name: "Pages · ${{ github.event.workflow_run.display_title || format('manual: {0}', inputs.deployment || 'app.bringa.io') }}"
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches: [main]
+    types: [completed]
   workflow_dispatch:
     inputs:
       deployment:
@@ -24,6 +26,7 @@ env:
 jobs:
   build:
     name: Build static app
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       BRINGA_DEPLOYMENT: ${{ inputs.deployment || 'app.bringa.io' }}
@@ -62,7 +65,7 @@ jobs:
 
   deploy:
     name: Deploy GitHub Pages app
-    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/deploy/') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
